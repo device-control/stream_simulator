@@ -24,6 +24,52 @@ class StreamTCPClient
     @opened = false
   end
 
+  # 本メソッドが正常に実施された場合、 server,client 共に接続通知される
+  def open
+    return if @opened
+    log = Log.instance
+    locker = Mutex::new
+    locker.lock
+    begin
+      @socket = TCPSocket.open(@ip, @port)
+      @receive_thread = Thread.new(&method(:receive))
+      @opened = true
+      notify_connect # 接続通知
+    rescue => e
+      @socket.close if @socket
+      @socket = nil
+      raise "StreamTCPClient::open: error: "+e.message
+    ensure
+      log.debug "StreamTCPClient: ensure"
+      locker.unlock
+    end
+  end
+
+  def write(message)
+    return if !@opened
+    locker = Mutex::new
+    locker.synchronize do
+      @socket.send(message,0)
+    end
+  end
+
+  # 本メソッドが正常に実施された場合、 server 側は client の切断が通知される
+  # * 自身(client) は close を呼び出したことで切断をしる（通知されない）
+  def close
+    return if !@opened
+    locker = Mutex::new
+    locker.synchronize do
+      @receive_thread.kill
+      @receive_thread.join
+      @receive_thread = nil
+      @socekt.close if @socket
+      @socket = nil
+      
+      @opened = false
+    end
+  end
+
+  private
   def receive
     log = Log.instance
     begin
@@ -55,40 +101,4 @@ class StreamTCPClient
     end
     log.debug "StreamTCPClient#receive: end"
   end
-  
-  # 本メソッドが正常に実施された場合、 server,client 共に接続通知される
-  def open
-    return if @opened
-    begin
-      @socket = TCPSocket.open(@ip, @port)
-      @receive_thread = Thread.new(&method(:receive))
-      @opened = true
-      notify_connect # 接続通知
-    rescue => e
-      @socket.close if @socket
-      @socket = nil
-      raise "StreamTCPClient::open: error: "+e.message
-    # ensure
-    #   puts "StreamTCPClient: ensure"
-    end
-  end
-
-  def write(message)
-    return if !@opened
-    @socket.send(message,0)
-  end
-
-  # 本メソッドが正常に実施された場合、 server 側は client の切断が通知される
-  # * 自身(client) は close を呼び出したことで切断をしる（通知されない）
-  def close
-    return if !@opened
-    @receive_thread.kill
-    @receive_thread.join
-    @receive_thread = nil
-    @socekt.close if @socket
-    @socket = nil
-    
-    @opened = false
-  end
-  
 end

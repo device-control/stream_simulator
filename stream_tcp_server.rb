@@ -31,6 +31,55 @@ class StreamTCPServer
     @connected = false
   end
 
+  # ソケットオープンしてclientを待ち受ける
+  # 通知はなにもされない
+  def open
+    return if @opened
+    log = Log.instance
+    locker = Mutex::new
+    locker.lock
+    begin
+      @server = TCPServer.open(@ip, @port)
+      @receive_thread = Thread.new(&method(:receive))
+      @opened = true
+    rescue => e
+      @server.close if @server
+      @server = nil
+      raise "StreamTCPServer::open: error: "+e.message
+    ensure
+      log.debug "StreamTCPServer#open: ensure"
+      locker.unlock
+    end
+  end
+
+  # opened だけでは client が接続してないので connected 時だけ write できる
+  def write(message)
+    return if !@connected
+    locker = Mutex::new
+    locker.synchronize do
+      @socket.send(message,0)
+    end
+  end
+
+  # 本メソッドが正常に実施された場合、client 側は server の切断が通知される
+  # * 自身(server) は close を呼び出したことで切断をしる（通知されない）
+  def close
+    return if !@opened
+    locker = Mutex::new
+    locker.synchronize do
+      @receive_thread.kill
+      @receive_thread.join
+      @receive_thread = nil
+      @socekt.close if @socket
+      @socket = nil
+      @server.close if @server
+      @server = nil
+      
+      @opened = false
+    end
+  end
+
+  private
   def receive
     log = Log.instance
     begin
@@ -69,43 +118,4 @@ class StreamTCPServer
     end
     puts "StreamTCPServer#receive: end"
   end
-
-  # ソケットオープンしてclientを待ち受ける
-  # 通知はなにもされない
-  def open
-    return if @opened
-    begin
-      @server = TCPServer.open(@ip, @port)
-      @receive_thread = Thread.new(&method(:receive))
-      @opened = true
-    rescue => e
-      @server.close if @server
-      @server = nil
-      raise "StreamTCPServer::open: error: "+e.message
-    # ensure
-    #   puts "StreamTCPServer#open: ensure"
-    end
-  end
-
-  # opened だけでは client が接続してないので connected 時だけ write できる
-  def write(message)
-    return if !@connected
-    @socket.send(message,0)
-  end
-
-  # 本メソッドが正常に実施された場合、client 側は server の切断が通知される
-  # * 自身(server) は close を呼び出したことで切断をしる（通知されない）
-  def close
-    return if !@opened
-    @receive_thread.kill
-    @receive_thread.join
-    @receive_thread = nil
-    @socekt.close if @socket
-    @socket = nil
-    @server.close if @server
-    @server = nil
-    
-    @opened = false
-  end
-  
 end
