@@ -146,8 +146,8 @@ describe 'StreamTCPServer' do
         break if server_listener.connects == 1 && client_listener.connects == 1
         sleep 1
       end
-      expect(tcp_server.write "server to client").not_to eq raise_error
-      expect(tcp_client.write "client to server").not_to eq raise_error
+      expect{ tcp_server.write("server to client") }.not_to raise_error
+      expect{ tcp_client.write("client to server") }.not_to raise_error
       # 送信待ち(max 5sec)
       5.times do
         break if server_listener.recv_messages == 1 && client_listener.recv_messages == 1
