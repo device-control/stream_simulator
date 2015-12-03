@@ -53,8 +53,8 @@ class TestData
   
   # 対象クラスを生成し、登録する
   def add_objects(data, container, target_class)
-    type = data[CONTENT_TYPE]
-    version = data[CONTENT_VERSION]
+    type = data[CONTENT_TYPE].to_s
+    version = data[CONTENT_VERSION].to_s
     contents = data[CONTENTS]
     
     return unless target_class::TARGET_CONTENT_TYPE == type
@@ -128,4 +128,11 @@ class TestData
     return MessageObject.new(message_format.name, message_format, data)
   end
   
+  # メッセージ一覧を表示する
+  def show_message
+    @message_objects.each do |name, message|
+      puts "#{name} =  #{message.to_hex_string}"
+    end
+    return true
+  end
 end

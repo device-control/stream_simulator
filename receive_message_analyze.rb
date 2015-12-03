@@ -52,6 +52,7 @@ class ReceiveMessageAnalyze
       
       # オブザーバーに解析結果を通知
       notify_analyze_result(object)
+      object.to_log
     end
   end
   

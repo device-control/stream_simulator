@@ -8,7 +8,7 @@ Encoding.default_internal = 'utf-8'
 
 class ScenarioData
   
-  TARGET_CONTENT_TYPE    = 'STREAMDEBUGGER SCENARIO DATA'
+  TARGET_CONTENT_TYPE    = 'scenario_data'
   TARGET_CONTENT_VERSION = '0.1'
   
   NAME          = 'name'

@@ -35,6 +35,8 @@ class MessageObject
   
   # データ更新
   def update_data(update_data)
+    return if update_data.nil?
+    
     update_data.each do |u|
       @data.each do |d|
         if d[NAME] == u[NAME]
@@ -47,6 +49,21 @@ class MessageObject
   # エンコード処理
   def encode
     return @format.encode(@data)
+  end
+  
+  # バイナリテキスト変換
+  def to_hex_string
+    binary_data = encode()
+    return @format.convert_hex_string(binary_data)
+  end
+  
+  # データをログに出力する
+  def to_log
+    log = Log.instance
+    log.info "name = #{@name}"
+    @data.each do |d|
+      log.info "#{d[NAME]} = #{d[VALUE]}"
+    end
   end
   
 end

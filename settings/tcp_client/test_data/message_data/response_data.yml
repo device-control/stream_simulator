@@ -1,0 +1,29 @@
+# coding: utf-8
+
+
+# using_format : フォーマット名
+# data         : データ
+#              :   フォーマットのデフォルトデータを上書きする
+#              :   上書きする項目のみを記載する
+#   name       : フォーマットの項目名を設定
+#   value      : 値を設定（設定できる値は、メッセージフォーマットを参照）
+
+
+content-type: message_data
+content-version: 0.1
+
+contents:
+  name: "クライアント レスポンス"
+  description: "クライアントのレスポンス"
+  using_format: "レスポンス"
+  data:
+    - name: kind
+      value: 0x99
+    - name: field_length
+      value: 0xF1E2
+    - name: ip_address
+      value: 0xFF0099BB
+    - name: sub_net_mask
+      value: 0x99999999
+    - name: response
+      value: "client response success"

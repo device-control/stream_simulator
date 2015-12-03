@@ -8,7 +8,7 @@ Encoding.default_internal = 'utf-8'
 
 class MessageData
   
-  TARGET_CONTENT_TYPE    = 'STREAMDEBUGGER MESSAGE DATA'
+  TARGET_CONTENT_TYPE    = 'message_data'
   TARGET_CONTENT_VERSION = '0.1'
   
   NAME          = 'name'
@@ -37,6 +37,8 @@ class MessageData
   
   # 更新データを生成する
   def create_update_data(contents)
+    return if contents[DATA].nil?
+    
     @update_data = Array.new
     contents[DATA].each do |d|
       struct = Hash.new

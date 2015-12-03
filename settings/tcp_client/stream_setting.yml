@@ -1,0 +1,21 @@
+# coding: utf-8
+
+# TCP Client
+# type         : tcp_client
+# name         : xxx client
+# ip           : 127.0.0.1
+# port         : 50000
+# timeout      : 5
+
+content-type: stream_setting
+content-version: 0.1
+
+contents:
+  name: "TCPクライアントストリームテスト"
+  description: "TCPクライアントストリームテスト"
+  parameters:
+    type: "tcp_client"
+    name: "TCPクライアント"
+    ip: "127.0.0.1"
+    port: 50000
+    

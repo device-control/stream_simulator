@@ -8,7 +8,7 @@ Encoding.default_internal = 'utf-8'
 
 class MessageFormat
   
-  TARGET_CONTENT_TYPE    = 'STREAMDEBUGGER MESSAGE FORMAT'
+  TARGET_CONTENT_TYPE    = 'message_format'
   TARGET_CONTENT_VERSION = '0.1'
   
   NAME          = 'name'
@@ -174,7 +174,7 @@ class MessageFormat
       end
       
       if value.nil?
-        raise "#{self.class}##{__method__}: no data found."
+        raise "#{self.class}##{__method__}: no data found. #{name}"
       end
       
       message += convert_message(value, type)
@@ -195,7 +195,9 @@ class MessageFormat
       return convert_integer(data)
     else
       # バイナリテキストに変換
-      return convert_hex_string(data)
+      buf = data.unpack('C*')
+      ret = convert_hex_string(buf)
+      return ret
     end
   end
   
@@ -239,8 +241,7 @@ class MessageFormat
   
   # バイナリテキストに変換
   def convert_hex_string(data)
-    buf = data.unpack('C*')
-    ret = buf.scan(/.{1}/).collect{|c| sprintf("%02X", c.ord)}.join
+    ret = data.scan(/.{1}/).collect{|c| sprintf("%02X", c.ord)}.join
     return ret
   end
   
@@ -261,7 +262,7 @@ class MessageFormat
   def type_array_count(type)
     count = 1
     type.match(/^.+\[(.+)\]$/) do |m|
-      count = md[1].to_i
+      count = m[1].to_i
     end
     return count
   end

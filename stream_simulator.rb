@@ -78,4 +78,8 @@ class StreamSimulator
     @stream.write message
   end
   
+  def show_message
+    @testdata.show_message
+  end
+  
 end
