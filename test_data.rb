@@ -1,30 +1,31 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require 'singleton'
-require 'find'
-require 'yaml'
-
 require 'yaml_reader'
-require 'message_object'
 require 'message_format'
 require 'message_data'
 require 'scenario_data'
+require 'message_object'
 require "log"
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class TestData
-  include Singleton
   
   CONTENT_TYPE    = 'content-type'
   CONTENT_VERSION = 'content-version'
   CONTENTS        = 'contents'
   
+  attr_reader :yamls
+  attr_reader :message_formats
+  attr_reader :message_datas
+  attr_reader :scenario_datas
+  attr_reader :message_objects
+  
   # コンストラクタ
-  def initialize
-    clear()
+  def initialize(path)
+    load(path)
   end
   
   # データクリア
@@ -62,7 +63,7 @@ class TestData
     object = target_class.new(contents)
     
     if container.has_key?(object.name)
-      Log.instance.warn("#{self.class}##{__method__}: #{object.name} already exists in #{target_class}.")
+      Log.instance.warn "#{self.class}##{__method__}: #{object.name} already exists in #{target_class}."
       return
     end
     
@@ -75,13 +76,13 @@ class TestData
     @message_datas.each do |name, data|
       # 同一名のメッセージＮＧ
       if @message_objects.has_key?(name)
-        Log.instance.warn("#{self.class}##{__method__}: #{name} already exists in messages.")
+        Log.instance.warn "#{self.class}##{__method__}: #{name} already exists in messages."
         next
       end
       # フォーマットが見つからなければＮＧ
       format = @message_formats[data.using_format]
       if format.nil?
-        Log.instance.warn("#{self.class}##{__method__}: #{name} not found format.")
+        Log.instance.warn "#{self.class}##{__method__}: #{name} not found format."
         next
       end
       

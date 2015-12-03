@@ -1,7 +1,6 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require 'test_data'
 require 'analyze_observer'
 require 'log'
 
@@ -12,8 +11,10 @@ class ScenarioAnalyze
   include AnalyzeObserver
   
   # コンストラクタ
-  def initialize
+  def initialize(testdata)
     super()
+    
+    @testdata = testdata
   end
   
   # 解析結果通知
@@ -25,11 +26,11 @@ class ScenarioAnalyze
   def analyze(object)
     # シナリオを検索する
     # 対象のシナリオがなければ、解析を終了する
-    scenario = TestData.instance.search_scenario(object.name)
+    scenario = @testdata.search_scenario(object.name)
     return if scenario.nil?
     
     # レスポンス名を取得する
-    response = TestData.instance.create_response(scenario, object.name)
+    response = @testdata.create_response(scenario, object.name)
     return if response.nil?
     
     # レスポンスを通知

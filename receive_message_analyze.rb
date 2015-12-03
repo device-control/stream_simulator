@@ -1,7 +1,6 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require 'test_data'
 require 'analyze_observer'
 require 'log'
 
@@ -12,8 +11,10 @@ class ReceiveMessageAnalyze
   include AnalyzeObserver
   
   # コンストラクタ
-  def initialize
+  def initialize(testdata)
     super()
+    
+    @testdata = testdata
     clear()
   end
   
@@ -41,13 +42,13 @@ class ReceiveMessageAnalyze
     loop do
       # フォーマットを検索する
       # 対象のフォーマットがなければ、解析を終了する
-      format = TestData.instance.search_message_format(@message)
+      format = @testdata.search_message_format(@message)
       break if format.nil?
       
       length = format.length
       message = @message[0, length]
       @message = @message[length, @message.length - length]
-      object = TestData.instance.create_message_object(message, format)
+      object = @testdata.create_message_object(message, format)
       
       # オブザーバーに解析結果を通知
       notify_analyze_result(object)
