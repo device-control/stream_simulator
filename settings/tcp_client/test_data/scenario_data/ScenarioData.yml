@@ -1,0 +1,19 @@
+# coding: utf-8
+
+# using_format : シナリオ名
+# sequence     : シーケンス
+#   command    : コマンド名を設定
+#              :   メッセージフォーマット名を設定する
+#   response   : レスポンス名を設定
+#              :   メッセージデータ名を設定する
+
+content-type: scenario_data
+content-version: 0.1
+
+contents:
+  name: "正常 パターン１"
+  description: "正常 パターン１"
+  sequence:
+    - command: "コマンド"
+      response: "クライアント レスポンス"
+      

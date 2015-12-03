@@ -62,7 +62,7 @@ class StreamTCPClient
       @receive_thread.kill
       @receive_thread.join
       @receive_thread = nil
-      @socekt.close if @socket
+      @socket.close if @socket
       @socket = nil
       
       @opened = false
