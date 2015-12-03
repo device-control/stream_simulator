@@ -20,14 +20,24 @@ require 'logger'
 class Log
   include Singleton
   attr_reader :log
-
+  
   def initialize
     @log = Logger.new(STDOUT)
     @log.level = Logger::DEBUG
     # @log.level = Logger::ERROR
+    @show_enabled = true
+  end
+
+  def enabled
+    @show_enabled = true
+  end
+  
+  def disabled
+    @show_enabled = false
   end
 
   def method_missing(method, *args)
+    return if @show_enabled == false
     begin
       @log.send method, args
     rescue => e
