@@ -46,6 +46,7 @@ class MessageFormat
   # プライマリキーを生成する
   def create_primary_key(contents)
     @primary_key = Array.new
+    return if contents[PRIMARY_KEY].nil?
     
     contents[PRIMARY_KEY].each do |key|
       struct = Hash.new

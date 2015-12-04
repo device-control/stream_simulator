@@ -33,8 +33,12 @@ class ScenarioAnalyze
     response = @testdata.create_response(scenario, object.name)
     return if response.nil?
     
+    # ログ出力
+    Log.instance.info "#{self.class}##{__method__}: response --->"
+    response.to_log
+    
     # レスポンスを通知
-    notify_analyze_result(response)
+    notify_analyze_result(response.encode)
   end
   
 end
