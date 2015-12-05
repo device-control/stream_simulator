@@ -46,9 +46,13 @@ class YamlReader
   # filename: ファイル名
   def self.read_yaml(filename)
     yaml = nil
-    File.open(filename) do |f|
-      tmp = f.read()
-      yaml = YAML.load(tmp)
+    begin
+      File.open(filename) do |f|
+        tmp = f.read()
+        yaml = YAML.load(tmp)
+      end
+    rescue => e
+      raise "#{filename}: " + e.message
     end
     return yaml
   end
