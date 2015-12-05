@@ -11,11 +11,11 @@ class ScenarioData
   TARGET_CONTENT_TYPE    = 'scenario_data'
   TARGET_CONTENT_VERSION = '0.1'
   
-  NAME          = 'name'
-  DESCRIPTION   = 'description'
-  SEQUENCE      = 'sequence'
-  COMMAND       = 'command'
-  RESPONSE      = 'response'
+  NAME           = 'name'
+  DESCRIPTION    = 'description'
+  SEQUENCE       = 'sequence'
+  REQUEST_FORMAT = 'request_format'
+  RESPONSE_DATA  = 'response_data'
   
   attr_accessor :name
   attr_accessor :description
@@ -37,25 +37,25 @@ class ScenarioData
   def create_sequence(contents)
     @sequences = Hash.new
     contents[SEQUENCE].each do |s|
-      command = s[COMMAND]
-      response = s[RESPONSE]
-      if @sequences.has_key?(command)
-        Log.instance.warn("#{self.class}##{__method__}: #{command} already exists.")
+      request = s[REQUEST_FORMAT]
+      response = s[RESPONSE_DATA]
+      if @sequences.has_key?(request)
+        Log.instance.warn("#{self.class}##{__method__}: #{request} already exists.")
         next
       end
-      @sequences[command] = response
+      @sequences[request] = response
     end
   end
   
   # 対象のコマンドかどうか
-  def target?(command)
-    return true if @sequences[command]
+  def target?(request)
+    return true if @sequences[request]
     return false
   end
   
   # レスポンスを取得する
-  def get_response(command)
-    return @sequences[command]
+  def get_response(request)
+    return @sequences[request]
   end
   
 end

@@ -40,6 +40,7 @@ class StreamSimulator
   def add_observer
     # Streamの状態変化通知
     @stream.add_observer(StreamObserver::STATUS, self)
+    @stream.add_observer(StreamObserver::STATUS, @receive_message_analyze)
     # Streamのメッセージ受信通知
     @stream.add_observer(StreamObserver::MESSAGE, @receive_message_analyze)
     

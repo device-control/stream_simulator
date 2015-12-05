@@ -28,6 +28,16 @@ class ReceiveMessageAnalyze
     @message += message
   end
   
+  # 接続通知
+  def stream_connected(stream)
+    clear
+  end
+  
+  # 切断通知
+  def stream_disconnected(stream)
+    clear
+  end
+  
   # 受信通知
   def stream_message_received(stream, message)
     add_message(message)
@@ -50,9 +60,12 @@ class ReceiveMessageAnalyze
       @message = @message[length, @message.length - length]
       object = @testdata.create_message_object(message, format)
       
+      # ログ出力
+      Log.instance.info "#{self.class}##{__method__}: command --->"
+      object.to_log
+      
       # オブザーバーに解析結果を通知
       notify_analyze_result(object)
-      object.to_log
     end
   end
   
