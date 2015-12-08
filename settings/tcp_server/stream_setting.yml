@@ -14,7 +14,7 @@ contents:
   name: "TCPサーバストリームテスト"
   description: "TCPサーバストリームテスト"
   parameters:
-    type: "tcp_server"
+    type: :TCP_SERVER
     name: "TCPサーバ"
     ip: "127.0.0.1"
     port: 50000

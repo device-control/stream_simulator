@@ -14,7 +14,7 @@ contents:
   name: "TCPクライアントストリームテスト"
   description: "TCPクライアントストリームテスト"
   parameters:
-    type: "tcp_client"
+    type: :TCP_CLIENT
     name: "TCPクライアント"
     ip: "127.0.0.1"
     port: 50000

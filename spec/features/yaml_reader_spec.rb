@@ -6,9 +6,7 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
 require 'yaml_reader'
 require 'log'
 
-require 'pry'
-
-describe 'TestData' do
+describe 'YamlReader' do
   before do
     log = Log.instance
     log.disabled

@@ -12,10 +12,11 @@ class StreamSetting
       map[:type] = parameters["type"]
       map[:name] = parameters["name"]
       map[:timeout] = parameters["timeout"]
-      if map[:type] =~ /^(tcp_server|tcp_client)$/
+      # シンボルで処理
+      if map[:type].to_s =~ /^(TCP_SERVER|TCP_CLIENT)$/
         map[:ip] = parameters["ip"]
         map[:port] = parameters["port"]
-      elsif map[:type] =~ /^(udp)$/
+      elsif map[:type].to_s =~ /^(UDP)$/
         raise "udp format. not support."
       else
         # 異常フォーマット

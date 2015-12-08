@@ -9,20 +9,20 @@ class StreamManager
     stream = nil
     begin
       # TODO: parameters フォーマットチェックが必要
-      if parameters[:type] == "tcp_server"
+      if parameters[:type] == :TCP_SERVER
         stream = StreamTCPServer.new( parameters[:name],
                                       parameters[:ip],
                                       parameters[:port],
                                       parameters[:timeout])
-      elsif parameters[:type] == "tcp_client"
+      elsif parameters[:type] == :TCP_CLIENT
         stream = StreamTCPClient.new( parameters[:name],
                                       parameters[:ip],
                                       parameters[:port],
                                       parameters[:timeout])
       else
-        raise "udp format. not support."
+        raise ":UDP format? not support."
       end
-    rescue
+    rescue => e
       # 異常フォーマット
       raise "StreamManager::create error: " + e.message
       stream = nil
