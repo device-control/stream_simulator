@@ -45,9 +45,9 @@ class MessageFormat
   
   # プライマリキーを生成する
   def create_primary_key(contents)
-    @primary_key = Array.new
     return if contents[PRIMARY_KEY].nil?
     
+    @primary_key = Array.new
     contents[PRIMARY_KEY].each do |key|
       struct = Hash.new
       struct[NAME] = key[NAME]
@@ -122,6 +122,8 @@ class MessageFormat
   
   # プライマリキーのチェック
   def check_primary_key(message)
+    return false if @primary_key.nil?
+    
     @primary_key.each do |key|
       position = key[POSITION]
       type = key[TYPE]
@@ -208,7 +210,10 @@ class MessageFormat
     # char型
     if type =~ /^char.*/
       ret = convert_hex_string(data)
-      ret += sprintf("%0#{length-ret.length}X", 0)
+      # 不足分は0で埋める
+      if (length - ret.length) > 0
+        ret += sprintf("%0#{length-ret.length}X", 0)
+      end
       return ret
     end
     # int型
@@ -218,7 +223,11 @@ class MessageFormat
       return ret
     else
       # バイナリテキストに変換
-      ret = data + sprintf("%0#{length-ret.length}X", 0)
+      ret = data
+      # 不足分は0で埋める
+      if (length - ret.length) > 0
+        ret += sprintf("%0#{length-ret.length}X", 0)
+      end
       return ret
     end
     
