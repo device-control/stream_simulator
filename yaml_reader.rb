@@ -21,7 +21,10 @@ class YamlReader
     # Yamlファイル読込
     files.each do |f|
       yaml = read_yaml(f)
-      yamls.push(yaml)
+      info = Hash.new
+      info[:file] = f
+      info[:yaml] = yaml
+      yamls.push(info)
     end
     
     return yamls

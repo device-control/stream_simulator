@@ -52,7 +52,8 @@ class TestData
   end
   
   # 対象クラスを生成し、登録する
-  def add_objects(data, container, target_class)
+  def add_objects(yaml, container, target_class)
+    data = yaml[:yaml]
     type = data[CONTENT_TYPE].to_s
     version = data[CONTENT_VERSION].to_s
     contents = data[CONTENTS]
