@@ -42,6 +42,7 @@ class MakeJava
   
   def self.export(path, formats)
     javasrc = <<-EOS
+package message;
 /**
 * @CLASS_NAME@クラス
 */
@@ -65,7 +66,7 @@ EOS
         bin_string = convert_message(item["default_value"], item["type"])
         list << "\t\t// #{item["name_jp"]}"
         list << "\t\tkey_list.add(\"#{item["name"]}\");"
-        list << "\t\tsize_list.add(new Integer(#{byte_size});"
+        list << "\t\tsize_list.add(new Integer(#{byte_size}));"
         list << "\t\tmap.put(\"#{item["name"]}\", \"#{bin_string}\");"
       end
       src = javasrc.clone
