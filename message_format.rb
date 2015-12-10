@@ -2,11 +2,13 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
+require 'message_utils'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class MessageFormat
+  include MessageUtils
   
   TARGET_CONTENT_TYPE    = 'message_format'
   TARGET_CONTENT_VERSION = '0.1'
@@ -162,128 +164,35 @@ class MessageFormat
   end
   
   # エンコード
-  def encode(data)
+  def encode(data=nil)
+    if data == nil
+      # デフォルト値を取得する
+      return get_default_value
+    end
     message = ""
-    @format.each do |f|
-      name = f[NAME]
-      type = f[TYPE]
-      
-      value = nil
-      data.each do |d|
-        if name == d[NAME]
-          value = d[VALUE]
-          break
-        end
+    @format.each.with_index(0) do |f,index|
+      d = data[index]
+      if d[NAME] != f[NAME]
+        raise "#{self.class}##{__method__}: unmatch key. #{f[NAME]}"
       end
-      
+      value = d[VALUE]
       if value.nil?
-        raise "#{self.class}##{__method__}: no data found. #{name}"
+        raise "#{self.class}##{__method__}: no data found. #{f[NAME]}"
       end
-      
-      message += convert_message(value, type)
+      message += convert_message(value, f[TYPE])
     end
     ret = convert_binary(message)
     return ret
   end
-  
-  # フォーマットのデータに変換する
-  def convert_format(data, type)
-    # char型
-    if type =~ /^char.*/
-      return convert_ascii(data)
+
+  def get_default_value
+    message = ""
+    @format.each.with_index(0) do |f,index|
+      message += convert_message(f[DEFAULT_VALUE], f[TYPE])
     end
-    # int型
-    array_count = type_array_count(type)
-    if array_count == 1
-      return convert_integer(data)
-    else
-      # バイナリテキストに変換
-      buf = data.unpack('C*')
-      ret = convert_hex_string(buf)
-      return ret
-    end
-  end
-  
-  # メッセージのデータに変換する
-  def convert_message(data, type)
-    length = type_length(type) * 2
-    # char型
-    if type =~ /^char.*/
-      ret = convert_hex_string(data)
-      # 不足分は0で埋める
-      if (length - ret.length) > 0
-        ret += sprintf("%0#{length-ret.length}X", 0)
-      end
-      return ret
-    end
-    # int型
-    array_count = type_array_count(type)
-    if array_count == 1
-      ret = sprintf("%0#{length}X", data)
-      return ret
-    else
-      # バイナリテキストに変換
-      ret = data
-      # 不足分は0で埋める
-      if (length - ret.length) > 0
-        ret += sprintf("%0#{length-ret.length}X", 0)
-      end
-      return ret
-    end
-    
-  end
-  
-  # ASCII文字に変換
-  def convert_ascii(data)
-    ret = data.unpack("A*").pop
+    # puts "bin[#{message}]"
+    ret = convert_binary(message)
     return ret
   end
 
-  # 整数に変換
-  def convert_integer(data)
-    buf = data.unpack('C*')
-    ret = 0
-    buf.each do |b|
-      ret = (ret << 8) | b
-    end
-    return ret
-  end
-  
-  # バイナリテキストに変換
-  def convert_hex_string(data)
-    ret = data.scan(/.{1}/).collect{|c| sprintf("%02X", c.ord)}.join
-    return ret
-  end
-  
-  # バイナリに変換
-  def convert_binary(data)
-    ret = data.scan(/.{2}/).collect{|c| c.hex}.pack("C*")
-    return ret
-  end
-  
-  # 型のバイト長
-  def type_length(type)
-    count = type_array_count(type)
-    size = type_size(type)
-    return count * size
-  end
-  
-  # 型の配列数
-  def type_array_count(type)
-    count = 1
-    type.match(/^.+\[(.+)\]$/) do |m|
-      count = m[1].to_i
-    end
-    return count
-  end
-  
-  # 型のサイズ
-  def type_size(type)
-    return 1 if type =~ /^char.*/
-    return 1 if type =~ /^int8.*/
-    return 2 if type =~ /^int16.*/
-    return 4 if type =~ /^int32.*/
-    raise "#{self.class}##{__method__}: structure type is invalid. #{type}"
-  end
-  
 end
