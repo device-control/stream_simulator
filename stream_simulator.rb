@@ -82,5 +82,9 @@ class StreamSimulator
   def show_message
     @testdata.show_message
   end
-  
+
+  def show_message_format
+    @testdata.show_message_format
+  end
+
 end

@@ -136,4 +136,11 @@ class TestData
     end
     return true
   end
+  
+  def show_message_format
+    @message_formats.each do |name, message|
+      puts "#{name}: #{message.get_default_value.unpack("H*")[0]}"
+    end
+    return true
+  end
 end
