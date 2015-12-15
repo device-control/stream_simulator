@@ -66,8 +66,8 @@ EOS
         bin_string = convert_message(item["default_value"], item["type"])
         list << "\t\t// #{item["name_jp"]}"
         list << "\t\tkey_list.add(\"#{item["name"]}\");"
-        list << "\t\tsize_list.add(new Integer(#{byte_size}));"
-        list << "\t\tmap.put(\"#{item["name"]}\", \"#{bin_string}\");"
+        list << "\t\tmap_value.put(\"#{item["name"]}\", \"#{bin_string}\");"
+        list << "\t\tmap_size.put(\"#{item["name"]}\", new Integer(#{byte_size}));"
       end
       src = javasrc.clone
       src.gsub!(/@CLASS_NAME@/){|item| class_name}
