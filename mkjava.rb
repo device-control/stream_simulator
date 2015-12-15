@@ -44,9 +44,9 @@ class MakeJava
     javasrc = <<-EOS
 package message;
 /**
-* @CLASS_NAME@クラス
-*/
-public class @CLASS_NAME@ extends MessageBase { // implements MessageBase {
+ * @CLASS_NAME@クラス
+ */
+public class @CLASS_NAME@ extends MessageBase {
 	public @CLASS_NAME@() {
 		super();
 @INITIALIZE@
