@@ -41,6 +41,7 @@ class StreamTCPServer
     begin
       @server = TCPServer.open(@ip, @port)
       @receive_thread = Thread.new(&method(:receive))
+      sleep 1 # TODO: accept状態になるまで待つ必要がある
       @opened = true
     rescue => e
       @server.close if @server

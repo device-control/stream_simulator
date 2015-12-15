@@ -24,7 +24,8 @@ class MockListener
   def stream_connected(stream)
     # server:クライアントが接続してきた時
     # client:クライアントが正しく接続できた時
-    puts "接続通知(#{@name}):" + stream.name
+    
+    # puts "接続通知(#{@name}):" + stream.name
     @connects += 1
   end
 
@@ -32,7 +33,8 @@ class MockListener
   def stream_disconnected(stream)
     # server:クライアントが切断してきた時
     # client:サーバが切断してきた時
-    puts "切断通知(#{@name}): " + stream.name
+    
+    # puts "切断通知(#{@name}): " + stream.name
     @connects -= 1
   end
 
@@ -40,7 +42,8 @@ class MockListener
   def stream_message_received(stream,message)
     # server:クライアントからメッセージを受信してきた時
     # client:サーバからのメッセージを受信した時
-    puts "受信通知(#{@name}): " + stream.name + " : " + message
+    
+    # puts "受信通知(#{@name}): " + stream.name + " : " + message
     @recv_messages += 1
     @recv_message = message
   end
