@@ -77,7 +77,12 @@ describe 'FunctionExecutor' do
     it '正しく生成／削除されることを確認' do
       function_executor = nil
       expect{ function_executor = FunctionExecutor.new }.not_to raise_error
+      # ２重start
       expect{ function_executor.start }.not_to raise_error
+      expect{ function_executor.start }.not_to raise_error
+      
+      # ２重stop
+      expect{ function_executor.stop }.not_to raise_error
       expect{ function_executor.stop }.not_to raise_error
     end
   end
@@ -120,7 +125,6 @@ describe 'FunctionExecutor' do
       expect(yml["contents"]["result"]["value"]).to eq 1
       expect(yml["contents"]["result"]["message"]).to eq "success"
       # 後始末
-      expect{ function_executor.stop }.not_to raise_error
       expect{ function_executor.stop }.not_to raise_error
     end
     
@@ -166,7 +170,6 @@ describe 'FunctionExecutor' do
       expect(yml["contents"]["result"]["message"]).to eq "success"
       # 後始末
       expect{ function_executor.stop }.not_to raise_error
-      expect{ function_executor.stop }.not_to raise_error
     end
     
     it '関数(引数あり:数値)が実行できることを確認' do
@@ -210,7 +213,6 @@ describe 'FunctionExecutor' do
       expect(yml["contents"]["result"]["value"]).to eq 1
       expect(yml["contents"]["result"]["message"]).to eq "success"
       # 後始末
-      expect{ function_executor.stop }.not_to raise_error
       expect{ function_executor.stop }.not_to raise_error
     end
     
@@ -257,7 +259,6 @@ describe 'FunctionExecutor' do
       expect(yml["contents"]["result"]["value"]).to eq 1
       expect(yml["contents"]["result"]["message"]).to eq "success"
       # 後始末
-      expect{ function_executor.stop }.not_to raise_error
       expect{ function_executor.stop }.not_to raise_error
     end
   end

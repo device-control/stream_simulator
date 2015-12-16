@@ -66,6 +66,7 @@ class FunctionRunner
     return false if !@connected # 接続できない場合は失敗
     
     begin
+      @recv_message = nil # 結果受信バッファクリア
       @stream.write send_yml.to_s
       5.times do
         break if @recv_message != nil
@@ -74,8 +75,8 @@ class FunctionRunner
       yml = YAML.load @recv_message
       return false if yml["content-type"] != "message_function_result"
       return false if yml["content-version"] != 0.1
-      return false if yml["connects"] == nil
-      contents = yml["connects"]
+      return false if yml["contents"] == nil
+      contents = yml["contents"]
       return true if contents["result"]["value"] == 1 # 0:失敗, 1:成功
       puts contents["result"]["message"]
     rescue => e
