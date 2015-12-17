@@ -37,6 +37,7 @@ class MessageFormat
   
   # コンテンツを生成
   def create_contents(contents,file=nil)
+    message_format_contents?(contents)
     @file_path = file
     @name = contents[NAME]
     @description = contents[DESCRIPTION]

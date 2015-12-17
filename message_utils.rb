@@ -6,7 +6,44 @@ require 'log'
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
+# TODO: 関数名から意味がわかるよう修正する必要がある。
+#       あと、入力と出力がわかるようにする必要がある。
+
 module MessageUtils
+
+  # message_format の contents 以下が正しいフォーマットか確認する
+  def message_format_contents?(contents)
+    begin
+      emb = "Error:#{self.class}##{__method__}:"
+      raise "#{emb}: Undefined \"name\"" if contents["name"].nil?
+      raise "#{emb}: Undefined \"description\"" if contents["description"].nil?
+      # プライマリキー存在している場合、項目確認
+      if !contents["primary_key"].nil?
+        contents["primary_key"].each do |key|
+          raise "#{emb}: Undefined \"primary_key/name\"]" if key["name"].nil?
+          raise "#{emb}: Undefined \"primary_key/name\"]" if key["value"].nil?
+        end
+      end
+      "#{emb}: Undefined \"format\"" if contents["format"].nil?
+      contents["format"].each.with_index(0) do |format,index|
+        raise "#{emb}: Undefined \"format[#{index}]/name\"]"          if format["name"].nil?
+        raise "#{emb}: Undefined \"format[#{index}]/name_jp\"]"       if format["name_jp"].nil?
+        raise "#{emb}: Undefined \"format[#{index}]/type\"]"          if format["type"].nil?
+        raise "#{emb}: Undefined \"format[#{index}]/default_value\"]" if format["default_value"].nil?
+
+        # サイズ確認（デフォルト値がtype指定したものよりサイズがオーバーしていないか確認
+        # ただし、type="int8" で default_value=0x00000001 のように、は見た目オーバーしているが
+        # default_value=0x01 として処理する。
+        length = type_length(format["type"])
+        bin_string = convert_message(format["default_value"], format["type"])
+        raise "#{emb}: size over \"format[#{index}] #{format["name"]} [#{bin_string}]" if bin_string.length != (length * 2)
+      end 
+    rescue => e
+      raise e.message
+    end
+    return true
+  end
+  
 
   # フォーマットのデータに変換する
   def convert_format(data, type)

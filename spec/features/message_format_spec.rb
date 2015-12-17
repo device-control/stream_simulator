@@ -30,7 +30,7 @@ describe 'MessageFormat' do
       expect(result).to eq actual # デフォルトエンコード確認
     end
     
-    it 'エンコード／デコードできることを確認' do
+    it 'エンコード／デコードできることを確認 encode/decode' do
       yaml = @yamls[0][:yaml]
       format= MessageFormat.new yaml['contents']
       input_data = Array.new
@@ -39,11 +39,48 @@ describe 'MessageFormat' do
       input_data << { 'name' => 'field_length',              'value' => 0x1234 }
       input_data << { 'name' => 'fixed_ip_address_setting',  'value' => 0x12345678 }
       input_data << { 'name' => 'sub_net_mask',              'value' => 0xFEDCBA98 }
-      actual = ['1001123412345678FEDCBA98'].pack("H*") # 予想
-      result = format.encode(input_data)
-      expect(result).to eq actual # エンコード確認
-      output_data = format.decode(actual)
+      expected = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      result = format.encode(input_data) # 入力：電文構造(name&value)の配列 出力：バイナリー
+      expect(result).to eq expected # エンコード確認
+      output_data = format.decode(expected) # 入力：バイナリー 出力：電文構造
       expect(output_data).to eq input_data # デコード確認
     end
+    
+    it '対象電文の有無判断の確認 target?' do
+      yaml = @yamls[0][:yaml]
+      format= MessageFormat.new yaml['contents']
+      message = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      expect(format.target?(message)).to eq true
+      message = ['0001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      expect(format.target?(message)).to eq false
+    end
+    
+    it 'プライマリキーの一致確認 check_primary_key' do
+      yaml = @yamls[0][:yaml]
+      format= MessageFormat.new yaml['contents']
+      message = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      expect(format.check_primary_key(message)).to eq true
+      message = ['0001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      expect(format.check_primary_key(message)).to eq false
+    end
+
+    it 'default_value値とtypeで指定した型サイズの確認 check_primary_key' do
+      yaml = @yamls[0][:yaml]
+      format= MessageFormat.new yaml['contents']
+      contents = Marshal.load Marshal.dump(yaml['contents'])
+      expect(format.message_format_contents?(contents)).to eq true
+      
+      # int8でdefault_value値がサイズオーバー
+      contents = Marshal.load Marshal.dump(yaml['contents'])
+      contents["format"][0]["default_value"] = 0x111
+      expect{format.message_format_contents?(contents)}.to raise_error RuntimeError
+      
+      # int32でdefault_value値がサイズオーバー
+      contents = Marshal.load Marshal.dump(yaml['contents'])
+      contents["format"][4]["default_value"] = 0xfffffffff
+      expect{format.message_format_contents?(contents)}.to raise_error RuntimeError
+      
+    end
+      
   end
 end
