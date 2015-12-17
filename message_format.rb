@@ -29,14 +29,15 @@ class MessageFormat
   attr_accessor :format
   attr_accessor :default_data
   attr_accessor :length
-  
+  attr_reader   :file_path
   # コンストラクタ
-  def initialize(contents)
-    create_contents(contents)
+  def initialize(contents,file=nil)
+    create_contents(contents,file)
   end
   
   # コンテンツを生成
-  def create_contents(contents)
+  def create_contents(contents,file=nil)
+    @file_path = file
     @name = contents[NAME]
     @description = contents[DESCRIPTION]
     create_primary_key(contents)
