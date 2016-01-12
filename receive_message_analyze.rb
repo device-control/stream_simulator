@@ -8,6 +8,7 @@ Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class ReceiveMessageAnalyze
+  include MessageUtils
   include AnalyzeObserver
   
   # コンストラクタ
@@ -25,7 +26,7 @@ class ReceiveMessageAnalyze
   
   # メッセージ追加
   def add_message(message)
-    @message += message
+    @message += binary_to_hex_string(message)
   end
   
   # 接続通知
@@ -55,9 +56,8 @@ class ReceiveMessageAnalyze
       format = @testdata.search_message_format(@message)
       break if format.nil?
       
-      length = format.length
-      message = @message[0, length]
-      @message = @message[length, @message.length - length]
+      message = @message[0, format.message_length]
+      @message = @message[format.message_length, @message.length - format.message_length]
       object = @testdata.create_message_object(message, format)
       
       # ログ出力

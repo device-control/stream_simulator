@@ -25,7 +25,7 @@ describe 'MessageFormat' do
     it 'デフォルト値がエンコードできることを確認' do
       yaml = @yamls[0][:yaml]
       format= MessageFormat.new yaml['contents']
-      actual = ['1001123412345678FEDCBA98'].pack("H*") # 予想
+      actual = '1001123412345678FEDCBA98' # 予想
       result = format.encode()
       expect(result).to eq actual # デフォルトエンコード確認
     end
@@ -39,32 +39,32 @@ describe 'MessageFormat' do
       input_data << { 'name' => 'field_length',              'value' => 0x1234 }
       input_data << { 'name' => 'fixed_ip_address_setting',  'value' => 0x12345678 }
       input_data << { 'name' => 'sub_net_mask',              'value' => 0xFEDCBA98 }
-      expected = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
-      result = format.encode(input_data) # 入力：電文構造(name&value)の配列 出力：バイナリー
-      expect(result).to eq expected # エンコード確認
-      output_data = format.decode(expected) # 入力：バイナリー 出力：電文構造
+      actual = '1001123412345678FEDCBA98' # 予想
+      result = format.encode(input_data)
+      expect(result).to eq actual # エンコード確認
+      output_data = format.decode(actual)
       expect(output_data).to eq input_data # デコード確認
     end
     
     it '対象電文の有無判断の確認 target?' do
       yaml = @yamls[0][:yaml]
       format= MessageFormat.new yaml['contents']
-      message = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      message = '1001123412345678FEDCBA98' # メッセージ(バイナリテキスト）
       expect(format.target?(message)).to eq true
-      message = ['0001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      message = '0001123412345678FEDCBA98' # メッセージ(バイナリテキスト）
       expect(format.target?(message)).to eq false
     end
     
     it 'プライマリキーの一致確認 check_primary_key' do
       yaml = @yamls[0][:yaml]
       format= MessageFormat.new yaml['contents']
-      message = ['1001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      message = '1001123412345678FEDCBA98' # メッセージ(バイナリテキスト）
       expect(format.check_primary_key(message)).to eq true
-      message = ['0001123412345678FEDCBA98'].pack("H*") # 予想(バイナリー）
+      message = '0001123412345678FEDCBA98' # メッセージ(バイナリテキスト）
       expect(format.check_primary_key(message)).to eq false
     end
 
-    it 'default_value値とtypeで指定した型サイズの確認 check_primary_key' do
+    it 'default_value値とtypeで指定した型サイズの確認 message_format_contents' do
       yaml = @yamls[0][:yaml]
       format= MessageFormat.new yaml['contents']
       contents = Marshal.load Marshal.dump(yaml['contents'])

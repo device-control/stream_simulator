@@ -38,7 +38,7 @@ class ScenarioAnalyze
     response.to_log
     
     # レスポンスを通知
-    notify_analyze_result(response.encode)
+    notify_analyze_result(response.to_hex_string())
   end
   
 end

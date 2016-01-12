@@ -28,7 +28,7 @@ class MessageFormat
   attr_accessor :primary_key
   attr_accessor :format
   attr_accessor :default_data
-  attr_accessor :length
+  attr_accessor :message_length
   attr_reader   :file_path
   # コンストラクタ
   def initialize(contents,file=nil)
@@ -44,7 +44,6 @@ class MessageFormat
     create_primary_key(contents)
     create_format(contents)
     create_default_data(contents)
-    create_length(contents)
   end
   
   # プライマリキーを生成する
@@ -65,7 +64,7 @@ class MessageFormat
           struct[POSITION] = position
           break
         end
-        position += type_length(f[TYPE])
+        position += type_message_length(f[TYPE])
       end
       
       # キーがフォーマットになければ異常
@@ -90,9 +89,9 @@ class MessageFormat
       struct[DEFAULT_VALUE] = f[DEFAULT_VALUE]
       struct[POSITION] = position
       @format.push(struct)
-      
-      position += type_length(f[TYPE])
+      position += type_message_length(f[TYPE])
     end
+    @message_length = position
   end
   
   # デフォルトデータを生成する
@@ -107,19 +106,9 @@ class MessageFormat
     end
   end
   
-  # メッセージ長を生成する
-  def create_length(contents)
-    len = 0
-    contents[FORMAT].each do |f|
-      type = f[TYPE]
-      len += type_length(type)
-    end
-    @length = len
-  end
-  
   # 対象のメッセージかどうか
   def target?(message)
-    return false if message.length < @length
+    return false if message.length < @message_length
     return false unless check_primary_key(message)
     return true
   end
@@ -127,52 +116,46 @@ class MessageFormat
   # プライマリキーのチェック
   def check_primary_key(message)
     return false if @primary_key.nil?
-    
     @primary_key.each do |key|
-      position = key[POSITION]
-      type = key[TYPE]
-      
-      data = message[position, type_length(type)]
-      value = convert_format(data, type)
-      
+      data = message[key[POSITION], type_message_length(key[TYPE])]
+      value = hex_string_to_typedata(data, key[TYPE])
       return false unless value == key[VALUE]
     end
     return true
   end
   
   # デコード
+  # メッセージ（バイナリテキスト）から
+  # フォーマットのデータ（Array）を生成する
   def decode(message)
     # メッセージ長のチェック
-    if message.length < @length
+    if message.length < @message_length
       raise "#{self.class}##{__method__}: message length is missing."
     end
     
     # フォーマットのデータに変換する
-    datas = Array.new
+    data = Array.new
     @format.each do |f|
-      name = f[NAME]
-      position = f[POSITION]
-      type = f[TYPE]
-      
-      data = message[position, type_length(type)]
-      value = convert_format(data, type)
+      temp_data = message[f[POSITION], type_message_length(f[TYPE])]
+      value = hex_string_to_typedata(temp_data, f[TYPE])
       
       struct = Hash.new
-      struct[NAME] = name
+      struct[NAME] = f[NAME]
       struct[VALUE] = value
-      datas.push(struct)
+      data.push(struct)
     end
-    return datas
+    return data
   end
   
   # エンコード
+  # フォーマットのデータ（Array）から
+  # メッセージ（バイナリテキスト）を生成する
   def encode(data=nil)
-    if data == nil
-      # デフォルト値を取得する
-      return get_default_value
-    end
     message = ""
     @format.each.with_index(0) do |f,index|
+      if data.nil?
+        value = f[DEFAULT_VALUE]
+      else
       d = data[index]
       if d[NAME] != f[NAME]
         raise "#{self.class}##{__method__}: unmatch key. #{f[NAME]}"
@@ -181,20 +164,10 @@ class MessageFormat
       if value.nil?
         raise "#{self.class}##{__method__}: no data found. #{f[NAME]}"
       end
-      message += convert_message(value, f[TYPE])
-    end
-    ret = convert_binary(message)
-    return ret
   end
-
-  def get_default_value
-    message = ""
-    @format.each.with_index(0) do |f,index|
-      message += convert_message(f[DEFAULT_VALUE], f[TYPE])
+      message += typedata_to_hex_string(value, f[TYPE])
     end
-    # puts "bin[#{message}]"
-    ret = convert_binary(message)
-    return ret
+    return message
   end
 
 end

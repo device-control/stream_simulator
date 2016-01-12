@@ -46,15 +46,10 @@ class MessageObject
     end
   end
   
-  # エンコード処理
-  def encode
-    return @format.encode(@data)
-  end
-  
   # バイナリテキスト変換
   def to_hex_string
-    binary_data = encode()
-    return @format.convert_hex_string(binary_data)
+    # return @format.create_message_data(@data)
+    return @format.encode(@data)
   end
   
   # データをログに出力する
