@@ -130,14 +130,14 @@ class TestData
   # メッセージ一覧を表示する
   def show_message
     @message_objects.each do |name, message|
-      puts "#{name} =  #{message.to_hex_string}"
+      puts "#{name} =  #{message.encode}"
     end
     return true
   end
   
   def show_message_format
     @message_formats.each do |name, message|
-      puts "#{name}: #{message.get_default_value.unpack("H*")[0]}"
+      puts "#{name}: #{message.encode}"
     end
     return true
   end

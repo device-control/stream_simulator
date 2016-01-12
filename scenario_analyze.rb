@@ -1,6 +1,7 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
+require 'message_utils'
 require 'analyze_observer'
 require 'log'
 
@@ -8,6 +9,7 @@ Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class ScenarioAnalyze
+  include MessageUtils
   include AnalyzeObserver
   
   # コンストラクタ
@@ -38,7 +40,8 @@ class ScenarioAnalyze
     response.to_log
     
     # レスポンスを通知
-    notify_analyze_result(response.to_hex_string())
+    message = hex_string_to_binary(response.encode())
+    notify_analyze_result(message)
   end
   
 end

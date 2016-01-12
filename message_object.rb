@@ -46,9 +46,9 @@ class MessageObject
     end
   end
   
-  # バイナリテキスト変換
-  def to_hex_string
-    # return @format.create_message_data(@data)
+  # エンコード
+  # メッセージ（バイナリテキスト）を生成する
+  def encode()
     return @format.encode(@data)
   end
   

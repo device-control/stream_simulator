@@ -1,6 +1,7 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
+require 'message_utils'
 require 'analyze_observer'
 require 'log'
 

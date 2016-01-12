@@ -156,18 +156,18 @@ class MessageFormat
       if data.nil?
         value = f[DEFAULT_VALUE]
       else
-      d = data[index]
-      if d[NAME] != f[NAME]
-        raise "#{self.class}##{__method__}: unmatch key. #{f[NAME]}"
+        d = data[index]
+        if d[NAME] != f[NAME]
+          raise "#{self.class}##{__method__}: unmatch key. #{f[NAME]}"
+        end
+        value = d[VALUE]
+        if value.nil?
+          raise "#{self.class}##{__method__}: no data found. #{f[NAME]}"
+        end
       end
-      value = d[VALUE]
-      if value.nil?
-        raise "#{self.class}##{__method__}: no data found. #{f[NAME]}"
-      end
-  end
       message += typedata_to_hex_string(value, f[TYPE])
     end
     return message
   end
-
+  
 end
