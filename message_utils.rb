@@ -113,7 +113,7 @@ module MessageUtils
   
   # バイナリをバイナリテキストに変換
   def binary_to_hex_string(data)
-    ret = data.scan(/.{1}/).collect{|c| sprintf("%02X", c.ord)}.join
+    ret = data.bytes.collect{|ch|sprintf "%02X",ch.ord}.join
     return ret
   end
   

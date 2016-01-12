@@ -130,12 +130,19 @@ describe 'MessageUtils' do
       string = '0123456789ABCDEFG'
       actual = string.each_char.collect{|ch|sprintf "%02X",ch.ord}.join
       expect(Mock.binary_to_hex_string string ).to eq actual
+      # 改行コードが含まれるパターン
+      string = "\x00\x01\r\n\x02\x03\n"
+      actual = "00010D0A02030A"
+      expect(Mock.binary_to_hex_string string ).to eq actual
     end
   end
 
   context 'hex_string_to_binary' do
     it 'バイナリストリグからバイナリに変換できること' do
       bin_string = '000102030405060708'
+      expect(Mock.hex_string_to_binary bin_string).to eq [bin_string].pack("H*")
+      # 改行コードが含まれるパターン
+      bin_string = '12345678900AABCDEF0D0A00'
       expect(Mock.hex_string_to_binary bin_string).to eq [bin_string].pack("H*")
     end
   end
