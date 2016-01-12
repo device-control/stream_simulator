@@ -1,0 +1,9 @@
+# coding: utf-8
+content-type: base
+content-version: 0.1
+
+contents:
+  name: "int16"
+  description: "2byte(16bit)の整数"
+  type: integer
+  byte: 2

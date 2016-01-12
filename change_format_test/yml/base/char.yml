@@ -1,0 +1,9 @@
+# coding: utf-8
+content-type: base
+content-version: 0.1
+
+contents:
+  name: "char"
+  description: "1byte(8bit)の文字"
+  type: character
+  byte: 1

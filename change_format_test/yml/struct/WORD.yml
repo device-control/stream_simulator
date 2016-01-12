@@ -1,0 +1,15 @@
+# coding: utf-8
+content-type: struct
+content-version: 0.1
+
+contents:
+  name: "WORD"
+  description: "WORD構造体"
+  format:
+    - name_jp: "b0データ"
+      name: b0
+      type: char
+    - name_jp: "b1データ"
+      name: b1
+      type: int16
+    

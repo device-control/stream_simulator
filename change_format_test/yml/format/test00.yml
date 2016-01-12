@@ -1,0 +1,40 @@
+# coding: utf-8
+content-type: format
+content-version: 0.1
+
+contents:
+  name: "test00"
+  description: "test00"
+  primary_key:
+    - name: function_code
+      value: 0x03
+    - name: register_number
+      value: 0xD000
+    - name: word_array[5]
+      value: 0x0001
+  # int8, int16, int32, char は ruby script 側で対応
+  format:
+    - name_jp: "ワード"
+      name: word
+      type: int16
+    - name_jp: "ワード配列"
+      name: word_array[10]
+      type: int16
+    - name_jp: "ワード構造"
+      name: word_struct
+      type: WORD
+    - name_jp: "ワード構造配列"
+      name: word_struct_array[10]
+      type: WORD
+    - name_jp: "文字列"
+      name: string[10]
+      type: char
+  default_values:
+    word: 0x0001
+    word_array[0]: 0x0002
+    word_array[0]: 0x0003
+    word_array[9]: 0x0004
+    word_struct_array[0].b0: 0x05
+    word_struct_array[9].b1: 0x06
+    string: "0123456789"
+
