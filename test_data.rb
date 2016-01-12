@@ -104,17 +104,21 @@ class TestData
   end
   
   # 対象シナリオを検索する
-  def search_scenario(message_name)
+  def search_scenario(message_object)
     @scenario_datas.each do |name, scenario|
-      return scenario if scenario.target?(message_name)
+      return scenario if scenario.target?(message_object.name)
     end
     return nil
   end
   
   # レスポンスを生成する
-  # シナリオから対象のレスポンスを取得し、データを生成する
-  def create_response(scenario, message_name)
-    response = scenario.get_response(message_name)
+  # 対象のシナリオからレスポンスを取得し、データを生成する
+  def create_response(message_object)
+    # 対象のシナリオを検索
+    scenario = search_scenario(message_object)
+    return nil if scenario.nil?
+    # レスポンス名を取得
+    response = scenario.get_response(message_object.name)
     return nil if response.nil?
     
     message = @message_objects[response]

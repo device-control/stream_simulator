@@ -26,13 +26,8 @@ class ScenarioAnalyze
   
   # 解析処理
   def analyze(object)
-    # シナリオを検索する
-    # 対象のシナリオがなければ、解析を終了する
-    scenario = @testdata.search_scenario(object.name)
-    return if scenario.nil?
-    
-    # レスポンス名を取得する
-    response = @testdata.create_response(scenario, object.name)
+    # レスポンスを取得する
+    response = @testdata.create_response(object)
     return if response.nil?
     
     # ログ出力
