@@ -28,12 +28,12 @@ contents:
       name: word_struct_array[10]
       type: WORD
       
-    # - name_jp: "ワードネスト構造"
-    #   name: word2_struct
-    #   type: WORD2
-    # - name_jp: "ワード構造配列"
-    #   name: word2_struct_array[10]
-    #   type: WORD2
+    - name_jp: "ワードネスト構造"
+      name: word2_struct
+      type: WORD2
+    - name_jp: "ワード構造配列"
+      name: word2_struct_array[10]
+      type: WORD2
       
     - name_jp: "文字列"
       name: string[10]

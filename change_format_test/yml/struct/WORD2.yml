@@ -1,0 +1,18 @@
+# coding: utf-8
+content-type: struct
+content-version: 0.1
+
+contents:
+  name: "WORD2"
+  description: "WORD2構造体"
+  format:
+    - name_jp: "bb0データ"
+      name: bb0
+      type: char
+    - name_jp: "WORDデータ"
+      name: word
+      type: WORD
+    - name_jp: "bb1データ"
+      name: bb1
+      type: int16
+    
