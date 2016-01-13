@@ -42,7 +42,39 @@ def get_size(type)
   raise "get_size: unknown type \"#{type}\""
 end
 
-def get_value(member_names, hmember, member_list, members, members_size)
+# member_list に member_name が含まれているか確認
+def member_name_include?(member_list, member_name)
+  escape_name = Regexp.escape member_name
+  member_list.each do |include_name|
+    if include_name.match(/^#{escape_name}/)
+      return true
+    end
+  end
+  return false
+end
+
+# member_list          : 全メンバ名のリスト(array)
+# nested_member_names  : 階層メンバ名(array)
+# member_name          : 登録対象のメンバ名
+def add_member_name(member_list, nested_member_names, member_name)
+  nested_member_names << member_name
+  all_member_name = nested_member_names.join('.')
+  
+  # メンバ名の重複確認
+  if member_name_include?(member_list, all_member_name)
+    raise "get_value: multiple member name \"#{all_member_name}\""
+  end
+  # escape_name = Regexp.escape all_member_name
+  # member_list.each do |include_name|
+  #   if include_name.match(/^#{escape_name}/)
+  #     raise "get_value: multiple member name \"#{all_member_name}\""
+  #   end
+  # end
+  # メンバ登録
+  member_list << all_member_name
+end
+
+def get_value(nested_member_names, hmember, member_list, members)
   # puts "=== get_value[#{hmember.name}]"
   # 最小型ならそのまま保持
   if hmember.type.match(/int8|int16|int32|char/)
@@ -51,16 +83,32 @@ def get_value(member_names, hmember, member_list, members, members_size)
     if m = member_name.match(/^(.+)\[([0-9]+)\]/)
       # 配列の場合
       member_name = m[1]
-      members[member_name] = Hash.new
-      pmembers = members[member_name]
       if hmember.type == 'char'
-        pmembers[:value] = 0 # 初期値=0
+        # char の場合、配列にしない
+        size = size * m[2].to_i
+        members[member_name] = Hash.new
+        pmembers = members[member_name]
+        pmembers[:value] = '' # 初期値=''
+        pmembers[:name_jp] = hmember.name_jp
+        pmembers[:type] = hmember.type
+        pmembers[:size] = size
+        add_member_name(member_list, nested_member_names, member_name)
+        @member_total_size += size
       else
-        pmembers[:value] = Array.new m[2].to_i, 0 # 初期値=0
+        # int の場合、配列にする
+        members[member_name] = Array.new m[2].to_i
+        m[2].to_i.times do |index|
+          nested_member_names_now = nested_member_names.clone
+          members[member_name][index] = Hash.new
+          pmembers = members[member_name][index]
+          pmembers[:value] = 0 # 初期値=0
+          pmembers[:name_jp] = hmember.name_jp
+          pmembers[:type] = hmember.type
+          pmembers[:size] = size;
+          add_member_name(member_list, nested_member_names_now, member_name+"[#{index}]")
+          @member_total_size += size
+        end
       end
-      pmembers[:name_jp] = hmember.name_jp
-      pmembers[:type] = hmember.type
-      size = size * m[2].to_i
     else
       # 配列でない場合
       members[member_name] = Hash.new
@@ -68,22 +116,16 @@ def get_value(member_names, hmember, member_list, members, members_size)
       pmembers[:value] = 0 # 初期値
       pmembers[:name_jp] = hmember.name_jp
       pmembers[:type] = hmember.type
+      pmembers[:size] = size
+      add_member_name(member_list, nested_member_names, member_name)
+      @member_total_size += size
     end
-    # 名前登録とサイズ登録
-    member_names << member_name
-    all_member_name = member_names.join('.')
-    member_list << all_member_name
-    if members_size.has_key?(all_member_name)
-      raise "get_value: multiple member name \"#{all_member_name}\""
-    end
-    members_size[all_member_name] = size
-    members_size[:TOTAL_SIZE] += size
     return true
   end
   return false # FIXME: ここも例外のほうがいいか？？
 end
 
-def get_struct(member_names, yamls, base_hmember, member_list, members, members_size)
+def get_struct(nested_member_names, yamls, base_hmember, member_list, members)
   member_name = base_hmember.name
   # puts "=== get_value[#{member_name}]"
   
@@ -94,19 +136,19 @@ def get_struct(member_names, yamls, base_hmember, member_list, members, members_
     target_struct = yamls[:structs][base_hmember.type]
     members[member_name] = Array.new(m[2].to_i)
     m[2].to_i.times do |index|
-      member_names_now = member_names.clone
+      nested_member_names_now = nested_member_names.clone
 
       members[member_name][index] = Hash.new
       pmembers = members[member_name][index]
-      member_names_now << member_name + "[#{index}]" # 配列用
+      nested_member_names_now << member_name + "[#{index}]" # 配列用
       
       target_struct[:body]["contents"]["format"].each do |member|
         hmember = Hashie::Mash.new member
-        member_names_now2 = member_names_now.clone # メンバ用
+        nested_member_names_now2 = nested_member_names_now.clone # メンバ用
         # 最小構成
-        next if get_value(member_names_now2, hmember,         member_list, pmembers, members_size)
+        next if get_value(nested_member_names_now2, hmember,         member_list, pmembers)
         # 構造体
-        next if get_struct(member_names_now2, yamls, hmember, member_list, pmembers, members_size)
+        next if get_struct(nested_member_names_now2, yamls, hmember, member_list, pmembers)
         # TODO: ここに来たら異常フォーマット
       end
     end
@@ -116,35 +158,33 @@ def get_struct(member_names, yamls, base_hmember, member_list, members, members_
     target_struct = yamls[:structs][base_hmember.type]
     members[member_name] = Hash.new
     pmembers = members[member_name]
-    member_names << member_name
+    nested_member_names << member_name
     target_struct[:body]["contents"]["format"].each do |member|
       hmember = Hashie::Mash.new member
-      member_names_now = member_names.clone
+      nested_member_names_now = nested_member_names.clone
       # 最小構成
-      next if get_value(member_names_now, hmember,         member_list, pmembers, members_size)
+      next if get_value(nested_member_names_now, hmember,         member_list, pmembers)
       # 構造体
-      next if get_struct(member_names_now, yamls, hmember, member_list, pmembers, members_size)
+      next if get_struct(nested_member_names_now, yamls, hmember, member_list, pmembers)
       # TODO: ここに来たら異常フォーマット
     end
   end
 end
 
 def set_value(format, key, value)
+  # メンバが存在しているか確認
+  if !member_name_include?(format[:member_list], key)
+    binding.pry
+    raise "set_value: member not found. \"#{key}\""
+  end
   hmembers = format[:hmembers]
-  # TODO: hmembers に key が存在しない場合の異常検出が必要
   begin
-    member_value = "hmembers.#{key}.value"
-    member_type = "hmembers.#{key}.type"
-    if m = key.match(/^(.+)(\[[0-9]+\])$/)
-      # 配列の場合はvalue[x]にする
-      member_value = "hmembers.#{m[1]}.value#{m[2]}"
-      member_type = "hmembers.#{m[1]}.type"
-    end
-    type = eval member_type
+    type = eval "hmembers.#{key}.type"
+    # TODO: サイズ内に収まってるか確認が必要
     if type == 'char'
-      eval "#{member_value}=\"#{value}\""
+      eval "hmembers.#{key}.value=\"#{value}\""
     else
-      eval "#{member_value}=#{value}"
+      eval "hmembers.#{key}.value=#{value}"
     end
   rescue => e
     puts "ERROR: get_value: " + e.message
@@ -158,23 +198,22 @@ def get_format(yamls)
     yamls[:formats].each do |name,yaml|
       # puts "=== target[#{name}]"
       member_list = Array.new # memberの順番
-      members_size = Hash.new # memberのサイズ
+      @member_total_size = 0 # memberのサイズ
       members = Hash.new # name_jp, type, value
       
-      members_size[:TOTAL_SIZE] = 0 # 全メンバサイズ合計 :TOTAL_SIZE は予約語とする。
       yaml[:body]["contents"]["format"].each do |member|
         hmember = Hashie::Mash.new member
-        member_names = Array.new
+        nested_member_names = Array.new
         # 最小構成
-        next if get_value(member_names, hmember,         member_list, members, members_size)
+        next if get_value(nested_member_names, hmember,         member_list, members)
         # 構造体
-        next if get_struct(member_names, yamls, hmember, member_list, members, members_size)
+        next if get_struct(nested_member_names, yamls, hmember, member_list, members)
         # TODO: ここに来たら異常フォーマット
       end
       # 出力設定
       formats[name] = Hash.new
       formats[name][:member_list] = member_list
-      formats[name][:members_size] = members_size
+      formats[name][:member_total_size] = @member_total_size
       formats[name][:hmembers] = Hashie::Mash.new members
       
       # 初期値設定

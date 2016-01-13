@@ -17,9 +17,18 @@ contents:
     - name_jp: "ワード"
       name: word
       type: int16
+      
+    # - name_jp: "重複名:ワード"
+    #   name: word
+    #   type: int8
+      
     - name_jp: "ワード配列"
       name: word_array[10]
       type: int16
+
+    # - name_jp: "重複名:ワード配列"
+    #   name: word_array[10]
+    #   type: int8
       
     - name_jp: "ワード構造"
       name: word_struct
@@ -34,6 +43,10 @@ contents:
     - name_jp: "ワード構造配列"
       name: word2_struct_array[10]
       type: WORD2
+
+    # - name_jp: "重複名:ワード構造配列"
+    #   name: word2_struct_array
+    #   type: int8
       
     - name_jp: "文字列"
       name: string[10]
