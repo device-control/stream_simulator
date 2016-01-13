@@ -20,12 +20,21 @@ contents:
     - name_jp: "ワード配列"
       name: word_array[10]
       type: int16
+      
     - name_jp: "ワード構造"
       name: word_struct
       type: WORD
     - name_jp: "ワード構造配列"
       name: word_struct_array[10]
       type: WORD
+      
+    # - name_jp: "ワードネスト構造"
+    #   name: word2_struct
+    #   type: WORD2
+    # - name_jp: "ワード構造配列"
+    #   name: word2_struct_array[10]
+    #   type: WORD2
+      
     - name_jp: "文字列"
       name: string[10]
       type: char

@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require "hashie"
 require "yaml_reader"
+require "pp"
 
 require "pry"
 
@@ -33,21 +34,30 @@ def remake_yamls(_yamls)
   return yamls
 end
 
-def get_value(member_names, hmember, member_list, members_name_jp, members_type, members_value)
+def get_value(member_names, hmember, member_list, members)
+  # puts "=== get_value[#{hmember.name}]"
   # 最小型ならそのまま保持
   if hmember.type.match(/int8|int16|int32|char/)
     member_name = hmember.name
     if m = member_name.match(/^(.+)\[([0-9]+)\]/)
       # 配列の場合
       member_name = m[1]
-      members_value[member_name] = Array.new m[2].to_i, 0 # 初期値=0
-      members_type[member_name] = hmember.type
-      members_name_jp[member_name] = hmember.name_jp
+      members[member_name] = Hash.new
+      pmembers = members[member_name]
+      if hmember.type == 'char'
+        pmembers[:value] = 0 # 初期値=0
+      else
+        pmembers[:value] = Array.new m[2].to_i, 0 # 初期値=0
+      end
+      pmembers[:name_jp] = hmember.name_jp
+      pmembers[:type] = hmember.type
     else
       # 配列でない場合
-      members_value[member_name] = 0 # 初期値
-      members_name_jp[member_name] = hmember.name_jp
-      members_type[member_name] = hmember.type
+      members[member_name] = Hash.new
+      pmembers = members[member_name]
+      pmembers[:value] = 0 # 初期値
+      pmembers[:name_jp] = hmember.name_jp
+      pmembers[:type] = hmember.type
     end
     # 名前登録
     member_names << member_name
@@ -58,106 +68,107 @@ def get_value(member_names, hmember, member_list, members_name_jp, members_type,
   return false
 end
 
-def get_struct_next(yamls, hmember, format, base)
-
-end
-
-
-#    :members_name_jp=>{"word"=>"ワード", "word_array"=>"ワード配列", "string"=>"文字列"},
-#    :members_type=>{"word"=>"int16", "word_array"=>"int16", "string"=>"char"},
-#    :members_value=>{"word"=>0, "word_array"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "string"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}}
-# 想定
-#    :member_list=>["word_struct.b0", "word_struct.b1", "word_struct_array"=>[["b0","b1"],...],"string"],
-#    :members_name_jp=>{"word_struct"=>{b0=>"b0",  b1=>"b1"   }, "word_struct_array"=>[ {b0=>{"b0", b1=>"b1"   },...], "string"=>"文字列"},
-#    :members_type=>   {"word_struct"=>{b0=>"char",b1=>"int16"}, "word_struct_array"=>[ {b0=>"char",b1=>"int16"},.. ], "string"=>"char"},
-#    :members_value=>  {"word_struct"=>{b0=>0     ,b1=>1      }, "word_struct_array"=>[ {b0=>0     ,b1=>1      },.. ], "string"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}}
-
-def get_struct(member_names, yamls, base_hmember, member_list, members_name_jp, members_type, members_value)
+def get_struct(member_names, yamls, base_hmember, member_list, members)
   member_name = base_hmember.name
+  # puts "=== get_value[#{member_name}]"
   
   if m = member_name.match(/^(.+)\[([0-9]+)\]/)
     member_name = m[1]
     # 配列の場合
-    members_name_jp[member_name] = Array.new(m[2].to_i)
-    members_type[member_name] = Array.new(m[2].to_i)
-    members_value[member_name] = Array.new(m[2].to_i)
-    return false if !yamls[:structs].has_key?(base_hmember.type)
+    raise "get_struct: does not exist type \"#{base_hmember.type}\" of Array." if !yamls[:structs].has_key?(base_hmember.type)
     target_struct = yamls[:structs][base_hmember.type]
+    members[member_name] = Array.new(m[2].to_i)
     m[2].to_i.times do |index|
       member_names_now = member_names.clone
 
-      members_name_jp[member_name][index] = Hash.new
-      members_type[member_name][index] = Hash.new
-      members_value[member_name][index] = Hash.new
+      members[member_name][index] = Hash.new
+      pmembers = members[member_name][index]
       member_names_now << member_name + "[#{index}]" # 配列用
       
       target_struct[:body]["contents"]["format"].each do |member|
         hmember = Hashie::Mash.new member
         member_names_now2 = member_names_now.clone # メンバ用
         # 最小構成
-        next if get_value(member_names_now2,         hmember, member_list, members_name_jp[member_name][index], members_type[member_name][index], members_value[member_name][index])
+        next if get_value(member_names_now2, hmember,         member_list, pmembers)
         # 構造体
-        next if get_struct(member_names_now2, yamls, hmember, member_list, members_name_jp[member_name][index], members_type[member_name][index], members_value[member_name][index])
+        next if get_struct(member_names_now2, yamls, hmember, member_list, pmembers)
+        # TODO: ここに来たら異常フォーマット
       end
     end
   else
     # ただの構造体の場合
-    return false if !yamls[:structs].has_key?(base_hmember.type)
+    raise "get_struct: does not exist type \"#{base_hmember.type}\" of Array." if !yamls[:structs].has_key?(base_hmember.type)
     target_struct = yamls[:structs][base_hmember.type]
-    members_name_jp[member_name] = Hash.new
-    members_type[member_name] = Hash.new
-    members_value[member_name] = Hash.new
-
+    members[member_name] = Hash.new
+    pmembers = members[member_name]
     member_names << member_name
     target_struct[:body]["contents"]["format"].each do |member|
       hmember = Hashie::Mash.new member
       member_names_now = member_names.clone
       # 最小構成
-      next if get_value(member_names_now, hmember, member_list, members_name_jp[member_name], members_type[member_name], members_value[member_name])
+      next if get_value(member_names_now, hmember,         member_list, pmembers)
       # 構造体
-      next if get_struct(member_names_now, yamls, hmember, member_list, members_name_jp[member_name], members_type[member_name], members_value[member_name])
+      next if get_struct(member_names_now, yamls, hmember, member_list, pmembers)
+      # TODO: ここに来たら異常フォーマット
     end
+  end
+end
+
+def set_value(format, key, value)
+  hmembers = format[:hmembers]
+  # TODO: hmembers に key が存在しない場合の異常検出が必要
+  begin
+    member_value = "hmembers.#{key}.value"
+    member_type = "hmembers.#{key}.type"
+    if m = key.match(/^(.+)(\[[0-9]+\])$/)
+      # 配列の場合はvalue[x]にする
+      member_value = "hmembers.#{m[1]}.value#{m[2]}"
+      member_type = "hmembers.#{m[1]}.type"
+    end
+    type = eval member_type
+    if type == 'char'
+      eval "#{member_value}=\"#{value}\""
+    else
+      eval "#{member_value}=#{value}"
+    end
+  rescue => e
+    puts "ERROR: get_value: " + e.message
   end
 end
 
 def get_format(yamls)
   formats = Hash.new
-  
-  yamls[:formats].each do |name,yaml|
-    format = Hash.new
-    format[:member_list] = Array.new # memberの順番
-    format[:members_name_jp] = Hash.new # member別の日本語名
-    format[:members_type] = Hash.new # member別のタイプ
-    format[:members_value] = Hash.new # member別の値(初期値)
-
-    # hformat = Hashie::Mash.new format
-    
-    yaml[:body]["contents"]["format"].each do |member|
-      hmember = Hashie::Mash.new member
-      member_names = Array.new
-      # 最小構成
-      next if get_value(member_names, hmember, format[:member_list], format[:members_name_jp], format[:members_type], format[:members_value])
-      # 構造体
-      next if get_struct(member_names, yamls, hmember, format[:member_list], format[:members_name_jp], format[:members_type], format[:members_value])
-
-      # TODO: ここに来たら異常フォーマット
-      # TODO: とりあえず読み飛ばし
-    end
-    
-    hformat = Hashie::Mash.new format
-    formats[name] = hformat
-    
-    # 初期値設定
-    yaml[:body]["contents"]["default_values"].each do |default_value|
-      type = eval "hformat.members_type.#{default_value[0]}"
-      if type == 'char'
-        eval "hformat.members_value.#{default_value[0]}=\"#{default_value[1]}\""
-      else
-        eval "hformat.members_value.#{default_value[0]}=#{default_value[1]}"
+  # TODO: メンバ名の重複チェックが必要
+  begin
+    yamls[:formats].each do |name,yaml|
+      # puts "=== target[#{name}]"
+      member_list = Array.new # memberの順番
+      members_size = Hash.new # memberのサイズ
+      members = Hash.new # name_jp, type, value
+      
+      yaml[:body]["contents"]["format"].each do |member|
+        hmember = Hashie::Mash.new member
+        member_names = Array.new
+        # 最小構成
+        next if get_value(member_names, hmember,         member_list, members)
+        # 構造体
+        next if get_struct(member_names, yamls, hmember, member_list, members)
+        # TODO: ここに来たら異常フォーマット
+      end
+      # 出力設定
+      formats[name] = Hash.new
+      formats[name][:member_list] = member_list
+      formats[name][:members_size] = members_size
+      formats[name][:hmembers] = Hashie::Mash.new members
+      
+      # 初期値設定
+      yaml[:body]["contents"]["default_values"].each do |key,value|
+        set_value(formats[name],key,value)
       end
     end
-    binding.pry
-    puts hformat
+  rescue => e
+    puts "ERROR: get_format: " + e.message
+    exit
   end
   return formats
 end
@@ -165,20 +176,6 @@ end
 _yamls = YamlReader::get_yamls("yml")
 yamls = remake_yamls(_yamls)
 formats = get_format(yamls)
-binding.pry
-
-puts formats
-
-# # test00 を表示
-# puts "--- hash ---"
-# puts yamls[:formats]["test00"][:body]["contents"]["format"]
-
-# # Hashieで test00 を表示(symbolも同様にアクセスできる)
-# h = Hashie::Mash.new yamls
-# puts "--- hashie ---"
-# puts h.formats.test00.body.contents.format
-
-
-
+pp formats["test00"].to_hash
 puts "終了"
 
