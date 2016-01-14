@@ -56,16 +56,30 @@ end
 # member_list          : 全メンバ名のリスト(array)
 # nested_member_names  : 階層メンバ名(array)
 # member_name          : 登録対象のメンバ名
-def add_member_name(member_list, nested_member_names, member_name)
+def add_member_name(member_list, nested_member_names, member_name,   pmembers, hmember, size)
+  # メンバ要素設定
+  if hmember.type == 'char'
+    pmembers[:value] = '' # 初期値
+  else
+    pmembers[:value] = 0 # 初期値
+  end
+  pmembers[:name_jp] = hmember.name_jp
+  pmembers[:type] = hmember.type
+  pmembers[:offset] = @member_total_size
+  pmembers[:size] = size
+
+  # 今回追加するフルメンバ名（ネストした自身のメンバ名）生成
   nested_member_names << member_name
   all_member_name = nested_member_names.join('.')
   
-  # メンバ名の重複確認
+  # フルメンバ名の重複確認
   if member_name_include?(member_list, all_member_name)
     raise "get_value: multiple member name \"#{all_member_name}\""
   end
-  # メンバ登録
+  # フルメンバ登録
   member_list << all_member_name
+
+  @member_total_size += size # トータルサイズ更新
 end
 
 def get_value(nested_member_names, hmember, member_list, members)
@@ -82,44 +96,22 @@ def get_value(nested_member_names, hmember, member_list, members)
         size = size * m[2].to_i
         members[member_name] = Hash.new
         pmembers = members[member_name]
-        
-        pmembers[:value] = '' # 初期値=''
-        pmembers[:name_jp] = hmember.name_jp
-        pmembers[:type] = hmember.type
-        pmembers[:offset] = @member_total_size
-        pmembers[:size] = size
-        add_member_name(member_list, nested_member_names, member_name)
-        @member_total_size += size
+        add_member_name(member_list, nested_member_names, member_name,  pmembers, hmember, size)
       else
         # int の場合、配列にする
         members[member_name] = Array.new m[2].to_i
         m[2].to_i.times do |index|
           nested_member_names_now = nested_member_names.clone
-          
           members[member_name][index] = Hash.new
           pmembers = members[member_name][index]
-          
-          pmembers[:value] = 0 # 初期値=0
-          pmembers[:name_jp] = hmember.name_jp
-          pmembers[:type] = hmember.type
-          pmembers[:offset] = @member_total_size
-          pmembers[:size] = size;
-          add_member_name(member_list, nested_member_names_now, member_name+"[#{index}]")
-          @member_total_size += size
+          add_member_name(member_list, nested_member_names_now, member_name+"[#{index}]",  pmembers, hmember, size)
         end
       end
     else
       # 配列でない場合
       members[member_name] = Hash.new
       pmembers = members[member_name]
-      
-      pmembers[:value] = 0 # 初期値
-      pmembers[:name_jp] = hmember.name_jp
-      pmembers[:type] = hmember.type
-      pmembers[:offset] = @member_total_size
-      pmembers[:size] = size
-      add_member_name(member_list, nested_member_names, member_name)
-      @member_total_size += size
+      add_member_name(member_list, nested_member_names, member_name,  pmembers, hmember, size)
     end
     return true
   end
