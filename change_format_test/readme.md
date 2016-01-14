@@ -51,19 +51,19 @@ ruby 環境を整えるには、ruby 本体と Devkit のインストールが�
    * インストール先は、上記の表を参照すること
    
 3. Ruby 2.1.7 と DevKit を紐づける
-  
-  コマンドプロンプトより以下を実施する
-  ```DOS .bat(dos)
-  > cd c:\Ruby\devkit\200
-  > ruby dk.rb init
-  > ruby dk.rb review
-  Based upon the settings in the 'config.yml' file generated
-  from running 'ruby dk.rb init' and any of your customizations,
-  DevKit functionality will be injected into the following Rubies
-  when you run 'ruby dk.rb install'.
-  C:/Ruby/217 <--- ここがインストールしたrubyのパスになっていること。
-  > ruby dk.rb install
-  ```
+コマンドプロンプトより以下を実施する
+```DOS .bat(dos)
+> cd c:\Ruby\devkit\200
+> ruby dk.rb init
+> ruby dk.rb review
+Based upon the settings in the 'config.yml' file generated
+from running 'ruby dk.rb init' and any of your customizations,
+DevKit functionality will be injected into the following Rubies
+when you run 'ruby dk.rb install'.
+C:/Ruby/217 <--- ここがインストールしたrubyのパスになっていること。
+> ruby dk.rb install
+```
+
 #### bunndler をインストールする手順
 コマンドプロンプトより以下を実施する
 ```DOS .bat(dos)
