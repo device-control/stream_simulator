@@ -42,10 +42,10 @@ def get_size(type)
   raise "get_size: unknown type \"#{type}\""
 end
 
-# member_list に member_name が含まれているか確認
-def member_name_include?(member_list, member_name)
+# @member_list に member_name が含まれているか確認
+def member_name_include?(member_name)
   escape_name = Regexp.escape member_name
-  member_list.each do |include_name|
+  @member_list.each do |include_name|
     if include_name.match(/^#{escape_name}/)
       return true
     end
@@ -53,10 +53,10 @@ def member_name_include?(member_list, member_name)
   return false
 end
 
-# member_list          : 全メンバ名のリスト(array)
+# @member_list          : 全メンバ名のリスト(array)
 # nested_member_names  : 階層メンバ名(array)
 # member_name          : 登録対象のメンバ名
-def add_member_name(member_list, nested_member_names, member_name,   pmembers, hmember, size)
+def add_member_name(nested_member_names, member_name,   pmembers, hmember, size)
   # メンバ要素設定
   if hmember.type == 'char'
     pmembers[:value] = '' # 初期値
@@ -73,16 +73,16 @@ def add_member_name(member_list, nested_member_names, member_name,   pmembers, h
   all_member_name = nested_member_names.join('.')
   
   # フルメンバ名の重複確認
-  if member_name_include?(member_list, all_member_name)
+  if member_name_include?(all_member_name)
     raise "get_value: multiple member name \"#{all_member_name}\""
   end
   # フルメンバ登録
-  member_list << all_member_name
+  @member_list << all_member_name
 
   @member_total_size += size # トータルサイズ更新
 end
 
-def get_value(nested_member_names, hmember, member_list, members)
+def get_value(nested_member_names, hmember, members)
   # puts "=== get_value[#{hmember.name}]"
   # 最小型ならそのまま保持
   if hmember.type.match(/int8|int16|int32|char/)
@@ -96,7 +96,7 @@ def get_value(nested_member_names, hmember, member_list, members)
         size = size * m[2].to_i
         members[member_name] = Hash.new
         pmembers = members[member_name]
-        add_member_name(member_list, nested_member_names, member_name,  pmembers, hmember, size)
+        add_member_name(nested_member_names, member_name,  pmembers, hmember, size)
       else
         # int の場合、配列にする
         members[member_name] = Array.new m[2].to_i
@@ -104,21 +104,21 @@ def get_value(nested_member_names, hmember, member_list, members)
           nested_member_names_now = nested_member_names.clone
           members[member_name][index] = Hash.new
           pmembers = members[member_name][index]
-          add_member_name(member_list, nested_member_names_now, member_name+"[#{index}]",  pmembers, hmember, size)
+          add_member_name(nested_member_names_now, member_name+"[#{index}]",  pmembers, hmember, size)
         end
       end
     else
       # 配列でない場合
       members[member_name] = Hash.new
       pmembers = members[member_name]
-      add_member_name(member_list, nested_member_names, member_name,  pmembers, hmember, size)
+      add_member_name(nested_member_names, member_name,  pmembers, hmember, size)
     end
     return true
   end
   return false # FIXME: ここも例外のほうがいいか？？
 end
 
-def get_struct(nested_member_names, yamls, base_hmember, member_list, members)
+def get_struct(nested_member_names, yamls, base_hmember, members)
   member_name = base_hmember.name
   # puts "=== get_value[#{member_name}]"
   
@@ -139,9 +139,9 @@ def get_struct(nested_member_names, yamls, base_hmember, member_list, members)
         hmember = Hashie::Mash.new member
         nested_member_names_now2 = nested_member_names_now.clone # メンバ用
         # 最小構成
-        next if get_value(nested_member_names_now2, hmember,         member_list, pmembers)
+        next if get_value(nested_member_names_now2, hmember,         pmembers)
         # 構造体
-        next if get_struct(nested_member_names_now2, yamls, hmember, member_list, pmembers)
+        next if get_struct(nested_member_names_now2, yamls, hmember, pmembers)
         # TODO: ここに来たら異常フォーマット
       end
     end
@@ -156,21 +156,20 @@ def get_struct(nested_member_names, yamls, base_hmember, member_list, members)
       hmember = Hashie::Mash.new member
       nested_member_names_now = nested_member_names.clone
       # 最小構成
-      next if get_value(nested_member_names_now, hmember,         member_list, pmembers)
+      next if get_value(nested_member_names_now, hmember,         pmembers)
       # 構造体
-      next if get_struct(nested_member_names_now, yamls, hmember, member_list, pmembers)
+      next if get_struct(nested_member_names_now, yamls, hmember, pmembers)
       # TODO: ここに来たら異常フォーマット
     end
   end
 end
 
-def set_value(format, key, value)
+def set_value(hmembers, key, value)
   # メンバが存在しているか確認
-  if !member_name_include?(format[:member_list], key)
+  if !member_name_include?(key)
     binding.pry
     raise "set_value: member not found. \"#{key}\""
   end
-  hmembers = format[:hmembers]
   begin
     type = eval "hmembers.#{key}.type"
     # TODO: サイズ内に収まってるか確認が必要
@@ -190,28 +189,29 @@ def get_format(yamls)
   begin
     yamls[:formats].each do |name,yaml|
       # puts "=== target[#{name}]"
-      member_list = Array.new # memberの順番
+      @member_list = Array.new # memberの順番
       @member_total_size = 0 # memberのサイズ
-      members = Hash.new # name_jp, type, value
+      members = Hash.new # name_jp, type, value, offset, size
       
       yaml[:body]["contents"]["format"].each do |member|
         hmember = Hashie::Mash.new member
         nested_member_names = Array.new
         # 最小構成
-        next if get_value(nested_member_names, hmember,         member_list, members)
+        next if get_value(nested_member_names, hmember,         members)
         # 構造体
-        next if get_struct(nested_member_names, yamls, hmember, member_list, members)
+        next if get_struct(nested_member_names, yamls, hmember, members)
         # TODO: ここに来たら異常フォーマット
       end
       # 出力設定
       formats[name] = Hash.new
-      formats[name][:member_list] = member_list
+      formats[name][:member_list] = @member_list
       formats[name][:member_total_size] = @member_total_size
       formats[name][:hmembers] = Hashie::Mash.new members
       
       # 初期値設定
+      hmembers = formats[name][:hmembers]
       yaml[:body]["contents"]["default_values"].each do |key,value|
-        set_value(formats[name],key,value)
+        set_value(hmembers,key,value) # @member_list に依存しているので注意
       end
     end
   rescue => e
