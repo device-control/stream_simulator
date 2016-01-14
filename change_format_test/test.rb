@@ -64,12 +64,6 @@ def add_member_name(member_list, nested_member_names, member_name)
   if member_name_include?(member_list, all_member_name)
     raise "get_value: multiple member name \"#{all_member_name}\""
   end
-  # escape_name = Regexp.escape all_member_name
-  # member_list.each do |include_name|
-  #   if include_name.match(/^#{escape_name}/)
-  #     raise "get_value: multiple member name \"#{all_member_name}\""
-  #   end
-  # end
   # メンバ登録
   member_list << all_member_name
 end
@@ -88,9 +82,11 @@ def get_value(nested_member_names, hmember, member_list, members)
         size = size * m[2].to_i
         members[member_name] = Hash.new
         pmembers = members[member_name]
+        
         pmembers[:value] = '' # 初期値=''
         pmembers[:name_jp] = hmember.name_jp
         pmembers[:type] = hmember.type
+        pmembers[:offset] = @member_total_size
         pmembers[:size] = size
         add_member_name(member_list, nested_member_names, member_name)
         @member_total_size += size
@@ -99,11 +95,14 @@ def get_value(nested_member_names, hmember, member_list, members)
         members[member_name] = Array.new m[2].to_i
         m[2].to_i.times do |index|
           nested_member_names_now = nested_member_names.clone
+          
           members[member_name][index] = Hash.new
           pmembers = members[member_name][index]
+          
           pmembers[:value] = 0 # 初期値=0
           pmembers[:name_jp] = hmember.name_jp
           pmembers[:type] = hmember.type
+          pmembers[:offset] = @member_total_size
           pmembers[:size] = size;
           add_member_name(member_list, nested_member_names_now, member_name+"[#{index}]")
           @member_total_size += size
@@ -113,9 +112,11 @@ def get_value(nested_member_names, hmember, member_list, members)
       # 配列でない場合
       members[member_name] = Hash.new
       pmembers = members[member_name]
+      
       pmembers[:value] = 0 # 初期値
       pmembers[:name_jp] = hmember.name_jp
       pmembers[:type] = hmember.type
+      pmembers[:offset] = @member_total_size
       pmembers[:size] = size
       add_member_name(member_list, nested_member_names, member_name)
       @member_total_size += size
