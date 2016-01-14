@@ -39,15 +39,16 @@ rubyinstaller-2.1.7.exe
 
 #### DevKit インストール手順
 1. [RubyInstaller for Windows](http://rubyinstaller.org/)から[DevKit 2.0(32bit)](http://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe)のインストーラをダウンロードする
-* ダウンロードサイト
-http://rubyinstaller.org/downloads/
-* 対象ファイル
-DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe
+   * ダウンロードサイト
+   http://rubyinstaller.org/downloads/
+   * 対象ファイル
+   DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe
 (DEVELOPMENT KIT For use with Ruby 2.0 and above (32bits version only))
 2. DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe を実行する
-* 7-Zip self-extracting archive で指定するパスがインストール先となる
-* インストール先は、上記の表を参照すること
+   * 7-Zip self-extracting archive で指定するパスがインストール先となる
+   * インストール先は、上記の表を参照すること
 3. Ruby 2.1.7 と DevKit を紐づける
+  
 コマンドプロンプトより以下を実施する
 ```DOS .bat(dos)
 > cd c:\Ruby\devkit\200
@@ -75,7 +76,8 @@ StreamSimulator の設置手順を以下に示す。
 
 |設置場所|C:\tools\StreamSimulator|
 |:----:|:----|
-|||
+
+|設置場所|C:\tools\StreamSimulator|
 
 1. 本github環境を設置場所に配置する
 2. StreamSimulatorが必要な ruby gem をインストールする
