@@ -64,11 +64,10 @@ ruby 環境を整えるには、ruby 本体と Devkit のインストールが�
   C:/Ruby/217 <--- ここがインストールしたrubyのパスになっていること。
   > ruby dk.rb install
   ```
-
 #### bunndler をインストールする手順
 コマンドプロンプトより以下を実施する
 ```DOS .bat(dos)
- > gem install bundler
+> gem install bundler
 ```
 
 StreamSimulator 設置
@@ -81,17 +80,17 @@ StreamSimulator の設置手順を以下に示す。
 |:----:|:----|
 
 1. 本github環境を設置場所に配置する
+   ```DOS .bat(dos)
+   # git クローン（クローンせずにzipファイルをダウンロードし手動で展開してもよい）
+   > cd C:\tools
+   > git clone https://github.com/device-control/stream_simulator.git
+   # C:\tools\stream_simulator が生成されているはず 
+   ```
+   
 2. StreamSimulatorが必要な ruby gem をインストールする
 以下に操作手順をまとめておく。
 コマンドプロンプトより以下を実施
-
-```DOS .bat(dos)
-# git クローン（クローンせずにzipファイルをダウンロードし手動で展開してもよい）
-> cd C:\tools
-> git clone https://github.com/device-control/stream_simulator.git
-# C:\tools\stream_simulator が生成されているはず 
-> cd C:\tools\StreamSimulator
-> bundle install 
-```
-
-
+    ```DOS .bat(dos)
+    > cd C:\tools\StreamSimulator
+    > bundle install 
+    ```
