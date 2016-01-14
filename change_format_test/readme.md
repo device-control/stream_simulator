@@ -72,6 +72,7 @@ StreamSimulator 設置
 
 StreamSimulator の設置手順を以下に示す。
 なお、設置場所は以下の通りとする
+
 |設置場所|C:\tools\StreamSimulator|
 |:----:|:----|
 |||
@@ -80,8 +81,9 @@ StreamSimulator の設置手順を以下に示す。
 2. StreamSimulatorが必要な ruby gem をインストールする
 以下に操作手順をまとめておく。
 コマンドプロンプトより以下を実施
+
 ```DOS .bat(dos)
-# git クローン（クローンせずにzipファイルをダウンロードし展開してもよい）
+# git クローン（クローンせずにzipファイルをダウンロードし手動で展開してもよい）
 > cd C:\tools
 > git clone https://github.com/device-control/stream_simulator.git
 # C:\tools\stream_simulator が生成されているはず 
