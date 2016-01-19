@@ -72,22 +72,27 @@ class StreamSimulator
   
   def start
     @stream.open
+    return true
   end
   
   def stop
     @stream.close
+    return true
   end
   
   def write(message)
     @stream.write message
+    return true
   end
   
   def show_message
     @testdata.show_message
+    return true
   end
 
   def show_message_format
     @testdata.show_message_format
+    return true
   end
 
 end
