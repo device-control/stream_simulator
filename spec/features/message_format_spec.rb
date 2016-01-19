@@ -13,7 +13,7 @@ describe 'MessageFormat' do
   before do
     log = Log.instance
     log.disabled
-    @yamls = YamlReader.get_yamls '../settings/tcp_server/test_data/message_format'
+    @yamls = YamlReader.get_yamls '../samples/01_both_tcp/tcp_server/test_data/message_format'
   end
   
   context '生成' do
