@@ -1,1 +1,0 @@
-pry -r "./execute.rb"

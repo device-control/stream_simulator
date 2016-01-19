@@ -10,7 +10,7 @@ require 'stream_manager'
 require 'test_data'
 require 'receive_message_analyze'
 require 'scenario_analyze'
-require 'function_executor'
+# require 'function_executor'
 
 require 'log'
 
@@ -33,8 +33,8 @@ class StreamSimulator
     @scenario_analyze = ScenarioAnalyze.new @testdata
     stream_parameters = StreamSetting.load inparam[:stream_setting_file_path]
     @stream = StreamManager.create stream_parameters
-    @function_executor = FunctionExecutor.new
-    @function_executor.start
+    # @function_executor = FunctionExecutor.new
+    # @function_executor.start
     
     add_observer
   end
