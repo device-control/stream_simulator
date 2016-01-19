@@ -68,5 +68,5 @@ def show_message_format
 end
 
 # 本スクリプト実行時に開始コマンドを実行する
-start
+# start
 
