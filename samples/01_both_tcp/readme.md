@@ -24,14 +24,14 @@ TCPサーバーとTCPクライアントを接続し、メッセージの送受�
 * /01_both_tcp/tcp_client/execute_stream_simulator.bat を実行 
 * 実行したコマンドプロンプトにて、 *start* を実行する
 
-接続ができれば、以下のようなログが表示されます。
+※接続ができれば、以下のようなログが表示されます。
 
-> 通知:StubMain:stream_coonected: TCPXXXXXXXX
+    通知:StubMain:stream_coonected: TCPXXXXXXXX
 
 3.クライアントからメッセージを送信する
 * クライアントのコマンドプロンプトにて、以下のコマンドを実行する
 
-*$ write "1001123412345678FEDCBA98"*
+*write "1001123412345678FEDCBA98"*
 
 メッセージが送信できれば、TCPサーバー側にログが表示されます。
 また、サーバーから自動でレスポンスが送信されてきます。
