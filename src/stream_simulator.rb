@@ -1,5 +1,8 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream_data'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream_runner'))
 
 require 'stream_tcp_server'
 require 'stream_tcp_client'

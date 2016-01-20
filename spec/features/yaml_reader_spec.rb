@@ -2,6 +2,10 @@
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_data'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_runner'))
 
 require 'yaml_reader'
 require 'log'
