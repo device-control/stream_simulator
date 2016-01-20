@@ -4,13 +4,11 @@ $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream'))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream_data'))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/stream_runner'))
 
-require 'stream_tcp_server'
-require 'stream_tcp_client'
-
 require 'stream_setting'
 require 'stream_manager'
 
-require 'test_data'
+require 'stream_data_creator'
+
 require 'receive_message_analyze'
 require 'scenario_analyze'
 # require 'function_executor'
@@ -23,13 +21,14 @@ Encoding.default_internal = 'utf-8'
 class StreamSimulator
   
   attr_reader :stream
-  attr_reader :testdata
+  attr_reader :stream_data
   attr_reader :receive_message_analyze
   attr_reader :scenario_analyze
   
   # コンストラクタ
   def initialize(inparam)
-    @testdata = TestData.new inparam[:testdata_path]
+    stream_data_creator = StreamDataCreator.new(inparam[:stream_data_path])
+    @stream_data = stream_data_creator.create()
     
     # オブジェクトを生成
     @receive_message_analyze = ReceiveMessageAnalyze.new @testdata
@@ -92,10 +91,10 @@ class StreamSimulator
     @testdata.show_message
     return true
   end
-
+  
   def show_message_format
     @testdata.show_message_format
     return true
   end
-
+  
 end

@@ -1,5 +1,4 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'find'
 require 'yaml'
@@ -7,24 +6,24 @@ require 'yaml'
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
-class YamlReader
+module YamlReader
   
   EXTENSION_YAML  = '.yml'
   
   # 指定されたパスのYamlオブジェクトを取得する
   # path   : 取得するパス
-  def self.get_yamls(path)
+  def get_yamls(path)
     yamls = Array.new
     
     # Yamlファイル一覧を取得
     files = get_files(path, EXTENSION_YAML)
     # Yamlファイル読込
-    files.each do |f|
-      yaml = read_yaml(f)
-      info = Hash.new
-      info[:file] = f
-      info[:yaml] = yaml
-      yamls.push(info)
+    files.each do |file|
+      body = read_yaml(file)
+      yaml = Hash.new
+      yaml[:file] = file
+      yaml[:body] = body
+      yamls.push(yaml)
     end
     
     return yamls
@@ -33,7 +32,7 @@ class YamlReader
   # 指定されたパスのファイル一覧を取得する
   # path   : 取得するパス
   # extname: 拡張子
-  def self.get_files(path, extension)
+  def get_files(path, extension)
     files = Array.new
     Find.find( path ) do | f |
       if ( File.file?(f) ) then
@@ -47,18 +46,17 @@ class YamlReader
   
   # YAMLファイル読込
   # filename: ファイル名
-  def self.read_yaml(filename)
-    yaml = nil
+  def read_yaml(filename)
+    body = nil
     begin
       File.open(filename) do |f|
         tmp = f.read()
-        yaml = YAML.load(tmp)
+        body = YAML.load(tmp)
       end
     rescue => e
       raise "#{filename}: " + e.message
     end
-    return yaml
+    return body
   end
   
 end
-  
