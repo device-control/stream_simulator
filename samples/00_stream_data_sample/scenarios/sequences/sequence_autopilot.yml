@@ -1,0 +1,29 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: sequence_autopilot
+  description: "自動応答ののシーケンス"
+  commands:
+    # 接続
+    - name: open
+      arguments:
+    
+    # 自動応答開始
+    - name: autopilot_start
+      arguments:
+        autopilot: "autopilot"
+    
+    # 待ち
+    - name: wait
+      arguments:
+        timeout: 60
+    
+    # 自動応答終了
+    - name: autopilot_stop
+      arguments:
+    
+    # 切断
+    - name: close
+      arguments:

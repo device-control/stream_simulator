@@ -1,0 +1,10 @@
+# coding: utf-8
+content-type: scenario
+content-version: 0.1
+
+contents:
+  name: scenario_tcp_server
+  description: "TCPサーバーのシナリオ"
+  sequences:
+    # 自動応答シーケンス
+    - name: "sequence_autopilot"

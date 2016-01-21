@@ -1,0 +1,12 @@
+# coding: utf-8
+content-type: stream_setting
+content-version: 0.1
+
+contents:
+  name: "tcp_client_setting"
+  description: "TCPクライアントストリーム"
+  parameters:
+    type: :TCP_CLIENT
+    name: "TCPクライアント"
+    ip: "127.0.0.1"
+    port: 50000
