@@ -10,13 +10,13 @@ class Scenario
   
   attr_reader :name
   attr_reader :file
-  attr_reader :sequence
+  attr_reader :sequences
   
   # コンストラクタ
-  def initialize(name, file, sequence)
+  def initialize(name, file, sequences)
     @name = name
     @file = file
-    @sequence = sequence
+    @sequences = sequences
   end
   
 end

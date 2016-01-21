@@ -6,17 +6,17 @@ require 'log'
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
-class Autopilot
+class Sequence
   
   attr_reader :name
   attr_reader :file
-  attr_reader :requests
+  attr_reader :commands
   
   # コンストラクタ
-  def initialize(name, file, requests)
+  def initialize(name, file, commands)
     @name = name
     @file = file
-    @requests = requests
+    @commands = commands
   end
   
 end
