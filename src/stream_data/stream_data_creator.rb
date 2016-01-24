@@ -30,9 +30,9 @@ class StreamDataCreator
   # Yamlオブジェクトを内部用にリメイクする
   def remake_yamls(_yamls)
     yamls = Hash.new
-    yamls[:structs] = yamls_by_name(_yamls, "message_struct")
-    yamls[:formats] = yamls_by_name(_yamls, "message_format")
-    yamls[:entities] = yamls_by_name(_yamls, "message_entity")
+    yamls[:message_structs] = yamls_by_name(_yamls, "message_struct")
+    yamls[:message_formats] = yamls_by_name(_yamls, "message_format")
+    yamls[:message_entities] = yamls_by_name(_yamls, "message_entity")
     yamls[:scenarios] = yamls_by_name(_yamls, "scenario")
     yamls[:sequences] = yamls_by_name(_yamls, "sequence")
     yamls[:autopilots] = yamls_by_name(_yamls, "autopilot")
@@ -59,24 +59,52 @@ class StreamDataCreator
   # message_formats取得
   def get_message_formats()
     formats = Hash.new
-    @yamls[:formats].each do |name, yaml|
+    @yamls[:message_formats].each do |name, yaml|
       formats[name] = create_message_format(name, yaml)
     end
     return formats
   end
   
+  # message_format の contents 以下が正しいフォーマットか確認する
+  def message_format_contents?(contents)
+    begin
+      emb = "Error:#{self.class}##{__method__}"
+      raise "#{emb}: Undefined \"name\""        if contents["name"].nil?
+      raise "#{emb}: Undefined \"description\"" if contents["description"].nil?
+      raise "#{emb}: Undefined \"members\""     if contents["members"].nil?
+      contents["members"].each.with_index(0) do |format,index|
+        raise "#{emb}: Undefined \"members[#{index}]/name_jp\"]" if format["name_jp"].nil?
+        raise "#{emb}: Undefined \"members[#{index}]/name\"]"    if format["name"].nil?
+        raise "#{emb}: Undefined \"members[#{index}]/type\"]"    if format["type"].nil?
+      end 
+    rescue => e
+      raise e.message
+    end
+    return true
+  end
+  
   # メッセージフォーマット生成処理
   def create_message_format(name, yaml)
+    # yamlのチェック
+    message_format_contents?(yaml[:body]["contents"])
+    
     # MessageFormatの情報を生成
     @creating_format = Hash.new
     @creating_format[:member_list] = Array.new
     @creating_format[:member_total_size] = 0
     @creating_format[:members] = Hash.new
+    @creating_format[:values] = Hash.new
+    
     @creating_format[:primary_keys] = yaml[:body]["contents"]["primary_keys"] || Hash.new
     @creating_format[:default_values] = yaml[:body]["contents"]["default_values"] || Hash.new
     
     nested_member_names = Array.new
     generate_members(nested_member_names, yaml[:body]['contents']['members'], @creating_format[:members])
+    
+    # プライマリキーの値を設定
+    set_primary_keys(message_format)
+    # デフォルト値を設定
+    set_default_values(message_format)
     
     # MessageFormatを生成
     message_format = MessageFormat.new(name,
@@ -84,12 +112,8 @@ class StreamDataCreator
                                        @creating_format[:member_list],
                                        @creating_format[:member_total_size],
                                        @creating_format[:members],
-                                       @creating_format[:primary_keys])
-    
-    # MessageFormatにプライマリキーの値を設定
-    set_primary_keys(message_format)
-    # MessageFormatにデフォルト値を設定
-    set_default_values(message_format)
+                                       @creating_format[:primary_keys],
+                                       @creating_format[:values])
     
     return message_format
   end
@@ -174,11 +198,12 @@ class StreamDataCreator
     end
     @creating_format[:member_list] << full_member_name
     @creating_format[:member_total_size] += member_data.size
+    @creating_format[:values][full_member_name] = member_data.default_value
   end
   
   # structを取得する
   def get_struct(member_type)
-    return @yamls[:structs][member_type]
+    return @yamls[:message_structs][member_type]
   end
   
   # メンバーの構成をリメイク
@@ -204,21 +229,25 @@ class StreamDataCreator
   end
   
   # プライマリキー値をセット
-  def set_primary_keys(message_format)
+  def set_primary_keys()
     @creating_format[:primary_keys].each do |key, value|
-      message_format.set_value(key, value)
+      if @creating_format[:values].include?(key)
+        Log.instance.warn "#{self.class}##{__method__}: Value configured. : key=[#{key}] file=[#{@file}]"
+        next
+      end
+      @creating_format[:values][key] = value
     end
   end
   
   # デフォルト値をセット
-  def set_default_values(message_format)
+  def set_default_values()
     @creating_format[:default_values].each do |key, value|
       if @creating_format[:primary_keys].include?(key)
         # プライマリキーに設定されている場合、セットしない
         Log.instance.warn "#{self.class}##{__method__}: Already defined in the primary_keys: key=[#{key}] file=[#{@file}]"
         next
       end
-      message_format.set_value(key, value)
+      @creating_format[:values][key] = value
     end
   end
   
@@ -226,7 +255,7 @@ class StreamDataCreator
   # message_entities取得
   def get_message_entities(message_formats)
     entities = Hash.new
-    @yamls[:entities].each do |name, yaml|
+    @yamls[:message_entities].each do |name, yaml|
       entities[name] = create_message_entity(name, yaml, message_formats)
     end
     return entities

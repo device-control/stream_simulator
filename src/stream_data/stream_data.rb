@@ -23,6 +23,9 @@ class StreamData
     @autopilots = autopilots
   end
   
+  def accept(visitor)
+  end
+  
 #   # 対象シナリオを検索する
 #   def search_scenario(message_object)
 #     @scenario_datas.each do |name, scenario|

@@ -15,92 +15,81 @@ class MessageFormat
   attr_reader :member_list
   attr_reader :member_total_size
   attr_reader :members
-  attr_reader :primary_key
+  attr_reader :primary_keys
   
   # コンストラクタ
-  def initialize(name, file, member_list, member_total_size, members, primary_key)
+  def initialize(name, file, member_list, member_total_size, members, primary_keys, values)
     @name = name
     @file = file
     @member_list = member_list
     @member_total_size = member_total_size
     @members = members
-    @primary_key = primary_key
+    @primary_keys = primary_keys
+    @values = values
   end
   
-  # 値をセットする
-  def set_value(key, value)
+  # 値をゲットする
+  def get_value(key)
+    return @values[key]
+  end
+  
+  # メンバーをゲットする
+  def get_member(key)
     begin
       hashie_members = Hashie::Mash.new @members
-      eval "hashie_members.#{key}.value = value"
+      return eval "hashie_members.#{key}"
     rescue => e
-      raise "ERROR: #{self.class}##{__method__}: key=[#{key}] value=[#{value}] file=[#{@file}] " + e.message
+      raise "ERROR: #{self.class}##{__method__}: key=[#{key}] file=[#{@file}] " + e.message
     end
   end
   
+  # 対象かどうか
+  def target?(values)
+    return false unless primary_keys_match?(values)
+    return true
+  end
   
+  # プライマリキーが一致するかどうか
+  def primary_keys_match?(values)
+    return false if @primary_keys.nil?
+    return false if @primary_keys.size == 0
+    @primary_keys.each do |key, value|
+      return false unless values.include?(key)
+      return false unless values[key] == value
+    end
+    return true
+  end
   
-  # # 対象のメッセージかどうか
-  # def target?(message)
-  #   return false if message.length < @message_length
-  #   return false unless check_primary_key(message)
-  #   return true
-  # end
+  # メッセージの長さが足りているかどうか
+  def enough_length?(hex_string)
+    return false if hex_string.length < @member_total_size*2
+    return true
+  end
   
-  # # プライマリキーのチェック
-  # def check_primary_key(message)
-  #   return false if @primary_key.nil?
-  #   @primary_key.each do |key|
-  #     data = message[key[POSITION], type_message_length(key[TYPE])]
-  #     value = hex_string_to_typedata(data, key[TYPE])
-  #     return false unless value == key[VALUE]
-  #   end
-  #   return true
-  # end
-  
-  # # デコード
-  # # メッセージ（バイナリテキスト）から
-  # # フォーマットのデータ（Array）を生成する
-  # def decode(message)
-  #   # メッセージ長のチェック
-  #   if message.length < @message_length
-  #     raise "#{self.class}##{__method__}: message length is missing."
-  #   end
+  # デコード処理
+  # @member_listをキーとしたHashにデコードする
+  def decode(hex_string)
+    return nil unless enough_length?(hex_string)
     
-  #   # フォーマットのデータに変換する
-  #   data = Array.new
-  #   @format.each do |f|
-  #     temp_data = message[f[POSITION], type_message_length(f[TYPE])]
-  #     value = hex_string_to_typedata(temp_data, f[TYPE])
-      
-  #     struct = Hash.new
-  #     struct[NAME] = f[NAME]
-  #     struct[VALUE] = value
-  #     data.push(struct)
-  #   end
-  #   return data
-  # end
+    values = Hash.new
+    @member_list.each do |member_name|
+      member_data = get_member(member_name)
+      value = hex_string[member_data.offset, member_data.hex_string_size]
+      values[member_name] = member_data.decode(value)
+    end
+    return values
+  end
   
-  # # エンコード
-  # # フォーマットのデータ（Array）から
-  # # メッセージ（バイナリテキスト）を生成する
-  # def encode(data=nil)
-  #   message = ""
-  #   @format.each.with_index(0) do |f,index|
-  #     if data.nil?
-  #       value = f[DEFAULT_VALUE]
-  #     else
-  #       d = data[index]
-  #       if d[NAME] != f[NAME]
-  #         raise "#{self.class}##{__method__}: unmatch key. #{f[NAME]}"
-  #       end
-  #       value = d[VALUE]
-  #       if value.nil?
-  #         raise "#{self.class}##{__method__}: no data found. #{f[NAME]}"
-  #       end
-  #     end
-  #     message += typedata_to_hex_string(value, f[TYPE])
-  #   end
-  #   return message
-  # end
+  # エンコード処理
+  # バイナリテキストにエンコードする
+  def encode()
+    hex_string = ""
+    @member_list.each do |member_name|
+      member_data = get_member(member_name)
+      value = get_value(member_name)
+      hex_string += member_data.encode(value)
+    end
+    return hex_string
+  end
   
 end
