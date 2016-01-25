@@ -41,53 +41,34 @@ class StreamDataCreator
   
   # StreamData を生成する
   def create()
-    # メッセージフォーマットを生成
-    message_formats = get_message_formats()
-    # メッセージエンティティを生成
-    message_entities = get_message_entities(message_formats)
-    # シーケンスを生成
-    sequences = get_sequences()
-    # シナリオを生成
-    scenarios = get_scenarios(sequences)
-    # オートパイロットを生成
-    autopilots = get_autopilots()
+    stream_data = StreamData.new
     
-    return StreamData.new(message_formats, message_entities, scenarios, sequences, autopilots)
+    # メッセージフォーマットを生成
+    stream_data.message_formats = get_message_formats(@yamls)
+    # メッセージエンティティを生成
+    stream_data.message_entities = get_message_entities(@yamls, stream_data.message_formats)
+    # シーケンスを生成
+    stream_data.sequences = get_sequences(@yamls)
+    # シナリオを生成
+    stream_data.scenarios = get_scenarios(@yamls, stream_data.sequences)
+    # オートパイロットを生成
+    stream_data.autopilots = get_autopilots(@yamls)
+    
+    return stream_data
   end
   
   # ---
   # message_formats取得
-  def get_message_formats()
+  def get_message_formats(yamls)
     formats = Hash.new
-    @yamls[:message_formats].each do |name, yaml|
+    yamls[:message_formats].each do |name, yaml|
       formats[name] = create_message_format(name, yaml)
     end
     return formats
   end
   
-  # message_format の contents 以下が正しいフォーマットか確認する
-  def message_format_contents?(contents)
-    begin
-      emb = "Error:#{self.class}##{__method__}"
-      raise "#{emb}: Undefined \"name\""        if contents["name"].nil?
-      raise "#{emb}: Undefined \"description\"" if contents["description"].nil?
-      raise "#{emb}: Undefined \"members\""     if contents["members"].nil?
-      contents["members"].each.with_index(0) do |format,index|
-        raise "#{emb}: Undefined \"members[#{index}]/name_jp\"]" if format["name_jp"].nil?
-        raise "#{emb}: Undefined \"members[#{index}]/name\"]"    if format["name"].nil?
-        raise "#{emb}: Undefined \"members[#{index}]/type\"]"    if format["type"].nil?
-      end
-    rescue => e
-      raise e.message
-    end
-    return true
-  end
-  
   # メッセージフォーマット生成処理
   def create_message_format(name, yaml)
-    # yamlのチェック
-    message_format_contents?(yaml[:body]["contents"])
-    
     # MessageFormatの情報を生成
     @creating_format = Hash.new
     @creating_format[:member_list] = Array.new
@@ -249,9 +230,9 @@ class StreamDataCreator
   
   # ---
   # message_entities取得
-  def get_message_entities(message_formats)
+  def get_message_entities(yamls, message_formats)
     entities = Hash.new
-    @yamls[:message_entities].each do |name, yaml|
+    yamls[:message_entities].each do |name, yaml|
       entities[name] = create_message_entity(name, yaml, message_formats)
     end
     return entities
@@ -274,9 +255,9 @@ class StreamDataCreator
   
   # ---
   # sequences取得
-  def get_sequences()
+  def get_sequences(yamls)
     sequences = Hash.new
-    @yamls[:sequences].each do |name, yaml|
+    yamls[:sequences].each do |name, yaml|
       sequences[name] = create_sequence(name, yaml)
     end
     return sequences
@@ -294,9 +275,9 @@ class StreamDataCreator
   
   # ---
   # scenarios取得
-  def get_scenarios(sequences)
+  def get_scenarios(yamls, sequences)
     scenarios = Hash.new
-    @yamls[:scenarios].each do |name, yaml|
+    yamls[:scenarios].each do |name, yaml|
       scenarios[name] = create_scenario(name, yaml, sequences)
     end
     return scenarios
@@ -304,19 +285,26 @@ class StreamDataCreator
   
   # シナリオ生成処理
   def create_scenario(name, yaml, sequences)
-    sequences = yaml[:body]['contents']['sequences']
-    if sequences.nil?
+    yaml_sequences = yaml[:body]['contents']['sequences']
+    if yaml_sequences.nil?
       raise "ERROR: #{self.class}##{__method__}: sequences is not defined. file=[#{yaml[:file]}]"
     end
     
-    return Scenario.new(name, yaml[:file], sequences)
+    scenario_sequences = Hash.new
+    yaml_sequences.each do |sequence|
+      unless sequences.include?(sequence['name'])
+        raise "ERROR: #{self.class}##{__method__}: sequence is not defined. sequence=[#{sequence['name']}] file=[#{yaml[:file]}]"
+      end
+      scenario_sequences[sequence['name']] = sequences[sequence['name']]
+    end
+    return Scenario.new(name, yaml[:file], scenario_sequences)
   end
   
   # ---
   # autopilots取得
-  def get_autopilots()
+  def get_autopilots(yamls)
     autopilots = Hash.new
-    @yamls[:autopilots].each do |name, yaml|
+    yamls[:autopilots].each do |name, yaml|
       autopilots[name] = create_autopilot(name, yaml)
     end
     return autopilots
