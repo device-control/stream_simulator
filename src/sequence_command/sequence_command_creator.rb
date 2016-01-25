@@ -15,7 +15,9 @@ Encoding.default_internal = 'utf-8'
 # シーケンスコマンド生成
 class SequenceCommandCreator
   def self.create(sequence, messages, stream, queues, variables)
-    if sequence[:command] == :SEND # メッセージ送信
+    if sequence[:command] == :OPEN # ストリーム開始
+      return SequenceCommandOpen.new stream
+    elsif sequence[:command] == :SEND # メッセージ送信
       return SequenceCommandSend.new sequence[:arguments], messages, stream
     elsif sequence[:command] == :RECEIVE # メッセージ受信
       return SequenceCommandReceive.new sequence[:arguments], messages, stream, queues[:sequence]
@@ -27,6 +29,8 @@ class SequenceCommandCreator
       return SequenceCommandAutopilotStart.new sequence[:arguments], messages, stream, queues[:autopilot], variables
     elsif sequence[:command] == :AUTOPILOT_END # オートパイロット終了
       return SequenceCommandAutopilotEnd.new sequence[:arguments]
+    elsif sequence[:command] == :CLOSE # ストリーム終了
+      return SequenceCommandClose.new stream
     else
       raise "unknonw command [#{sequence[:command]}]"
     end
@@ -34,6 +38,7 @@ class SequenceCommandCreator
 end
 
 
+# 例外発行場所出力サンプル(backtrace)
 # class TestCreator
 #   def self.create
 #     raise "test"
