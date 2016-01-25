@@ -14,8 +14,8 @@ module MessageAnalyze
   def initialize(stream)
     super stream
     clear
-    stream.add_observer(StreamObserver::STATUS, obj)
-    stream.add_observer(StreamObserver::MESSAGE,obj)
+    stream.add_observer(StreamObserver::STATUS, self)
+    stream.add_observer(StreamObserver::MESSAGE,self)
   end
 
   # 受信メッセージ削除
@@ -43,7 +43,7 @@ module MessageAnalyze
   
   # 解析処理
   # 受信データからフォーマットを特定する
-  # フォーマットが特定できれば、 message_received()メソッドが呼び出される
+  # フォーマットが特定できれば、 analyze_completed()メソッドが呼び出される
   def analyze
     # 受信データの解析処理
     loop do
@@ -63,7 +63,7 @@ module MessageAnalyze
       # # 解析結果を通知(callback)
       # message_analyzed(object)
       object = nil # dummy
-      message_analyzed(object)
+      analyze_completed(object)
     end
   end
   

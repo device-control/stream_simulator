@@ -18,6 +18,8 @@ class StreamDataRunner
     @queues = Hash.new
     @queues[:sequence] = Queue.new # sequence用queue
     @queues[:autopilot] = Queue.new # autopilot用queue
+    # autopilot管理開始
+    AutopilotManager.instance.start @queues[:autopilot]
   end
 
   def visit_sequence(sequence,messages)
@@ -29,12 +31,12 @@ class StreamDataRunner
     command.run
   end
 
-  # 解析してmessage_entityが生成されたら呼び出されるメソッド
-  def message_received(obj)
+  # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
+  def analyze_completed(message_entity)
     puts "message_received!!"
     event = Hash.new
     event[:name] = :message_receive
-    event[:arguments] = [ obj ]
+    event[:arguments] = [ message_entity ]
     @queues.each do |name,queue|
       queue.push(evnet)
     end
