@@ -10,13 +10,15 @@ class Autopilot
   
   attr_reader :name
   attr_reader :file
-  attr_reader :requests
+  attr_reader :type
+  attr_reader :arguments
   
   # コンストラクタ
-  def initialize(name, file, requests)
+  def initialize(name, file, type, arguments)
     @name = name
     @file = file
-    @requests = requests
+    @type = type
+    @arguments = arguments
   end
   
 end

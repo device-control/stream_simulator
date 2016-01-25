@@ -1,19 +1,22 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
+require 'member_data_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class MemberDataTypeInt8
+  include MemberDataUtils
   
   attr_reader :name_jp
   attr_reader :name
   attr_reader :type
   attr_reader :size
-  attr_accessor :offset
-  attr_accessor :value
+  attr_reader :hex_string_size
+  attr_reader :offset
+  attr_reader :default_value
   
   SIZE = 1
   DEFAULT_VALUE = 0
@@ -24,22 +27,26 @@ class MemberDataTypeInt8
     @name = member['name']
     @type = member['type']
     @size = SIZE
+    @hex_string_size = SIZE*2
     @offset = offset
-    @value = DEFAULT_VALUE
+    @default_value = DEFAULT_VALUE
   end
   
   def use_array?
     return true
   end
   
-  def value=(val)
-    unless val.kind_of?(Integer)
-      raise "ERROR: #{self.class}##{__method__}: Not a target class of value. value=[#{val}] class=[#{val.class}]"
-    end
-    if val < 0 || val > (256 ** @size - 1)
-      raise "ERROR: #{self.class}##{__method__}: Range is out of value. val=[#{val}]"
-    end
-    @value = val
+  def valid?(value)
+    return false unless val.kind_of?(Integer)
+    # raise "ERROR: #{self.class}##{__method__}: Not a target class of value. value=[#{val}] class=[#{val.class}]"
+    return false if val < 0 || val > (256 ** @size - 1)
+    # raise "ERROR: #{self.class}##{__method__}: Range is out of value. val=[#{val}]"
+    return true
+  end
+  
+  def encode(value=nil)
+    value = @value if value.nil?
+    return integer_to_hex_string(value, @size*2)
   end
   
 end

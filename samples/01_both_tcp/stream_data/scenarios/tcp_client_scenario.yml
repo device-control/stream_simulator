@@ -3,8 +3,8 @@ content-type: scenario
 content-version: 0.1
 
 contents:
-  name: scenario_tcp_client
+  name: "tcp_client_scenario"
   description: "TCPクライアントのシナリオ"
   sequences:
     # 送受信シーケンス
-    - name: "sequence_send_receive"
+    - name: "send_receive_sequence"

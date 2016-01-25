@@ -16,20 +16,20 @@ Encoding.default_internal = 'utf-8'
 # (2) StreamSimulator データ一式の位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
 #  例：simulator_data_path = 'simulator_data'
-simulator_data_path = 'test_data'
+simulator_data_path = '../stream_data'
 
 
 #---------------------------------------------------
 # (3) StreamSimulator Stream設定ファイルの位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
 #  例：stream_setting_file = 'stream_setting.yml'
-stream_setting_file = 'test_data/settings/stream_setting.yml'
+stream_setting_file = '../stream_data/settings/tcp_client_setting.yml'
 
 
 # パラメータ設定
 $inparam = Hash.new
 $inparam[:stream_setting_file_path] = File.expand_path(File.dirname(__FILE__))+"/#{stream_setting_file}"
-$inparam[:testdata_path] = File.expand_path(File.dirname(__FILE__))+"/#{simulator_data_path}"
+$inparam[:stream_data_path] = File.expand_path(File.dirname(__FILE__))+"/#{simulator_data_path}"
 # シミュレータ生成
 $simulator = StreamSimulator.new $inparam
 
