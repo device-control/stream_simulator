@@ -76,7 +76,7 @@ class StreamDataCreator
         raise "#{emb}: Undefined \"members[#{index}]/name_jp\"]" if format["name_jp"].nil?
         raise "#{emb}: Undefined \"members[#{index}]/name\"]"    if format["name"].nil?
         raise "#{emb}: Undefined \"members[#{index}]/type\"]"    if format["type"].nil?
-      end 
+      end
     rescue => e
       raise e.message
     end
@@ -102,9 +102,9 @@ class StreamDataCreator
     generate_members(nested_member_names, yaml[:body]['contents']['members'], @creating_format[:members])
     
     # プライマリキーの値を設定
-    set_primary_keys(message_format)
+    set_primary_keys()
     # デフォルト値を設定
-    set_default_values(message_format)
+    set_default_values()
     
     # MessageFormatを生成
     message_format = MessageFormat.new(name,
@@ -231,10 +231,6 @@ class StreamDataCreator
   # プライマリキー値をセット
   def set_primary_keys()
     @creating_format[:primary_keys].each do |key, value|
-      if @creating_format[:values].include?(key)
-        Log.instance.warn "#{self.class}##{__method__}: Value configured. : key=[#{key}] file=[#{@file}]"
-        next
-      end
       @creating_format[:values][key] = value
     end
   end
@@ -328,12 +324,12 @@ class StreamDataCreator
   
   # オートパイロット生成処理
   def create_autopilot(name, yaml)
-    requests = yaml[:body]['contents']['requests']
-    if requests.nil?
+    parameters = yaml[:body]['contents']['parameters']
+    if parameters.nil?
       raise "ERROR: #{self.class}##{__method__}: requests is not defined. file=[#{yaml[:file]}]"
     end
     
-    return Autopilot.new(name, yaml[:file], requests)
+    return Autopilot.new(name, yaml[:file], parameters['type'], parameters['arguments'])
   end
   
 end
