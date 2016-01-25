@@ -31,8 +31,8 @@ class StreamSimulator
     @stream_data = stream_data_creator.create()
     
     # オブジェクトを生成
-    @receive_message_analyze = ReceiveMessageAnalyze.new @testdata
-    @scenario_analyze = ScenarioAnalyze.new @testdata
+    # @receive_message_analyze = ReceiveMessageAnalyze.new @stream_data
+    # @scenario_analyze = ScenarioAnalyze.new @stream_data
     stream_parameters = StreamSetting.load inparam[:stream_setting_file_path]
     @stream = StreamManager.create stream_parameters
     # @function_executor = FunctionExecutor.new
@@ -45,14 +45,14 @@ class StreamSimulator
   def add_observer
     # Streamの状態変化通知
     @stream.add_observer(StreamObserver::STATUS, self)
-    @stream.add_observer(StreamObserver::STATUS, @receive_message_analyze)
+    # @stream.add_observer(StreamObserver::STATUS, @receive_message_analyze)
     # Streamのメッセージ受信通知
-    @stream.add_observer(StreamObserver::MESSAGE, @receive_message_analyze)
+    # @stream.add_observer(StreamObserver::MESSAGE, @receive_message_analyze)
     
     # 受信メッセージの解析結果通知
-    @receive_message_analyze.add_observer(@scenario_analyze)
+    # @receive_message_analyze.add_observer(@scenario_analyze)
     # シナリオの解析結果通知
-    @scenario_analyze.add_observer(self)
+    # @scenario_analyze.add_observer(self)
   end
   
   # 接続通知
@@ -88,12 +88,18 @@ class StreamSimulator
   end
   
   def show_message
-    @testdata.show_message
+    @stream_data.message_entities.each do |name, entity|
+      message = entity.encode()
+      puts message
+    end
     return true
   end
   
   def show_message_format
-    @testdata.show_message_format
+    @stream_data.message_formats.each do |name, format|
+      message = format.encode()
+      puts message
+    end
     return true
   end
   

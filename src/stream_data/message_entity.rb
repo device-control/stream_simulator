@@ -21,4 +21,27 @@ class MessageEntity
     @values = values
   end
   
+  # 値をゲットする
+  # @valuesになければ、@formatから取得する
+  def get_value(key)
+    return @format.get_value(key) if @values.nil?
+    return @format.get_value(key) if @values[key].nil?
+    return @values[key] 
+  end
+  
+  def decode()
+  end
+  
+  # エンコード処理
+  # @valuesを@formatでバイナリテキストにエンコードする
+  def encode()
+    hex_string = ""
+    @format.member_list.each do |member_name|
+      member_data = @format.get_member(member_name)
+      value = get_value(member_name)
+      hex_string += member_data.encode(value)
+    end
+    return hex_string
+  end
+  
 end

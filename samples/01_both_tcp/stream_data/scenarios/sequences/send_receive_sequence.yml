@@ -3,24 +3,24 @@ content-type: sequence
 content-version: 0.1
 
 contents:
-  name: sequence_send_receive
+  name: send_receive_sequence
   description: "送受信のシーケンス"
   commands:
     # 接続
-    - name: open
+    - command: open
       arguments:
     
     # 送信
-    - name: send
+    - command: send
       arguments:
         message_data: "entity_command"
     
     # 受信
-    - name: receive
+    - command: receive
       arguments:
         expected_format: "format_response"
         timeout: 5 # 秒
     
     # 切断
-    - name: close
+    - command: close
       arguments:
