@@ -8,11 +8,14 @@ Encoding.default_internal = 'utf-8'
 
 # メッセージ受信
 class SequenceCommandReceive
-  def initialize(arguments, messages, stream, queue)
+  def initialize(arguments, messages, stream, queue, variables)
+    raise "not found expected" unless (arguments.has_key? :expected_entity) || (arguments.has_key? :expected_format)
+
     @arguments = arguments
     @messages = messages
     @stream = stream
     @queue = queue
+    @variables = variables
   end
   
   def run
@@ -27,9 +30,9 @@ class SequenceCommandReceive
       entity = event[:arguments][0]
       raise "receive message entity is nil" if entity.nil?
       message_name = nil
-      message_name = @arguments[:message_data] if @arguments.has_key? :message_data
-      message_name = @arguments[:message_format] if @arguments.has_key? :message_format
-      raise "unknown message type" if message_name.nil?
+      message_name = @arguments[:expected_format] if @arguments.has_key? :expected_format
+      message_name = @arguments[:expected_entity] if @arguments.has_key? :expected_entity
+      raise "not found receve message" if message_name.nil?
       # 期待値と違う
       # TODO: ログだす？
     end

@@ -1,7 +1,7 @@
 # coding: utf-8
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require 'log'
+require '../log'
 require 'sequence_command_open'
 require 'sequence_command_close'
 require 'sequence_command_send'
@@ -17,14 +17,17 @@ Encoding.default_internal = 'utf-8'
 # シーケンスコマンド生成
 class SequenceCommandCreator
   def self.create(sequence, messages, stream, queues, variables)
+    raise "not found command" unless sequence.has_key? :command
+    raise "not found arguments" unless sequence.has_key? :arguments
+    
     if sequence[:command] == :OPEN # ストリーム開始
       return SequenceCommandOpen.new stream
     elsif sequence[:command] == :SEND # メッセージ送信
-      return SequenceCommandSend.new sequence[:arguments], messages, stream
+      return SequenceCommandSend.new sequence[:arguments], messages, stream, variables
     elsif sequence[:command] == :RECEIVE # メッセージ受信
-      return SequenceCommandReceive.new sequence[:arguments], messages, stream, queues[:sequence]
+      return SequenceCommandReceive.new sequence[:arguments], messages, stream, queues[:sequence], variables
     elsif sequence[:command] == :WAIT # 待ち
-      return SequenceCommandWait.new sequence[:arguments]
+      return SequenceCommandWait.new sequence[:arguments], variables
     elsif sequence[:command] == :SET_VARIABLE # 変数設定
       return SequenceCommandSetVariable.new sequence[:arguments], variables
     elsif sequence[:command] == :AUTOPILOT_START # オートパイロット開始
