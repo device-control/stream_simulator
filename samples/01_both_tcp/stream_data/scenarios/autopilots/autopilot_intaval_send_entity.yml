@@ -1,0 +1,13 @@
+# coding: utf-8
+content-type: autopilot
+content-version: 0.1
+
+contents:
+  name: "autopilot_intaval_send_entity"
+  description: "定時送信"
+  parameters:
+    type: intaval_send_entity
+    arguments:
+      # サンプル
+      - send_entity: "entity_command"
+        intaval: 4
