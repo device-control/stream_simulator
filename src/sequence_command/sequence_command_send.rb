@@ -8,17 +8,20 @@ Encoding.default_internal = 'utf-8'
 
 # メッセージ送信
 class SequenceCommandSend
-  def initialize(arguments, messages, stream)
+  def initialize(arguments, messages, stream, variables)
+    raise "not found message_entity" unless arguments.has_key? :message_entity
+    
     @arguments = arguments
     @messages = messages
     @stream = stream
+    @variables = variables
   end
   
   def run
-    entity = messages[:formats][arguments[:message_data]]
-    if entity.nil?
-      raise "SequenceCommandSend#run: unknown message_entity [#{arguments[:message_data]}]"
-    end
-    stream.write entity.encode
+    raise "unknown message_entity [#{arguments[:message_entity]}]" if messages[:entities].has_key? arguments[:message_entity]
+    entity = messages[:entities][arguments[:message_entity]]
+    # TODO: グローバル変数を置換する場合、@variables指定が必要
+    #       ex) @stream.write entity.encode, @variables
+    @stream.write entity.encode
   end
 end

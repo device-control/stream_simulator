@@ -8,8 +8,9 @@ Encoding.default_internal = 'utf-8'
 
 # 待ち
 class SequenceCommandWait
-  def initialize(arguments)
+  def initialize(arguments, variables)
     @arguments = arguments
+    @variables = variables
   end
   
   def run
