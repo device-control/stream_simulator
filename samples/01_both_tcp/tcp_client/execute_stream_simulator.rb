@@ -16,14 +16,14 @@ Encoding.default_internal = 'utf-8'
 # (2) StreamSimulator データ一式の位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
 #  例：simulator_data_path = 'simulator_data'
-simulator_data_path = '../../00_stream_data_sample'
+simulator_data_path = '../stream_data'
 
 
 #---------------------------------------------------
 # (3) StreamSimulator Stream設定ファイルの位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
 #  例：stream_setting_file = 'stream_setting.yml'
-stream_setting_file = '../../00_stream_data_sample/settings/tcp_client_setting.yml'
+stream_setting_file = '../stream_data/settings/tcp_client_setting.yml'
 
 
 # パラメータ設定

@@ -3,8 +3,8 @@ content-type: scenario
 content-version: 0.1
 
 contents:
-  name: scenario_tcp_server
+  name: "tcp_server_scenario"
   description: "TCPサーバーのシナリオ"
   sequences:
     # 自動応答シーケンス
-    - name: "sequence_autopilot"
+    - name: "auto_response_sequence"
