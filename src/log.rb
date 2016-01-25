@@ -21,12 +21,17 @@ class Log
   attr_reader :log
   
   def initialize
-    @log = Logger.new(STDOUT)
-    @log.level = Logger::DEBUG
-    # @log.level = Logger::ERROR
-    @show_enabled = true
+    disabled
   end
-
+  
+  def start(output, mode=Logger::DEBUG)
+    output = STDOUT if output.nil?
+    
+    @log = Logger.new(output)
+    @log.level = mode
+    enabled
+  end
+  
   def enabled
     @show_enabled = true
   end
