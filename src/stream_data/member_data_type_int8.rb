@@ -44,6 +44,23 @@ class MemberDataTypeInt8
     return true
   end
   
+  # メッセージの長さが足りているかどうか
+  def enough_length?(hex_string)
+    return false if hex_string.length < @hex_string_size
+    return true
+  end
+  
+  # デコード処理
+  # バイナリテキストからデコードする
+  def decode(hex_string)
+    return nil unless enough_length?(hex_string)
+    
+    binary = hex_string_to_binary(hex_string)
+    return binary_to_integer(binary)
+  end
+  
+  # エンコード処理
+  # バイナリテキストにエンコードする
   def encode(value=nil)
     value = @value if value.nil?
     return integer_to_hex_string(value, @size*2)

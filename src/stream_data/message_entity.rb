@@ -29,9 +29,6 @@ class MessageEntity
     return @values[key] 
   end
   
-  def decode()
-  end
-  
   # エンコード処理
   # @valuesを@formatでバイナリテキストにエンコードする
   def encode()
