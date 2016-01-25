@@ -23,7 +23,7 @@ class SequenceCommandReceive
     Timeout.timeout(timeout) do # timeout=nil の場合、無限
       event = @queue.pop
       raise "not found name" if event.has_key? :name
-      raise "unknown receive event name [#{event[:name]}]" if event[:name] != :message_receive
+      raise "unknown receive event name [#{event[:name]}]" if event[:name] != :message_entity_received
       entity = event[:arguments][0]
       raise "receive message entity is nil" if entity.nil?
       message_name = nil

@@ -2,6 +2,8 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
+require 'sequence_command_open'
+require 'sequence_command_close'
 require 'sequence_command_send'
 require 'sequence_command_receive'
 require 'sequence_command_wait'

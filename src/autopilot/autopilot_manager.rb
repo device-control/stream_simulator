@@ -38,6 +38,9 @@ class AutopilotManager
           event = @queue.pop
         end
         next if event.nil?
+        raise "not found name" unless event.has_key? :name
+        raise "not found arguments" unless event.has_key? :arguments
+        raise "unknown event name [#{event[:name]}]" if event[:name] != :message_entity_received
         @autopilots.each do |name,autopilot|
           # autopilots に message entity 通知
           autopilot.message_entity_notify event[:arguments][0]

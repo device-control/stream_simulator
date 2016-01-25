@@ -11,10 +11,13 @@ class StreamDataRunner
   include 'message_analyze'
   attr_reader :stream
 
-  def initialize(stream)
+  # messages = messages[:formats][name] = format
+  #            messages[:entities][name] = entity
+  def initialize(stream,messages)
     super stream
     @variables = Hash.new
     @stream = stream
+    @messages = messages
     @queues = Hash.new
     @queues[:sequence] = Queue.new # sequence用queue
     @queues[:autopilot] = Queue.new # autopilot用queue
@@ -22,12 +25,10 @@ class StreamDataRunner
     AutopilotManager.instance.start @queues[:autopilot]
   end
 
-  def visit_sequence(sequence,messages)
-    # sequence = :command
-    #            :arguments
-    # messages = :formats
-    #            :entites
-    command = SequenceCommandCreator.create sequence, messages, @stream, @queues, @variables
+  # sequence = sequence[:command]
+  #            sequence[:arguments]
+  def visit_sequence(sequence)
+    command = SequenceCommandCreator.create sequence, @messages, @stream, @queues, @variables
     command.run
   end
 
@@ -35,7 +36,7 @@ class StreamDataRunner
   def analyze_completed(message_entity)
     puts "message_received!!"
     event = Hash.new
-    event[:name] = :message_receive
+    event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]
     @queues.each do |name,queue|
       queue.push(evnet)

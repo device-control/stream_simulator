@@ -11,6 +11,7 @@ Encoding.default_internal = 'utf-8'
 class SequenceCommandSetVariable
   def initialize(arguments,variables)
     @arguments = arguments
+    @variables = variables
   end
   
   def run
