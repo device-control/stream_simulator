@@ -21,12 +21,14 @@ class AutopilotManager
 
   # 開始
   def start(queue)
+    return false if @running # 失敗(開始済み)
     @queue = queue
-    @thread = Thread.new(&method(:message_received))
+    @thread = Thread.new(&method(:message_entity_received))
+    return true # 成功
   end
 
   # message entitiy 受信待ち
-  def message_received
+  def message_entity_received
     @running = true
     loop do
       begin
@@ -38,7 +40,7 @@ class AutopilotManager
         next if event.nil?
         @autopilots.each do |name,autopilot|
           # autopilots に message entity 通知
-          autopilot.message_notify event[:arguments][0]
+          autopilot.message_entity_notify event[:arguments][0]
         end
       rescue Timeout::Error
         next
@@ -48,6 +50,9 @@ class AutopilotManager
 
   # 終了
   def stop
+    @thread.kill
+    @thread.join
+    @thread = nil
     @running = false
   end
 
@@ -55,19 +60,20 @@ class AutopilotManager
   # arguments
   #  :name = autopilot name
   #
-  def add(arguments, messages, stream)
+  def create(arguments, messages, stream)
     raise "not found autopilot" unless messages.has_key? :autopilot
     raise "not found name" unless arguments.has_key? :name
     name = arguments[:name]
     body = messages[:autopilot][name]
     contents = body["contents"]
     if contents["type"] == "autopilot_response"
-      @autopilots[name] = AutopilotAutoResponse.new(contents,message,stream)
+      @autopilots[name] = AutopilotAutoResponse.new(contents[:arguments],message,stream)
     elsif contents["type"] = "interval_send"
-      @autopilots[name] = AutopilotIntervalSend.new(contents,message,stream)
+      @autopilots[name] = AutopilotIntervalSend.new(contents[:arguments],message,stream)
     else
       raise "unknown type [#{contents["type"]}]"
     end
+    @autopilots[name].start
   end
 
   # autopilot 削除
