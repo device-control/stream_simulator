@@ -1,0 +1,10 @@
+# coding: utf-8
+content-type: scenario
+content-version: 0.1
+
+contents:
+  name: scenario_tcp_client
+  description: "TCPクライアントのシナリオ"
+  sequences:
+    # 送受信シーケンス
+    - name: "sequence_send_receive"

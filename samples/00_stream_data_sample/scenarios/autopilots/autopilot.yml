@@ -1,0 +1,11 @@
+# coding: utf-8
+content-type: autopilot
+content-version: 0.1
+
+contents:
+  name: autopilot
+  description: "自動応答"
+  requests:
+    # サンプル
+    - request_format: "format_command"
+      response_entity: "entity_response"

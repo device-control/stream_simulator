@@ -7,6 +7,7 @@ require 'stream_data'
 require 'message_format'
 require 'message_entity'
 require 'scenario'
+require 'sequence'
 require 'autopilot'
 require 'member_data_creator'
 
@@ -15,10 +16,6 @@ Encoding.default_internal = 'utf-8'
 
 class StreamDataCreator
   include YamlReader
-  
-  CONTENT_TYPE    = 'content-type'
-  CONTENT_VERSION = 'content-version'
-  CONTENTS        = 'contents'
   
   attr_reader :yamls
   
@@ -37,37 +34,28 @@ class StreamDataCreator
     yamls[:formats] = yamls_by_name(_yamls, "message_format")
     yamls[:entities] = yamls_by_name(_yamls, "message_entity")
     yamls[:scenarios] = yamls_by_name(_yamls, "scenario")
+    yamls[:sequences] = yamls_by_name(_yamls, "sequence")
     yamls[:autopilots] = yamls_by_name(_yamls, "autopilot")
     return yamls
   end
   
-  # yamlsをnameをキーとしてHashにする
-  # 指定typeのみを対象とする
-  def yamls_by_name(yamls, type)
-    hash = Hash.new
-    yamls.each.with_index do |yaml,index|
-      yaml_obj = yaml[:body]
-      next if yaml_obj[CONTENT_TYPE] != type
-      contents = yaml_obj[CONTENTS]
-      name = contents["name"]
-      if hash.has_key?(name)
-        Log.instance.warn "#{self.class}##{__method__}: Multiple define name: type=[#{type}] name=[#{name}] file=[#{yaml[:file]}]"
-        next
-      end
-      hash[name] = yaml
-    end
-    return hash
-  end
-  
   # StreamData を生成する
   def create()
+    # メッセージフォーマットを生成
     message_formats = get_message_formats()
+    # メッセージエンティティを生成
     message_entities = get_message_entities(message_formats)
-    scenarios = get_scenarios()
+    # シーケンスを生成
+    sequences = get_sequences()
+    # シナリオを生成
+    scenarios = get_scenarios(sequences)
+    # オートパイロットを生成
     autopilots = get_autopilots()
-    return StreamData.new(message_formats, message_entities, scenarios, autopilots)
+    
+    return StreamData.new(message_formats, message_entities, scenarios, sequences, autopilots)
   end
   
+  # ---
   # message_formats取得
   def get_message_formats()
     formats = Hash.new
@@ -77,35 +65,6 @@ class StreamDataCreator
     return formats
   end
   
-  # message_entities取得
-  def get_message_entities(message_formats)
-    entities = Hash.new
-    @yamls[:entities].each do |name, yaml|
-      entities[name] = create_message_entity(name, yaml, message_formats)
-    end
-    return entities
-  end
-  
-  # scenarios取得
-  def get_scenarios()
-    scenarios = Hash.new
-    @yamls[:scenarios].each do |name, yaml|
-      scenarios[name] = create_scenario(name, yaml)
-    end
-    return scenarios
-  end
-  
-  # autopilots取得
-  def get_autopilots()
-    autopilots = Hash.new
-    @yamls[:autopilots].each do |name, yaml|
-      autopilots[name] = create_autopilot(name, yaml)
-    end
-    return autopilots
-  end
-  
-  
-  # ---
   # メッセージフォーマット生成処理
   def create_message_format(name, yaml)
     # MessageFormatの情報を生成
@@ -113,11 +72,11 @@ class StreamDataCreator
     @creating_format[:member_list] = Array.new
     @creating_format[:member_total_size] = 0
     @creating_format[:members] = Hash.new
-    @creating_format[:primary_key] = yaml[:body]["contents"]["primary_key"] || Hash.new
+    @creating_format[:primary_keys] = yaml[:body]["contents"]["primary_keys"] || Hash.new
     @creating_format[:default_values] = yaml[:body]["contents"]["default_values"] || Hash.new
     
     nested_member_names = Array.new
-    generate_members(nested_member_names, yaml[:body]['contents']['format'], @creating_format[:members])
+    generate_members(nested_member_names, yaml[:body]['contents']['members'], @creating_format[:members])
     
     # MessageFormatを生成
     message_format = MessageFormat.new(name,
@@ -125,10 +84,10 @@ class StreamDataCreator
                                        @creating_format[:member_list],
                                        @creating_format[:member_total_size],
                                        @creating_format[:members],
-                                       @creating_format[:primary_key])
+                                       @creating_format[:primary_keys])
     
     # MessageFormatにプライマリキーの値を設定
-    set_primary_key(message_format)
+    set_primary_keys(message_format)
     # MessageFormatにデフォルト値を設定
     set_default_values(message_format)
     
@@ -136,61 +95,63 @@ class StreamDataCreator
   end
   
   # membersを生成する
-  def generate_members(nested_member_names, format, members)
-    format.each do |member|
+  def generate_members(nested_member_names, members, out_members)
+    return if members.nil?
+    
+    members.each do |member|
       # メンバーの構成をリメイク
       member = remake_member(member)
       
       # 構造体の場合
       struct = get_struct(member['type'])
       unless struct.nil?
-        analyze_struct(nested_member_names, member, struct, members)
+        analyze_struct(nested_member_names, member, struct, out_members)
         next
       end
       
       # 最小構成の場合
-      generate_member(nested_member_names, member, members)
+      generate_member(nested_member_names, member, out_members)
     end
   end
   
   # 構造体を解析する
-  def analyze_struct(nested_member_names, member, struct, members)
+  def analyze_struct(nested_member_names, member, struct, out_members)
     if member['count'].nil?
       # 配列でない場合
       nested_member_names_now =  nested_member_names.clone
       nested_member_names_now << member['name']
       # 構造体のメンバーを取得
-      members[member['name']] =Hash.new
-      generate_members(nested_member_names_now, struct[:body]['contents']['struct'], members[member['name']])
+      out_members[member['name']] =Hash.new
+      generate_members(nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']])
     else
       # 配列の場合
-      members[member['name']] = Array.new(member['count'])
+      out_members[member['name']] = Array.new(member['count'])
       member['count'].times do |index|
         nested_member_names_now =  nested_member_names.clone
         nested_member_names_now << member['name'] + "[#{index}]"
         # 構造体のメンバーを取得
-        members[member['name']][index] =Hash.new
-        generate_members(nested_member_names_now, struct[:body]['contents']['struct'], members[member['name']][index])
+        out_members[member['name']][index] =Hash.new
+        generate_members(nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']][index])
       end
     end
   end
   
   # メンバーを生成する
-  def generate_member(nested_member_names, member, members)
+  def generate_member(nested_member_names, member, out_members)
     if member['count'].nil? || !MemberDataCreator.use_array?(member)
       # 配列でない場合
-      add_member(nested_member_names, member, members)
+      add_member(nested_member_names, member, out_members)
     else
       # 配列の場合
-      members[member['name']] = Array.new(member['count'])
+      out_members[member['name']] = Array.new(member['count'])
       member['count'].times do |index|
-        add_member(nested_member_names, member, members, index)
+        add_member(nested_member_names, member, out_members, index)
       end
     end
   end
   
   # メンバーを追加する
-  def add_member(nested_member_names, member, members, index=nil)
+  def add_member(nested_member_names, member, out_members, index=nil)
     # フルメンバー名を生成
     nested_member_names_now =  nested_member_names.clone
     nested_member_names_now << member['name']
@@ -206,10 +167,10 @@ class StreamDataCreator
     member_data = MemberDataCreator.create(member, @creating_format[:member_total_size])
     if index.nil?
       # 配列でない場合
-      members[member['name']] = member_data
+      out_members[member['name']] = member_data
     else
       # 配列の場合
-      members[member['name']][index] = member_data
+      out_members[member['name']][index] = member_data
     end
     @creating_format[:member_list] << full_member_name
     @creating_format[:member_total_size] += member_data.size
@@ -243,8 +204,8 @@ class StreamDataCreator
   end
   
   # プライマリキー値をセット
-  def set_primary_key(message_format)
-    @creating_format[:primary_key].each do |key, value|
+  def set_primary_keys(message_format)
+    @creating_format[:primary_keys].each do |key, value|
       message_format.set_value(key, value)
     end
   end
@@ -252,9 +213,9 @@ class StreamDataCreator
   # デフォルト値をセット
   def set_default_values(message_format)
     @creating_format[:default_values].each do |key, value|
-      if @creating_format[:primary_key].include?(key)
+      if @creating_format[:primary_keys].include?(key)
         # プライマリキーに設定されている場合、セットしない
-        Log.instance.warn "#{self.class}##{__method__}: Already defined in the primary_key: key=[#{key}] file=[#{@file}]"
+        Log.instance.warn "#{self.class}##{__method__}: Already defined in the primary_keys: key=[#{key}] file=[#{@file}]"
         next
       end
       message_format.set_value(key, value)
@@ -262,6 +223,15 @@ class StreamDataCreator
   end
   
   # ---
+  # message_entities取得
+  def get_message_entities(message_formats)
+    entities = Hash.new
+    @yamls[:entities].each do |name, yaml|
+      entities[name] = create_message_entity(name, yaml, message_formats)
+    end
+    return entities
+  end
+  
   # メッセージエンティティ生成処理
   def create_message_entity(name, yaml, message_formats)
     using_format = yaml[:body]['contents']['using_format']
@@ -278,25 +248,63 @@ class StreamDataCreator
   end
   
   # ---
-  # シナリオ生成処理
-  def create_scenario(name, yaml)
-    sequence = yaml[:body]['contents']['sequence']
-    if sequence.nil?
-      raise "ERROR: #{self.class}##{__method__}: sequence is not defined. file=[#{yaml[:file]}]"
+  # sequences取得
+  def get_sequences()
+    sequences = Hash.new
+    @yamls[:sequences].each do |name, yaml|
+      sequences[name] = create_sequence(name, yaml)
+    end
+    return sequences
+  end
+  
+  # シーケンス生成処理
+  def create_sequence(name, yaml)
+    commands = yaml[:body]['contents']['commands']
+    if commands.nil?
+      raise "ERROR: #{self.class}##{__method__}: commands is not defined. file=[#{yaml[:file]}]"
     end
     
-    return Scenario.new(name, yaml[:file], sequence)
+    return Sequence.new(name, yaml[:file], commands)
   end
   
   # ---
-  # オートパイロット生成処理
-  def create_autopilot(name, yaml)
-    autopilot = yaml[:body]['contents']['autopilot']
-    if autopilot.nil?
-      raise "ERROR: #{self.class}##{__method__}: autopilot is not defined. file=[#{yaml[:file]}]"
+  # scenarios取得
+  def get_scenarios(sequences)
+    scenarios = Hash.new
+    @yamls[:scenarios].each do |name, yaml|
+      scenarios[name] = create_scenario(name, yaml, sequences)
+    end
+    return scenarios
+  end
+  
+  # シナリオ生成処理
+  def create_scenario(name, yaml, sequences)
+    sequences = yaml[:body]['contents']['sequences']
+    if sequences.nil?
+      raise "ERROR: #{self.class}##{__method__}: sequences is not defined. file=[#{yaml[:file]}]"
     end
     
-    return Autopilot.new(name, yaml[:file], autopilot)
+    return Scenario.new(name, yaml[:file], sequences)
+  end
+  
+  # ---
+  # autopilots取得
+  def get_autopilots()
+    autopilots = Hash.new
+    @yamls[:autopilots].each do |name, yaml|
+      autopilots[name] = create_autopilot(name, yaml)
+    end
+    return autopilots
+  end
+  
+  # オートパイロット生成処理
+  def create_autopilot(name, yaml)
+    requests = yaml[:body]['contents']['requests']
+    if requests.nil?
+      raise "ERROR: #{self.class}##{__method__}: requests is not defined. file=[#{yaml[:file]}]"
+    end
+    
+    return Autopilot.new(name, yaml[:file], requests)
   end
   
 end

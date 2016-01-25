@@ -1,0 +1,26 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: sequence_send_receive
+  description: "送受信のシーケンス"
+  commands:
+    # 接続
+    - name: open
+      arguments:
+    
+    # 送信
+    - name: send
+      arguments:
+        message_data: "entity_command"
+    
+    # 受信
+    - name: receive
+      arguments:
+        expected_format: "format_response"
+        timeout: 5 # 秒
+    
+    # 切断
+    - name: close
+      arguments:

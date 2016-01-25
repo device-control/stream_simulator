@@ -11,13 +11,15 @@ class StreamData
   attr_reader :message_formats
   attr_reader :message_entities
   attr_reader :scenarios
+  attr_reader :sequences
   attr_reader :autopilots
   
   # コンストラクタ
-  def initialize(message_formats, message_entities, scenarios, autopilots)
+  def initialize(message_formats, message_entities, scenarios, sequences, autopilots)
     @message_formats = message_formats
     @message_entities = message_entities
     @scenarios = scenarios
+    @sequences = sequences
     @autopilots = autopilots
   end
   

@@ -1,0 +1,9 @@
+# coding: utf-8
+content-type: message_entity
+content-version: 0.1
+
+contents:
+  name: entity_response
+  description: "レスポンスのエンティティ"
+  using_format: format_response
+  values:
