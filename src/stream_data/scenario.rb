@@ -1,5 +1,4 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
 
@@ -17,6 +16,12 @@ class Scenario
     @name = name
     @file = file
     @sequences = sequences
+  end
+  
+  def accept(visitor)
+    @sequences.each do |name, sequence|
+      sequence.accept(visitor)
+    end
   end
   
 end

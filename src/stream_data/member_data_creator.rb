@@ -1,10 +1,10 @@
 # coding: utf-8
 
 require 'log'
-require 'member_data_type_char'
-require 'member_data_type_int8'
-require 'member_data_type_int16'
-require 'member_data_type_int32'
+require 'stream_data/member_data_type_char'
+require 'stream_data/member_data_type_int8'
+require 'stream_data/member_data_type_int16'
+require 'stream_data/member_data_type_int32'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

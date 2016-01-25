@@ -1,9 +1,8 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require '../stream/stream_tcp_server'
-require '../stream/stream_tcp_client'
-require '../log'
+require 'stream/stream_tcp_server'
+require 'stream/stream_tcp_client'
+require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

@@ -1,15 +1,14 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
-require 'yaml_reader'
-require 'stream_data'
-require 'message_format'
-require 'message_entity'
-require 'scenario'
-require 'sequence'
-require 'autopilot'
-require 'member_data_creator'
+require 'stream_data/yaml_reader'
+require 'stream_data/stream_data'
+require 'stream_data/message_format'
+require 'stream_data/message_entity'
+require 'stream_data/scenario'
+require 'stream_data/sequence'
+require 'stream_data/autopilot'
+require 'stream_data/member_data_creator'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

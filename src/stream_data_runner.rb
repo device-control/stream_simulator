@@ -1,24 +1,25 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
-require 'autopilot_runner'
+require 'autopilot/autopilot_manager'
+require 'sequence_command/sequence_command_creator'
+require 'message_analyze'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class StreamDataRunner
-  include 'message_analyze'
+  include MessageAnalyze
   attr_reader :stream
 
   # messages = messages[:formats][name] = format
   #            messages[:entities][name] = entity
-  def initialize(stream,messages)
-    super stream
+  def initialize(stream, messages)
+    super stream, messages[:formats]
     # 入力チェック
     raise "stream is nil" if stream.nil?
-    raise "not found formats" if messages.has_key? :formats
-    raise "not found entities" if messages.has_key? :entities
+    raise "not found formats" unless messages.has_key? :formats
+    raise "not found entities" unless messages.has_key? :entities
 
     @variables = Hash.new
     @stream = stream
@@ -34,8 +35,8 @@ class StreamDataRunner
   #            sequence[:arguments]
   def visit_sequence(sequence)
     # TODO: yml同様フォーマットの場合は、ここで変換する
-    raise "not found command" if sequence.has_key? :sequence
-    raise "not found arguments" if sequence.has_key? :arguments
+    raise "not found command" unless sequence.has_key? :command
+    raise "not found arguments" unless sequence.has_key? :arguments
     command = SequenceCommandCreator.create sequence, @messages, @stream, @queues, @variables
     command.run
   end

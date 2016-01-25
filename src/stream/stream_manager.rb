@@ -1,8 +1,7 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require "stream_tcp_server"
-require "stream_tcp_client"
+require "stream/stream_tcp_server"
+require "stream/stream_tcp_client"
 
 class StreamManager
   def self.create(parameters)

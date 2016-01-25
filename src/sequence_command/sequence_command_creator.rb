@@ -1,15 +1,14 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require '../log'
-require 'sequence_command_open'
-require 'sequence_command_close'
-require 'sequence_command_send'
-require 'sequence_command_receive'
-require 'sequence_command_wait'
-require 'sequence_command_set_variable'
-require 'sequence_command_autopilot_start'
-require 'sequence_command_autopilot_end'
+require 'log'
+require 'sequence_command/sequence_command_open'
+require 'sequence_command/sequence_command_close'
+require 'sequence_command/sequence_command_send'
+require 'sequence_command/sequence_command_receive'
+require 'sequence_command/sequence_command_wait'
+require 'sequence_command/sequence_command_set_variable'
+require 'sequence_command/sequence_command_autopilot_start'
+require 'sequence_command/sequence_command_autopilot_end'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

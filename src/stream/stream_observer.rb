@@ -1,7 +1,5 @@
 # coding: utf-8
 
-# $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
-
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 

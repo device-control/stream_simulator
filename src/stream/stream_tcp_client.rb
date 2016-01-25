@@ -1,8 +1,7 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require "socket"
-require "stream_observer"
+require "stream/stream_observer"
 require "log"
 
 Encoding.default_external = 'utf-8'

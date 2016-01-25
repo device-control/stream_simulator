@@ -1,11 +1,10 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'singleton'
 require 'timeout'
-require 'autopilot_auto_response'
-require 'autopilot_intaval_send'
-require '../log'
+require 'autopilot/autopilot_auto_response'
+require 'autopilot/autopilot_interval_send'
+require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

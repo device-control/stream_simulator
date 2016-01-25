@@ -1,7 +1,6 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
-require 'member_data_utils'
+require 'stream_data/member_data_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'

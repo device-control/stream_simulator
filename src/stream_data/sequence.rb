@@ -1,5 +1,4 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
 
@@ -17,6 +16,16 @@ class Sequence
     @name = name
     @file = file
     @commands = commands
+  end
+  
+  def accept(visitor)
+    @commands.each do |command|
+      sequence = Hash.new
+      sequence[:command] = command['command']
+      sequence[:arguments] = command['arguments']
+      
+      visitor.visit_sequence sequence
+    end
   end
   
 end

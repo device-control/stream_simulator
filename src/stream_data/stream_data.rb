@@ -1,5 +1,4 @@
 # coding: utf-8
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
 
@@ -19,7 +18,9 @@ class StreamData
   end
   
   def accept(visitor)
-    visitor.visit(@message_formats, @message_entities, @scenarios, @sequences, @autopilots)
+    @scenarios.each do |name, scenario|
+      scenario.accept(visitor)
+    end
   end
   
 end
