@@ -16,7 +16,7 @@ class SequenceCommandWait
   
   def run
     # TODO: 脱出方法を検討する必要があるはず
-    if @arguments[:time] == :wait_for_ever
+    if @arguments[:time] == :WAIT_FOR_EVER
       loop do
         sleep 1
       end

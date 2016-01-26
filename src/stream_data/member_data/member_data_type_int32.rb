@@ -13,7 +13,6 @@ class MemberDataTypeInt32
   attr_reader :name
   attr_reader :type
   attr_reader :size
-  attr_reader :hex_string_size
   attr_reader :offset
   attr_reader :default_value
   
@@ -26,7 +25,6 @@ class MemberDataTypeInt32
     @name = member['name']
     @type = member['type']
     @size = SIZE
-    @hex_string_size = SIZE*2
     @offset = offset
     @default_value = DEFAULT_VALUE
   end
@@ -45,7 +43,7 @@ class MemberDataTypeInt32
   
   # メッセージの長さが足りているかどうか
   def enough_length?(hex_string)
-    return false if hex_string.length < @hex_string_size
+    return false if hex_string.length < @size*2
     return true
   end
   

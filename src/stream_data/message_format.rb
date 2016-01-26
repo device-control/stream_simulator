@@ -74,7 +74,7 @@ class MessageFormat
     values = Hash.new
     @member_list.each do |member_name|
       member_data = get_member(member_name)
-      value = hex_string[member_data.offset, member_data.hex_string_size]
+      value = hex_string[member_data.offset*2, member_data.size*2]
       values[member_name] = member_data.decode(value)
     end
     return values

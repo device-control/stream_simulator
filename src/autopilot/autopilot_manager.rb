@@ -42,10 +42,10 @@ class AutopilotManager
     raise "unknown autopilot name [#{arguments[:name]}]" unless messages[:autopilot].has_key? arguments[:name]
     name = arguments[:name]
     autopilot = messages[:autopilot][name]
-    if autopilot.type == :AUTOPILOT_RESPONSE
-      @autopilots[name] = AutopilotAutoResponse.new(autopilot.arguments,message,stream, variables)
-    elsif autopilot.type = :INTERVAL_SEND
-      @autopilots[name] = AutopilotIntervalSend.new(autopilot.arguments,message,stream, variables)
+    if autopilot.type == :AUTO_RESPONSE
+      @autopilots[name] = AutopilotAutoResponse.new(autopilot.arguments,messages,stream, variables)
+    elsif autopilot.type == :INTERVAL_SEND
+      @autopilots[name] = AutopilotIntervalSend.new(autopilot.arguments,messages,stream, variables)
     else
       raise "unknown type [#{autopilot.type}]"
     end

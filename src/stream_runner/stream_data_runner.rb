@@ -62,7 +62,7 @@ class StreamDataRunner
     event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]
     @queues.each do |name,queue|
-      queue.push(evnet)
+      queue.push(event)
     end
   end
 end

@@ -19,11 +19,15 @@ class SequenceCommandCreator
     raise "not found :command" unless sequence.has_key? :command
     raise "not found :arguments" unless sequence.has_key? :arguments
     # arguments keysシンボル変換
-    arguments = sequence[:arguments].clone
-    def arguments.symbolize_keys
-      self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
+    if sequence[:arguments].nil?
+      arguments = nil
+    else
+      arguments = sequence[:arguments].clone
+      def arguments.symbolize_keys
+        self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
+      end
+      arguments = arguments.symbolize_keys
     end
-    arguments.symbolize_keys
     
     if sequence[:command] == :OPEN # ストリーム開始
       return SequenceCommandOpen.new stream
@@ -36,7 +40,7 @@ class SequenceCommandCreator
     elsif sequence[:command] == :SET_VARIABLE # 変数設定
       return SequenceCommandSetVariable.new arguments, variables
     elsif sequence[:command] == :AUTOPILOT_START # オートパイロット開始
-      return SequenceCommandAutopilotStart.new arguments, messages, stream, queues[:autopilot], variables
+      return SequenceCommandAutopilotStart.new arguments, messages, stream, variables
     elsif sequence[:command] == :AUTOPILOT_END # オートパイロット終了
       return SequenceCommandAutopilotEnd.new arguments
     elsif sequence[:command] == :CLOSE # ストリーム終了

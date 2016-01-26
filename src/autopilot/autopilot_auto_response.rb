@@ -23,12 +23,12 @@ class AutopilotAutoResponse
       def argument.symbolize_keys
         self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
       end
-      argument.symbolize_keys
+      argument = argument.symbolize_keys
       raise "arguments[#{index}] not found :request_format" unless argument.has_key? :request_format
-      raise "arguments[#{index}] not found :response_entity" unless arguments.has_key? :response_entity
+      raise "arguments[#{index}] not found :response_entity" unless argument.has_key? :response_entity
       raise "arguments[#{index}] unknown request_format name [#{argument[:request_format]}]" unless messages[:formats].has_key? argument[:request_format]
       raise "arguments[#{index}] unknown response_entity name [#{argument[:response_entity]}]" unless messages[:entities].has_key? argument[:response_entity]
-      responses[argument[:request_format]] = messages[:entities][arguments[:response_entity]]
+      responses[argument[:request_format]] = messages[:entities][argument[:response_entity]]
     end
     return responses
   end
@@ -48,8 +48,9 @@ class AutopilotAutoResponse
 
   # message entity 通知
   def message_entity_notify(message_entity)
+    Log.instance.debug "message entity 通知 #{message_entity.name}"
     # 通知されてきたmessage_entityが応答リスト内に登録されているか
-    unless @responses.has_key? message_entity.format
+    unless @responses.has_key? message_entity.format.name
       # TODO: 登録されてない場合は、ログに出力する？
       return
     end

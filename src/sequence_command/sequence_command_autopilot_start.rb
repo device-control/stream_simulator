@@ -9,14 +9,15 @@ Encoding.default_internal = 'utf-8'
 
 # オートパイロット開始
 class SequenceCommandAutopilotStart
-  def initialize(arguments, messages, stream)
+  def initialize(arguments, messages, stream, variables)
     @arguments = arguments
     @messages = messages
     @stream = stream
+    @variables = variables
   end
   
   def run
-    AutopilotManager.instance.add @arguments, @messages, @stream
+    AutopilotManager.instance.create @arguments, @messages, @stream, @variables
   end
   
 end
