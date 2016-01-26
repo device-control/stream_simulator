@@ -23,31 +23,8 @@ class AutopilotManager
     return false if @running # 失敗(開始済み)
     @queue = queue
     @thread = Thread.new(&method(:message_entity_received))
-    return true # 成功
-  end
-
-  # message entitiy 受信待ち
-  def message_entity_received
     @running = true
-    loop do
-      begin
-        break if @running == false
-        event = nil
-        Timeout.timeout(1) do
-          event = @queue.pop
-        end
-        next if event.nil?
-        raise "not found name" unless event.has_key? :name
-        raise "not found arguments" unless event.has_key? :arguments
-        raise "unknown event name [#{event[:name]}]" if event[:name] != :message_entity_received
-        @autopilots.each do |name,autopilot|
-          # autopilots に message entity 通知
-          autopilot.message_entity_notify event[:arguments][0]
-        end
-      rescue Timeout::Error
-        next
-      end
-    end
+    return true # 成功
   end
 
   # 終了
@@ -59,29 +36,50 @@ class AutopilotManager
   end
 
   # autopilot 登録
-  # arguments
-  #  :name = autopilot name
-  #
-  def create(arguments, messages, stream)
-    raise "not found autopilot" unless messages.has_key? :autopilot
-    raise "not found name" unless arguments.has_key? :name
+  def create(arguments, messages, stream, variables)
+    raise "not found :autopilot" unless messages.has_key? :autopilot
+    raise "not found :name" unless arguments.has_key? :name
+    raise "unknown autopilot name [#{arguments[:name]}]" unless messages[:autopilot].has_key? arguments[:name]
     name = arguments[:name]
-    body = messages[:autopilot][name]
-    contents = body["contents"]
-    if contents["type"] == "autopilot_response"
-      @autopilots[name] = AutopilotAutoResponse.new(contents[:arguments],message,stream)
-    elsif contents["type"] = "interval_send"
-      @autopilots[name] = AutopilotIntervalSend.new(contents[:arguments],message,stream)
+    autopilot = messages[:autopilot][name]
+    if autopilot.type == :AUTOPILOT_RESPONSE
+      @autopilots[name] = AutopilotAutoResponse.new(autopilot.arguments,message,stream, variables)
+    elsif autopilot.type = :INTERVAL_SEND
+      @autopilots[name] = AutopilotIntervalSend.new(autopilot.arguments,message,stream, variables)
     else
-      raise "unknown type [#{contents["type"]}]"
+      raise "unknown type [#{autopilot.type}]"
     end
     @autopilots[name].start
   end
 
   # autopilot 削除
   def delete(arguments)
-    raise "not found name" unless arguments.has_key? :name
+    raise "not found :name" unless arguments.has_key? :name
     @autopilots.delete(arguments[:name])
+  end
+
+  # message entitiy 受信待ち
+  private
+  def message_entity_received
+    loop do
+      begin
+        break if @running == false
+        event = nil
+        Timeout.timeout(1) do
+          event = @queue.pop
+        end
+        next if event.nil?
+        raise "not found :name" unless event.has_key? :name
+        raise "not found :arguments" unless event.has_key? :arguments
+        raise "unknown event name [#{event[:name]}]" unless event[:name] == :message_entity_received
+        @autopilots.each do |name,autopilot|
+          # autopilots に message entity 通知
+          autopilot.message_entity_notify event[:arguments][0]
+        end
+      rescue Timeout::Error
+        next
+      end
+    end
   end
   
 end

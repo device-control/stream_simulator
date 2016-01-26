@@ -7,11 +7,10 @@ Encoding.default_internal = 'utf-8'
 
 # オートパイロット
 class AutopilotIntervalSendEntity
-  def initialize(arguments, messages, stream)
-    @arguments = arguments
-    @messages = messages
+  def initialize(arguments, messages, stream, variables)
+    @interval_entities = create_interval_entities(arguments,messages)
     @stream = stream
-    @interval_send_entities = create_interval_entities(@arguments)
+    @variables = variables
     @running = false
   end
 
@@ -26,16 +25,23 @@ class AutopilotIntervalSendEntity
   rescue ArgumentError
     false
   end
-  
-  def create_interval_entities(arguments)
+
+  # インターバル送信するmessage_entityリストを生成する
+  def create_interval_entities(arguments,messages)
     entities = Array.new
-    arguments.each.with_index(0) do |argument,index|
+    arguments.each.with_index(0) do |_argument,index|
+      argument = _argument.clone
+      def argument.symbolize_keys
+        self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
+      end
+      argument.symbolize_keys
       # エラーチェック
-      raise "arguments[#{index}] not found send_entity" if argument.has_key :send_entity
-      raise "arguments[#{index}] unknown send_entity name [#{argument[:send_entity]}]" if @messages[:entities].has_key? argument[:send_entity]
+      raise "arguments[#{index}] not found :send_entity" unless argument.has_key :send_entity
+      raise "arguments[#{index}] not found :interval" unless argument.has_key :interval
+      raise "arguments[#{index}] unknown send_entity name [#{argument[:send_entity]}]" unless messages[:entities].has_key? argument[:send_entity]
       raise "arguments[#{index}] unknown interval time [#{argument[:interval]}]" unless integer? argument[:interval]
       entity = Hash.new
-      entity[:send_entity] = argument[:send_entity]
+      entity[:send_entity] = messages[:entities][argument[:send_entity]]
       entity[:interval] = argument[:interval]
       entity[:count] = 0
       entities << entity
@@ -59,25 +65,26 @@ class AutopilotIntervalSendEntity
     return true
   end
 
+  # message entity 通知
+  def message_entity_notify(message_entity)
+    # 何もしない
+  end
+
+  # 一秒間隔で送信できるか確認する
   private
   def run
-    message_entities = message[:entities]
     loop do
       sleep 1
-      @interval_send_entities.each do |ise|
+      @interval_entities.each do |ise|
         ise[:count] -= 1
         if ise[:count] <= 0
-          @stream.write message_entities[ise[:send_entity]].encode
+          @stream.write ise[:send_entity].encode
           ise[:count] = ise[:interval]
         end
       end
     end
   end
 
-  # message entity 通知
-  def message_entity_notify(message_entity)
-    # 何もしない
-  end
   
 end
 
