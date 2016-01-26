@@ -2,7 +2,7 @@
 
 require 'stream/stream_observer'
 require 'stream_data/message_entity'
-require 'message_utils'
+require 'stream_data/message_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'
