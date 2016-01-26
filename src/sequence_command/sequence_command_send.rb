@@ -7,9 +7,15 @@ Encoding.default_internal = 'utf-8'
 
 # メッセージ送信
 class SequenceCommandSend
+  # 例: sequence yaml
+  # - command: send
+  #   arguments:
+  #     message_entity: "03.10.01_CommandData03"
   def initialize(arguments, messages, stream, variables)
-    raise "not found message_entity" unless arguments.has_key? :message_entity
-    
+    raise "not found :message_entity" unless arguments.has_key? :message_entity
+    raise "unknown message_entity [#{arguments[:message_entity]}]" unless messages[:entities].has_key? arguments[:message_entity]
+    @send_entity = messages[:entities][arguments[:message_entity]]
+
     @arguments = arguments
     @messages = messages
     @stream = stream
@@ -17,10 +23,8 @@ class SequenceCommandSend
   end
   
   def run
-    raise "unknown message_entity [#{arguments[:message_entity]}]" if messages[:entities].has_key? arguments[:message_entity]
-    entity = messages[:entities][arguments[:message_entity]]
     # TODO: グローバル変数を置換する場合、@variables指定が必要
-    #       ex) @stream.write entity.encode, @variables
-    @stream.write entity.encode
+    #       ex) @stream.write @send_entity.encode, @variables
+    @stream.write @send_entity.encode
   end
 end

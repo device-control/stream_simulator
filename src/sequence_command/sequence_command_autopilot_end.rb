@@ -7,10 +7,8 @@ Encoding.default_internal = 'utf-8'
 
 # オートパイロット終了
 class SequenceCommandAutopilotEnd
-  def initialize(arguments, messages, stream)
+  def initialize(arguments)
     @arguments = arguments
-    @messages = messages
-    @stream = stream
   end
   
   def run

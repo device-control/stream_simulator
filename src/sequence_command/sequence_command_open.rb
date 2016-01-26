@@ -17,10 +17,12 @@ class SequenceCommandOpen
   
   def run
     @stream.open
+    # 接続待ち
     loop do
       break if @connected
       sleep 1
     end
+    @stream.delete_observer(StreamObserver::STATUS, self)
   end
 
   # 接続通知
