@@ -31,8 +31,17 @@ class StreamDataRunner
     AutopilotManager.instance.start @queues[:autopilot]
   end
 
-  # sequence = sequence[:command]
-  #            sequence[:arguments]
+  # sequence内容に従いコマンドを発行する
+  #  sequence = sequence[:command]
+  #             sequence[:arguments]
+  # 例：sequence yaml
+  # - command: send
+  #   arguments:
+  #     message_entity: "03.10.01_CommandData03"
+  # - command: receive
+  #   arguments:
+  #     expected_format: "03.10.01_CommandData03"
+  #     timeout: 5
   def visit_sequence(sequence)
     # TODO: yml同様フォーマットの場合は、ここで変換する
     raise "not found command" unless sequence.has_key? :command
