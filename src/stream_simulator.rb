@@ -19,7 +19,7 @@ class StreamSimulator
   # コンストラクタ
   def initialize(inparam)
     # Log出力開始
-    Log.instance.start inparam[:log_output_destination]
+    Log.instance.start inparam[:stream_simulator_log_path]
    
     # Stream生成
     stream_parameters = StreamSetting.load inparam[:stream_setting_file_path]
