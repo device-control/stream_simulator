@@ -33,8 +33,26 @@ class StreamSimulator
     messages = Hash.new
     messages[:formats] = @stream_data.message_formats
     messages[:entities] = @stream_data.message_entities
+    messages[:autopilot] = @stream_data.autopilots
     @stream_data_runner = StreamDataRunner.new @stream, messages
     
+    # @stream.add_observer(StreamObserver::STATUS, self)
+    # @stream.add_observer(StreamObserver::MESSAGE,self)
+  end
+  
+  # 接続通知
+  def stream_connected(stream)
+    # Log.instance.debug "stream_coonected: " + stream.name
+  end
+  
+  # 切断通知
+  def stream_disconnected(stream)
+    # Log.instance.debug "stream_discoonected: " + stream.name
+  end
+  
+  # 受信通知
+  def stream_message_received(stream, message)
+    # Log.instance.debug message.bytes.collect{|ch|sprintf "%02X",ch.ord}.join
   end
   
   def run

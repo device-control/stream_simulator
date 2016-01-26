@@ -25,6 +25,6 @@ class SequenceCommandSend
   def run
     # TODO: グローバル変数を置換する場合、@variables指定が必要
     #       ex) @stream.write @send_entity.encode, @variables
-    @stream.write @send_entity.encode
+    @stream.write @send_entity.encode :binary
   end
 end

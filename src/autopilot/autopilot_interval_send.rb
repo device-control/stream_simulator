@@ -78,7 +78,7 @@ class AutopilotIntervalSendEntity
       @interval_entities.each do |ise|
         ise[:count] -= 1
         if ise[:count] <= 0
-          @stream.write ise[:send_entity].encode
+          @stream.write ise[:send_entity].encode :binary
           ise[:count] = ise[:interval]
         end
       end

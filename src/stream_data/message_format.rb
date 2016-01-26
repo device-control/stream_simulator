@@ -1,13 +1,15 @@
 # coding: utf-8
 
-require "hashie"
+require 'hashie'
 
 require 'log'
+require 'stream_data/message_utils'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class MessageFormat
+  include MessageUtils
   
   attr_reader :name
   attr_reader :file
@@ -82,13 +84,16 @@ class MessageFormat
   
   # エンコード処理
   # バイナリテキストにエンコードする
-  def encode()
+  # option:
+  #   :binary バイナリにエンコードする
+  def encode(option=nil)
     hex_string = ""
     @member_list.each do |member_name|
       member_data = get_member(member_name)
       value = get_value(member_name)
       hex_string += member_data.encode(value)
     end
+    return hex_string_to_binary(hex_string) if option == :binary
     return hex_string
   end
   

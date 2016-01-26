@@ -37,7 +37,7 @@ module MemberDataUtils
   
   # 整数をバイナリテキストに変換
   def integer_to_hex_string(data, hex_length)
-    return sprintf("%0#{@hex_length}X", data)
+    return sprintf("%0#{hex_length}X", data)
   end
   
   # バイナリをバイナリテキストに変換

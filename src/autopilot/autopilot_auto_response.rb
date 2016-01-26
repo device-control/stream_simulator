@@ -54,7 +54,7 @@ class AutopilotAutoResponse
       # TODO: 登録されてない場合は、ログに出力する？
       return
     end
-    @stream.write @responses[message_entity.format].encode
+    @stream.write @responses[message_entity.format.name].encode :binary
   end
   
 end
