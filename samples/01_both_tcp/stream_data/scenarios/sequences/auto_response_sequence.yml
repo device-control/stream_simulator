@@ -7,23 +7,23 @@ contents:
   description: "自動応答シーケンス"
   commands:
     # 接続
-    - command: open
+    - command: :OPEN
       arguments:
     
     # 自動応答開始
-    - command: autopilot_start
+    - command: :AUTOPILOT_START
       arguments:
-      name: "autopilot_auto_response"
+        name: "autopilot_auto_response"
     
     # 待ち
-    - command: wait
+    - command: :WAIT
       arguments:
         timeout: :INFINITE # 無限待ち
     
     # 自動応答終了
-    - command: autopilot_stop
+    - command: :AUTOPILOT_END
       arguments:
     
     # 切断
-    - command: close
+    - command: :CLOSE
       arguments:

@@ -45,6 +45,11 @@ def stop
   $simulator.stop
 end
 
+# 実行
+def run
+  $simulator.run
+end
+
 
 #---------------------------------------------------
 # (4) 使用したいコマンドを追加

@@ -39,7 +39,7 @@ class Log
   def disabled
     @show_enabled = false
   end
-
+  
   def method_missing(method, *args)
     return if @show_enabled == false
     begin

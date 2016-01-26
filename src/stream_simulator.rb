@@ -5,8 +5,7 @@ require 'log'
 require 'stream/stream_setting'
 require 'stream/stream_manager'
 require 'stream_data/stream_data_creator'
-
-require 'stream_data_runner'
+require 'stream_runner/stream_data_runner'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -15,7 +14,7 @@ class StreamSimulator
   
   attr_reader :stream
   attr_reader :stream_data
-  attr_reader :message_analyze
+  attr_reader :stream_data_runner
   
   # コンストラクタ
   def initialize(inparam)

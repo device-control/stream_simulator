@@ -7,20 +7,20 @@ contents:
   description: "送受信のシーケンス"
   commands:
     # 接続
-    - command: open
+    - command: :OPEN
       arguments:
     
     # 送信
-    - command: send
+    - command: :SEND
       arguments:
         message_data: "entity_command"
     
     # 受信
-    - command: receive
+    - command: :RECEIVE
       arguments:
         expected_format: "format_response"
         timeout: 5 # 秒
     
     # 切断
-    - command: close
+    - command: :CLOSE
       arguments:

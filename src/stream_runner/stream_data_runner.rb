@@ -1,9 +1,9 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_data/message_analyze'
 require 'autopilot/autopilot_manager'
 require 'sequence_command/sequence_command_creator'
-require 'message_analyze'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -42,14 +42,19 @@ class StreamDataRunner
   #   arguments:
   #     expected_format: "03.10.01_CommandData03"
   #     timeout: 5
-  def visit_sequence(sequence)
+  def visit_sequence(_sequence)
     # TODO: yml同様フォーマットの場合は、ここで変換する
+    sequence = _sequence.clone
+    def sequence.symbolize_keys
+      self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
+    end
+    sequence.symbolize_keys
     raise "not found command" unless sequence.has_key? :command
     raise "not found arguments" unless sequence.has_key? :arguments
     command = SequenceCommandCreator.create sequence, @messages, @stream, @queues, @variables
     command.run
   end
-
+  
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
   def analyze_completed(message_entity)
     puts "message_received!!"
