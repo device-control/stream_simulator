@@ -6,24 +6,24 @@ contents:
   name: "auto_response_sequence"
   description: "自動応答シーケンス"
   commands:
-    # 接続
-    - command: :OPEN
-      arguments:
-    
     # 自動応答開始
     - command: :AUTOPILOT_START
       arguments:
         name: "autopilot_auto_response"
+    
+    # 接続
+    - command: :OPEN
+      arguments:
     
     # 待ち
     - command: :WAIT
       arguments:
         timeout: :INFINITE # 無限待ち
     
-    # 自動応答終了
-    - command: :AUTOPILOT_END
-      arguments:
-    
     # 切断
     - command: :CLOSE
+      arguments:
+    
+    # 自動応答終了
+    - command: :AUTOPILOT_END
       arguments:

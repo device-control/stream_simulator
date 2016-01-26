@@ -6,7 +6,7 @@ contents:
   name: "autopilot_interval_send_entity"
   description: "定時送信"
   parameters:
-    type: interval_send_entity
+    type: :INTERVAL_SEND
     arguments:
       # サンプル
       - send_entity: "entity_command"

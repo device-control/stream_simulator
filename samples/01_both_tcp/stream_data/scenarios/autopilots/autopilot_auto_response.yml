@@ -6,7 +6,7 @@ contents:
   name: "autopilot_auto_response"
   description: "自動応答"
   parameters:
-    type: auto_response
+    type: :AUTO_RESPONSE
     arguments:
       # サンプル
       - request_format: "format_command"
