@@ -8,7 +8,7 @@ require 'stream_data/message_entity'
 require 'stream_data/scenario'
 require 'stream_data/sequence'
 require 'stream_data/autopilot'
-require 'stream_data/member_data_creator'
+require 'stream_data/member_data/member_data_creator'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -92,8 +92,9 @@ class StreamDataCreator
                                        @creating_format[:member_list],
                                        @creating_format[:member_total_size],
                                        @creating_format[:members],
-                                       @creating_format[:primary_keys],
-                                       @creating_format[:values])
+                                       @creating_format[:values],
+                                       @creating_format[:primary_keys]
+                                      )
     
     return message_format
   end

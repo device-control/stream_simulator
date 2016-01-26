@@ -1,6 +1,6 @@
 # coding: utf-8
 
-require 'stream_data/member_data_utils'
+require 'stream_data/member_data/member_data_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'

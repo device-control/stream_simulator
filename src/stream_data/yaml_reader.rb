@@ -71,9 +71,17 @@ module YamlReader
     hash = Hash.new
     yamls.each.with_index do |yaml,index|
       yaml_obj = yaml[:body]
-      next if yaml_obj[CONTENT_TYPE] != type
+      content_type = yaml_obj[CONTENT_TYPE]
+      content_version = yaml_obj[CONTENT_VERSION]
       contents = yaml_obj[CONTENTS]
+      raise "\"#{CONTENT_TYPE}\" is not defined: file=[#{yaml[:file]}]" if content_type.nil?
+      raise "\"#{CONTENT_VERSION}\" is not defined: file=[#{yaml[:file]}]" if content_version.nil?
+      raise "\"#{CONTENTS}\" is not defined: file=[#{yaml[:file]}]" if contents.nil?
+      
+      next unless content_type == type
+      
       name = contents["name"]
+      raise "\"name\" is not defined in \"#{CONTENTS}\": file=[#{yaml[:file]}]" if name.nil?
       if hash.has_key?(name)
         Log.instance.warn "#{self.class}##{__method__}: Multiple define name: type=[#{type}] name=[#{name}] file=[#{yaml[:file]}]"
         next

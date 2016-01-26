@@ -14,17 +14,18 @@ class MessageFormat
   attr_reader :member_list
   attr_reader :member_total_size
   attr_reader :members
+  attr_reader :values
   attr_reader :primary_keys
   
   # コンストラクタ
-  def initialize(name, file, member_list, member_total_size, members, primary_keys, values)
+  def initialize(name, file, member_list, member_total_size, members, values, primary_keys)
     @name = name
     @file = file
     @member_list = member_list
     @member_total_size = member_total_size
     @members = members
-    @primary_keys = primary_keys
     @values = values
+    @primary_keys = primary_keys
   end
   
   # 値をゲットする
