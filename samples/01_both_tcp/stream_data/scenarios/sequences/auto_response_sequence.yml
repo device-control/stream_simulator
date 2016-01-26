@@ -13,7 +13,7 @@ contents:
     # 自動応答開始
     - command: :AUTOPILOT_START
       arguments:
-      name: "autopilot_auto_response"
+        name: "autopilot_auto_response"
     
     # 待ち
     - command: :WAIT
@@ -21,7 +21,7 @@ contents:
         timeout: :INFINITE # 無限待ち
     
     # 自動応答終了
-    - command: :AUTOPILOT_STOP
+    - command: :AUTOPILOT_END
       arguments:
     
     # 切断
