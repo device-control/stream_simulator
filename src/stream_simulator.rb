@@ -32,7 +32,7 @@ class StreamSimulator
     messages = Hash.new
     messages[:formats] = @stream_data.message_formats
     messages[:entities] = @stream_data.message_entities
-    messages[:autopilot] = @stream_data.autopilots
+    messages[:autopilots] = @stream_data.autopilots
     @stream_data_runner = StreamDataRunner.new @stream, messages
     
     # @stream.add_observer(StreamObserver::STATUS, self)

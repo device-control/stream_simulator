@@ -34,7 +34,7 @@ class SequenceCommandReceive
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
     # TODO: 期待のmessage_formatが到着するまで繰り返すべきか？
-    #       autopilotとの組み合わせ時との動作を検討する必要がある「
+    #       autopilotとの組み合わせ時との動作を検討する必要がある
     Timeout.timeout(timeout) do # timeout=nil の場合、無限
       event = @queue.pop
       raise "not found :name" unless event.has_key? :name

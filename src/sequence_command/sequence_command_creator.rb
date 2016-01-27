@@ -18,16 +18,7 @@ class SequenceCommandCreator
   def self.create(sequence, messages, stream, queues, variables)
     raise "not found :command" unless sequence.has_key? :command
     raise "not found :arguments" unless sequence.has_key? :arguments
-    # arguments keysシンボル変換
-    if sequence[:arguments].nil?
-      arguments = nil
-    else
-      arguments = sequence[:arguments].clone
-      def arguments.symbolize_keys
-        self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
-      end
-      arguments = arguments.symbolize_keys
-    end
+    arguments = sequence[:arguments]
     
     if sequence[:command] == :OPEN # ストリーム開始
       return SequenceCommandOpen.new stream

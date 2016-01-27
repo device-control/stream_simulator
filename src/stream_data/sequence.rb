@@ -22,11 +22,7 @@ class Sequence
   
   def accept(visitor)
     @commands.each do |command|
-      sequence = Hash.new
-      sequence[:command] = command['command']
-      sequence[:arguments] = command['arguments']
-      
-      visitor.visit_sequence sequence
+      visitor.visit_sequence command
     end
   end
   

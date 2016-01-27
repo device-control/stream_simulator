@@ -37,11 +37,11 @@ class AutopilotManager
 
   # autopilot 登録
   def create(arguments, messages, stream, variables)
-    raise "not found :autopilot" unless messages.has_key? :autopilot
+    raise "not found :autopilot" unless messages.has_key? :autopilots
     raise "not found :name" unless arguments.has_key? :name
-    raise "unknown autopilot name [#{arguments[:name]}]" unless messages[:autopilot].has_key? arguments[:name]
+    raise "unknown autopilot name [#{arguments[:name]}]" unless messages[:autopilots].has_key? arguments[:name]
     name = arguments[:name]
-    autopilot = messages[:autopilot][name]
+    autopilot = messages[:autopilots][name]
     if autopilot.type == :AUTO_RESPONSE
       @autopilots[name] = AutopilotAutoResponse.new(autopilot.arguments,messages,stream, variables)
     elsif autopilot.type == :INTERVAL_SEND
@@ -51,7 +51,7 @@ class AutopilotManager
     end
     @autopilots[name].start
   end
-
+  
   # autopilot 削除
   def delete(arguments)
     raise "not found :name" unless arguments.has_key? :name

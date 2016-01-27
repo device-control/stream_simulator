@@ -20,7 +20,8 @@ class StreamDataRunner
     raise "stream is nil" if stream.nil?
     raise "not found formats" unless messages.has_key? :formats
     raise "not found entities" unless messages.has_key? :entities
-
+    raise "not found autopilots" unless messages.has_key? :autopilots
+    
     @variables = Hash.new
     @stream = stream
     @messages = messages
@@ -42,13 +43,7 @@ class StreamDataRunner
   #   arguments:
   #     expected_format: "03.10.01_CommandData03"
   #     timeout: 5
-  def visit_sequence(_sequence)
-    # TODO: yml同様フォーマットの場合は、ここで変換する
-    sequence = _sequence.clone
-    def sequence.symbolize_keys
-      self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
-    end
-    sequence.symbolize_keys
+  def visit_sequence(sequence)
     raise "not found command" unless sequence.has_key? :command
     raise "not found arguments" unless sequence.has_key? :arguments
     command = SequenceCommandCreator.create sequence, @messages, @stream, @queues, @variables
