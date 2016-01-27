@@ -81,19 +81,9 @@ class StreamDataCreator
   def get_sequences(yamls)
     sequences = Hash.new
     yamls[:sequences].each do |name, yaml|
-      sequences[name] = create_sequence(name, yaml)
+      sequences[name] = Sequence.create name, yaml
     end
     return sequences
-  end
-  
-  # シーケンス生成処理
-  def create_sequence(name, yaml)
-    commands = yaml[:body]['contents']['commands']
-    if commands.nil?
-      raise "ERROR: #{self.class}##{__method__}: commands is not defined. file=[#{yaml[:file]}]"
-    end
-    
-    return Sequence.new(name, yaml[:file], commands)
   end
   
   # ---

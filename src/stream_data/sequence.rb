@@ -1,11 +1,13 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_data/sequence_creator'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class Sequence
+  extend SequenceCreator
   
   attr_reader :name
   attr_reader :file

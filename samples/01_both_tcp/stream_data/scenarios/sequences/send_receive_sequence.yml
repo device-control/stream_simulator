@@ -13,7 +13,7 @@ contents:
     # 送信
     - command: :SEND
       arguments:
-        message_data: "entity_command"
+        message_entity: "entity_command"
     
     # 受信
     - command: :RECEIVE
