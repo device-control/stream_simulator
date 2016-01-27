@@ -1,13 +1,13 @@
 # coding: utf-8
 
-require 'stream_data/member_data/member_data_utils'
+require 'stream_data/message_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class MemberDataTypeChar
-  include MemberDataUtils
+  include MessageUtils
   
   attr_reader :name_jp
   attr_reader :name
@@ -38,9 +38,7 @@ class MemberDataTypeChar
   
   def valid?(value)
     return false unless value.kind_of?(String)
-    # raise "ERROR: #{self.class}##{__method__}: Not a target class of value. value=[#{val}] class=[#{val.class}]"
-    return false if val.bytesize > @size
-    # raise "ERROR: #{self.class}##{__method__}: Size is over. val=[#{val}] size=[#{val.bytesize}]"
+    return false if value.bytesize > @size
     return true
   end
   

@@ -1,13 +1,13 @@
 # coding: utf-8
 
-require 'stream_data/member_data/member_data_utils'
+require 'stream_data/message_utils'
 require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class MemberDataTypeInt32
-  include MemberDataUtils
+  include MessageUtils
   
   attr_reader :name_jp
   attr_reader :name
@@ -34,10 +34,8 @@ class MemberDataTypeInt32
   end
   
   def valid?(value)
-    return false unless val.kind_of?(Integer)
-    # raise "ERROR: #{self.class}##{__method__}: Not a target class of value. value=[#{val}] class=[#{val.class}]"
-    return false if val < 0 || val > (256 ** @size - 1)
-    # raise "ERROR: #{self.class}##{__method__}: Range is out of value. val=[#{val}]"
+    return false unless value.kind_of?(Integer)
+    return false if value < 0 || value > (256 ** @size - 1)
     return true
   end
   

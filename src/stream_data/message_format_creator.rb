@@ -28,10 +28,16 @@ module MessageFormatCreator
     out_members = Hash.new
     generate_members creating_info, nested_member_names, yaml[:body]['contents']['members'], out_members, message_structs
     
+    # Hashieオブジェクトを生成
+    hashie_members = Hashie::Mash.new out_members
+    
     # プライマリキーの値を設定
     primary_keys = yaml[:body]['contents']['primary_keys'] || Hash.new
     primary_keys.each do |key, value|
       raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
+      # 値のチェック
+      member_data = eval "hashie_members.#{key}"
+      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
       creating_info[:values][key] = value
     end
     # デフォルト値を設定
@@ -39,6 +45,9 @@ module MessageFormatCreator
     default_values.each do |key, value|
       raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
       raise "already defined [#{key}] in primary_keys" if primary_keys.has_key? key
+      # 値のチェック
+      member_data = eval "hashie_members.#{key}"
+      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
       creating_info[:values][key] = value
     end
     

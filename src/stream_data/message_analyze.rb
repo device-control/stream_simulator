@@ -49,7 +49,7 @@ module MessageAnalyze
     # 受信データの解析処理
     loop do
       # Entity生成
-      message_entity = create_message_entity @message
+      message_entity = MessageEntity.create_from_message @message, @message_formats
       break if message_entity.nil?
       
       # 受信メッセージから解析済みメッセージを削除
@@ -60,27 +60,6 @@ module MessageAnalyze
       # 解析完了を通知(callback)
       analyze_completed message_entity
     end
-  end
-  
-  # メッセージエンティティ生成処理
-  def create_message_entity(message)
-    # フォーマットを特定する
-    target_format = nil
-    values = nil
-    @message_formats.each do |name, message_format|
-      values = message_format.decode @message
-      next if values.nil?
-      if message_format.target? values
-        target_format = message_format
-        break
-      end
-    end
-    # フォーマットなし？
-    return nil if target_format.nil?
-    
-    # エンティティ生成
-    name = 'MessageAnalyze_'+target_format.name
-    return MessageEntity.new name, 'None', target_format, values
   end
   
 end

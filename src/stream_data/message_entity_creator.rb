@@ -24,9 +24,28 @@ module MessageEntityCreator
     values = yaml[:body]['contents']['values'] || Hash.new
     values.each do |key, value|
       raise "not found [#{key}] in member_list" unless format.member_list.include? key
+      member_data = format.get_member key
+      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
     end
     
     return MessageEntity.new name, yaml[:file], format, values
+  end
+  
+  # メッセージから MessageEntity を生成する
+  def create_from_message(message, message_formats)
+    # フォーマットを特定する
+    target_format = nil
+    values = nil
+    message_formats.each do |name, message_format|
+      values = message_format.decode message
+      next if values.nil?
+      if message_format.target? values
+        target_format = message_format
+        break
+      end
+    end
+    return nil if target_format.nil?
+    return MessageEntity.new target_format.name, '', target_format, values
   end
   
 end

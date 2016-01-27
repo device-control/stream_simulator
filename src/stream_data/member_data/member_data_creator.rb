@@ -16,8 +16,8 @@ module MemberDataCreator
     return MemberDataTypeInt8.new(member, offset) if member['type'] == :INT8
     return MemberDataTypeInt16.new(member, offset) if member['type'] == :INT16
     return MemberDataTypeInt32.new(member, offset) if member['type'] == :INT32
-    # 異常フォーマット
-    raise "ERROR: #{self.class}##{__method__}: Undefined member type. name=[#{member['name']}] type=[#{member['type']}]"
+    # フォーマット異常
+    raise "undefined member type. name=[#{member['name']}] type=[#{member['type']}]"
   end
   
   def self.use_array?(member)

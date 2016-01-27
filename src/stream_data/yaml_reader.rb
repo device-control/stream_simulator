@@ -9,9 +9,7 @@ Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 module YamlReader
-  
   EXTENSION_YAML  = '.yml'
-  
   CONTENT_TYPE    = 'content-type'
   CONTENT_VERSION = 'content-version'
   CONTENTS        = 'contents'
@@ -22,14 +20,14 @@ module YamlReader
     yamls = Array.new
     
     # Yamlファイル一覧を取得
-    files = get_files(path, EXTENSION_YAML)
+    files = get_files path, EXTENSION_YAML
     # Yamlファイル読込
     files.each do |file|
-      body = read_yaml(file)
+      body = read_yaml file
       yaml = Hash.new
       yaml[:file] = file
       yaml[:body] = body
-      yamls.push(yaml)
+      yamls << yaml
     end
     
     return yamls
@@ -43,7 +41,7 @@ module YamlReader
     Find.find( path ) do | f |
       if ( File.file?(f) ) then
         if ( File.extname( f ) == extension ) then
-          files.push(f)
+          files << f
         end
       end
     end
@@ -56,8 +54,8 @@ module YamlReader
     body = nil
     begin
       File.open(filename) do |f|
-        tmp = f.read()
-        body = YAML.load(tmp)
+        tmp = f.read
+        body = YAML.load tmp
       end
     rescue => e
       raise "#{filename}: " + e.message
@@ -82,7 +80,7 @@ module YamlReader
       
       name = contents["name"]
       raise "\"name\" is not defined in \"#{CONTENTS}\": file=[#{yaml[:file]}]" if name.nil?
-      if hash.has_key?(name)
+      if hash.has_key? name 
         Log.instance.warn "#{self.class}##{__method__}: Multiple define name: type=[#{type}] name=[#{name}] file=[#{yaml[:file]}]"
         next
       end
