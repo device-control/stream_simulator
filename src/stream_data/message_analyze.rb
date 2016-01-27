@@ -12,8 +12,10 @@ module MessageAnalyze
   include MessageUtils
   
   def initialize(stream, message_formats)
-    @message_formats = message_formats
+    raise "stream is nil" if stream.nil?
+    raise "message_formats is nil" if message_formats.nil?
     
+    @message_formats = message_formats
     clear
     stream.add_observer StreamObserver::STATUS, self
     stream.add_observer StreamObserver::MESSAGE, self

@@ -11,6 +11,7 @@ module SequenceCreator
   
   # Sequence 生成処理
   def create(name, yaml)
+    raise "name is nil" if name.nil?
     raise "yaml is nil" if yaml.nil?
     raise "not found file" unless yaml.has_key? :file
     raise "not found body" unless yaml.has_key? :body

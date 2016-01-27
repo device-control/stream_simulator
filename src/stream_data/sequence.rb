@@ -15,12 +15,18 @@ class Sequence
   
   # コンストラクタ
   def initialize(name, file, commands)
+    raise "name is nil" if name.nil?
+    raise "file is nil" if file.nil?
+    raise "commands is nil" if commands.nil?
+    
     @name = name
     @file = file
     @commands = commands
   end
   
   def accept(visitor)
+    raise "visitor is nil" if visitor.nil?
+    
     @commands.each do |command|
       visitor.visit_sequence command
     end

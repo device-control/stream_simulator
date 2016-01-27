@@ -18,6 +18,11 @@ class MessageEntity
   
   # コンストラクタ
   def initialize(name, file, format, values)
+    raise "name is nil" if name.nil?
+    raise "file is nil" if file.nil?
+    raise "format is nil" if format.nil?
+    raise "values is nil" if values.nil?
+    
     @name = name
     @file = file
     @format = format
@@ -27,6 +32,7 @@ class MessageEntity
   # 値をゲットする
   # @valuesになければ、@formatから取得する
   def get_value(key)
+    raise "key is nil" if key.nil?
     return @format.get_value key if @values.nil?
     return @format.get_value key if @values[key].nil?
     return @values[key] 

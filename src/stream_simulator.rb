@@ -6,11 +6,13 @@ require 'stream/stream_setting'
 require 'stream/stream_manager'
 require 'stream_data/stream_data'
 require 'stream_runner/stream_data_runner'
+require 'stream_data/message_utils'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class StreamSimulator
+  include MessageUtils
   
   attr_reader :stream
   attr_reader :stream_data
@@ -54,35 +56,55 @@ class StreamSimulator
     # Log.instance.debug message.bytes.collect{|ch|sprintf "%02X",ch.ord}.join
   end
   
-  def run
-    @stream_data.accept @stream_data_runner
+  # シナリオ実行
+  def run(scenario_name)
+    unless @stream_data.scenarios.has_key? scenario_name
+      Log.instance.debug "scenario not found: name=[#{scenario_name}]"
+      return false
+    end
+    @stream_data.accept @stream_data_runner, scenario_name
+    return true
   end
   
+  # stream 開始
   def start
     @stream.open
     return true
   end
   
+  # stream 停止
   def stop
     @stream.close
     return true
   end
   
+  # メッセージ送信
   def write(message)
-    @stream.write message
+    hex_string = binary_to_hex_string message
+    @stream.write hex_string
     return true
   end
   
+  # メッセージ一覧表示
   def show_message
     @stream_data.message_entities.each do |name, entity|
-      puts "#{name}: #{entity.encode}"
+      puts "#{name}: \"#{entity.encode}\""
     end
     return true
   end
   
+  # メッセージフォーマット一覧表示
   def show_message_format
     @stream_data.message_formats.each do |name, format|
-      puts "#{name}: #{format.encode}"
+      puts "#{name}: \"#{format.encode}\""
+    end
+    return true
+  end
+  
+  # シナリオ一覧表示
+  def show_scenario
+    @stream_data.scenarios.each do |name, scenario|
+      puts "#{name}: \"#{scenario.name}\""
     end
     return true
   end

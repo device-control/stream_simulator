@@ -11,7 +11,9 @@ module ScenarioCreator
   
   # Scenario 生成処理
   def create(name, yaml, sequences)
+    raise "name is nil" if name.nil?
     raise "yaml is nil" if yaml.nil?
+    raise "sequences is nil" if sequences.nil?
     raise "not found file" unless yaml.has_key? :file
     raise "not found body" unless yaml.has_key? :body
     raise "not found contents" unless yaml[:body].has_key? 'contents'

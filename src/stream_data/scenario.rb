@@ -15,12 +15,18 @@ class Scenario
   
   # コンストラクタ
   def initialize(name, file, sequences)
+    raise "name is nil" if name.nil?
+    raise "file is nil" if file.nil?
+    raise "sequences is nil" if sequences.nil?
+    
     @name = name
     @file = file
     @sequences = sequences
   end
   
   def accept(visitor)
+    raise "visitor is nil" if visitor.nil?
+    
     @sequences.each do |sequence|
       sequence.accept visitor
     end

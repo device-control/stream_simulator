@@ -23,6 +23,14 @@ class MessageFormat
   
   # コンストラクタ
   def initialize(name, file, member_list, member_total_size, members, values, primary_keys)
+    raise "name is nil" if name.nil?
+    raise "file is nil" if file.nil?
+    raise "member_list is nil" if member_list.nil?
+    raise "member_total_size is nil" if member_total_size.nil?
+    raise "members is nil" if members.nil?
+    raise "values is nil" if values.nil?
+    raise "primary_keys is nil" if primary_keys.nil?
+    
     @name = name
     @file = file
     @member_list = member_list

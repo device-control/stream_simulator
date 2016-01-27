@@ -19,10 +19,17 @@ class StreamData
   def initialize()
   end
   
-  def accept(visitor)
-    @scenarios.each do |name, scenario|
-      scenario.accept visitor
+  def accept(visitor, scenario_name)
+    raise "visitor is nil" if visitor.nil?
+    raise "scenario_name is nil" if scenario_name.nil?
+    
+    # シナリオが存在しない場合、ログに出力して終了
+    unless @scenarios.has_key? scenario_name
+      Log.instance.debug "scenario not found: name=[#{scenario_name}]"
+      return
     end
+    
+    @scenarios[scenario_name].accept visitor
   end
   
 end

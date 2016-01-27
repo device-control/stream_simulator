@@ -15,20 +15,10 @@ Encoding.default_internal = 'utf-8'
 module StreamDataCreator
   include YamlReader
   
-  # Yamlオブジェクトを内部用にリメイクする
-  def remake_yamls(_yamls)
-    yamls = Hash.new
-    yamls[:message_structs] = yamls_by_name _yamls, "message_struct"
-    yamls[:message_formats] = yamls_by_name _yamls, "message_format"
-    yamls[:message_entities] = yamls_by_name _yamls, "message_entity"
-    yamls[:scenarios] = yamls_by_name _yamls, "scenario"
-    yamls[:sequences] = yamls_by_name _yamls, "sequence"
-    yamls[:autopilots] = yamls_by_name _yamls, "autopilot"
-    return yamls
-  end
-  
   # StreamData を生成する
   def create(path)
+    raise "path is nil" if path.nil?
+    
     # yamlファイル読込み
     yamls = get_yamls(path)
     yamls = remake_yamls(yamls)
@@ -48,7 +38,18 @@ module StreamDataCreator
     return stream_data
   end
   
-  # ---
+  # Yamlオブジェクトを内部用にリメイクする
+  def remake_yamls(_yamls)
+    yamls = Hash.new
+    yamls[:message_structs] = yamls_by_name _yamls, "message_struct"
+    yamls[:message_formats] = yamls_by_name _yamls, "message_format"
+    yamls[:message_entities] = yamls_by_name _yamls, "message_entity"
+    yamls[:scenarios] = yamls_by_name _yamls, "scenario"
+    yamls[:sequences] = yamls_by_name _yamls, "sequence"
+    yamls[:autopilots] = yamls_by_name _yamls, "autopilot"
+    return yamls
+  end
+  
   # message_formats取得
   def get_message_formats(yamls, message_structs)
     formats = Hash.new
@@ -58,7 +59,6 @@ module StreamDataCreator
     return formats
   end
   
-  # ---
   # message_entities取得
   def get_message_entities(yamls, message_formats)
     entities = Hash.new
@@ -68,7 +68,6 @@ module StreamDataCreator
     return entities
   end
   
-  # ---
   # sequences取得
   def get_sequences(yamls)
     sequences = Hash.new
@@ -78,7 +77,6 @@ module StreamDataCreator
     return sequences
   end
   
-  # ---
   # scenarios取得
   def get_scenarios(yamls, sequences)
     scenarios = Hash.new
@@ -88,7 +86,6 @@ module StreamDataCreator
     return scenarios
   end
   
-  # ---
   # autopilots取得
   def get_autopilots(yamls)
     autopilots = Hash.new

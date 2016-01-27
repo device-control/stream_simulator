@@ -10,7 +10,9 @@ module MessageEntityCreator
   
   # MessageEntity を生成する
   def create(name, yaml, message_formats)
+    raise "name is nil" if name.nil?
     raise "yaml is nil" if yaml.nil?
+    raise "message_formats is nil" if message_formats.nil?
     raise "not found file" unless yaml.has_key? :file
     raise "not found body" unless yaml.has_key? :body
     raise "not found contents" unless yaml[:body].has_key? 'contents'
@@ -33,6 +35,8 @@ module MessageEntityCreator
   
   # メッセージから MessageEntity を生成する
   def create_from_message(message, message_formats)
+    raise "message is nil" if message.nil?
+    raise "message_formats is nil" if message_formats.nil?
     # フォーマットを特定する
     target_format = nil
     values = nil
