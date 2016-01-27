@@ -3,13 +3,13 @@ content-type: sequence
 content-version: 0.1
 
 contents:
-  name: auto_response_sequence
-  description: "自動応答シーケンス"
+  name: interval_send_sequence
+  description: "定時送信シーケンス"
   commands:
     # 自動応答開始
     - command: :AUTOPILOT_START
       arguments:
-        name: "auto_response_autopilot"
+        name: "interval_send_autopilot"
     
     # 接続
     - command: :OPEN
@@ -27,4 +27,4 @@ contents:
     # 自動応答終了
     - command: :AUTOPILOT_END
       arguments:
-        name: "auto_response_autopilot"
+        name: "interval_send_autopilot"

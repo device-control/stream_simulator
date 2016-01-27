@@ -3,8 +3,8 @@ content-type: message_format
 content-version: 0.1
 
 contents:
-  name: format_command
-  description: "コマンドのフォーマット"
+  name: response_format
+  description: "レスポンスのフォーマット"
   # メンバー定義
   members:
     - name_jp: "ID"
@@ -23,29 +23,14 @@ contents:
     - name_jp: "member4 CHAR"
       name: member4_char
       type: :CHAR
-    - name_jp: "member5 Struct"
-      name: member5_struct
-      type: Struct
-    
-    - name_jp: "member6 INT8[3]"
-      name: member6_int8[3]
-      type: :INT8
-    - name_jp: "member7 INT16[3]"
-      name: member7_int16[3]
-      type: :INT16
-    - name_jp: "member8 INT32[3]"
-      name: member8_int32[3]
-      type: :INT32
-    - name_jp: "member9 CHAR[3]"
-      name: member9_char[3]
-      type: :CHAR
-    - name_jp: "member10 Struct[3]"
-      name: member10_struct[3]
-      type: Struct
     
   # プライマリキーの項目と値を設定
   primary_keys:
-    id: 0x01
+    id: 0x81
   
   # デフォルト値を設定（設定しなければ、typeの初期値となる）
   default_values:
+    member1_int8: 0xFF
+    member2_int16: 0xFFFF
+    member3_int32: 0xFFFFFFFF
+    member4_char: 'Z'

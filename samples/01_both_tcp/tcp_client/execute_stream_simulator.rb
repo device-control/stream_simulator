@@ -30,10 +30,22 @@ stream_setting_file = '../stream_data/settings/tcp_client_setting.yml'
 $inparam = Hash.new
 $inparam[:stream_setting_file_path] = File.expand_path(File.dirname(__FILE__))+"/#{stream_setting_file}"
 $inparam[:stream_data_path] = File.expand_path(File.dirname(__FILE__))+"/#{simulator_data_path}"
+$inparam[:stream_simulator_log_path] = File.expand_path(File.dirname(__FILE__))+"/stream_simulator.log"
 # シミュレータ生成
 $simulator = StreamSimulator.new $inparam
 
 # 既定のコマンド定義
+
+# シナリオ実行
+def run(scenario_name)
+  $simulator.run scenario_name
+end
+
+
+#---------------------------------------------------
+# (4) 使用したいコマンドを追加
+#  stream_simulator のメソッド呼び出しを追加することが可能
+#  以下サンプルコマンドを追加
 
 # 開始
 def start
@@ -45,33 +57,26 @@ def stop
   $simulator.stop
 end
 
-# 実行
-def run
-  $simulator.run
-end
-
-
-#---------------------------------------------------
-# (4) 使用したいコマンドを追加
-#  stream_simulator のメソッド呼び出しを追加することが可能
-#  以下サンプルコマンドを追加
-
-# バイナリテキストをバイナリに変換し、メッセージを送信する
+# メッセージを送信する
 def write(message)
-  binary_message = message.scan(/.{2}/).collect{|c| c.hex}.pack("C*")
-  $simulator.write binary_message
+  $simulator.write message
 end
 
-# 管理しているメッセージデータすべてをバイナリテキストにして表示する
+# 管理しているメッセージをバイナリテキストにして表示する
 def show_message
   $simulator.show_message
 end
 
-# 管理しているメッセージフォーマットすべてをバイナリテキストにして表示する
+# 管理しているメッセージフォーマットをバイナリテキストにして表示する
 def show_message_format
   $simulator.show_message_format
 end
 
+# 管理しているシナリオを表示する
+def show_scenario
+  $simulator.show_scenario
+end
+
 # 本スクリプト実行時に開始コマンドを実行する
-# start
+run "tcp_client_scenario"
 

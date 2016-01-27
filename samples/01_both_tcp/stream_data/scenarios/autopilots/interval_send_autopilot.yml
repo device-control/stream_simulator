@@ -3,11 +3,11 @@ content-type: autopilot
 content-version: 0.1
 
 contents:
-  name: "autopilot_interval_send_entity"
+  name: interval_send_autopilot
   description: "定時送信"
   parameters:
     type: :INTERVAL_SEND
     arguments:
       # サンプル
-      - send_entity: "entity_command"
-        interval: 4
+      - send_entity: "command_entity"
+        interval: 5

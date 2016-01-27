@@ -3,7 +3,7 @@ content-type: message_entity
 content-version: 0.1
 
 contents:
-  name: entity_response
+  name: response_entity
   description: "レスポンスのエンティティ"
-  using_format: format_response
+  using_format: response_format
   values:

@@ -8,3 +8,4 @@ contents:
   sequences:
     # 送受信シーケンス
     - name: "send_receive_sequence"
+    - name: "interval_send_sequence"

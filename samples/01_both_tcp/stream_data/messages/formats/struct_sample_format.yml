@@ -3,8 +3,8 @@ content-type: message_format
 content-version: 0.1
 
 contents:
-  name: format_response
-  description: "レスポンスのフォーマット"
+  name: struct_sample_format
+  description: "構造体確認用のフォーマット"
   # メンバー定義
   members:
     - name_jp: "ID"
@@ -45,7 +45,7 @@ contents:
     
   # プライマリキーの項目と値を設定
   primary_keys:
-    id: 0x81
+    id: 0xFF
   
   # デフォルト値を設定（設定しなければ、typeの初期値となる）
   default_values:

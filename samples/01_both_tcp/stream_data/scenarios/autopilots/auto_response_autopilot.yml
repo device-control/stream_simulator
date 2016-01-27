@@ -3,11 +3,11 @@ content-type: autopilot
 content-version: 0.1
 
 contents:
-  name: "autopilot_auto_response"
+  name: auto_response_autopilot
   description: "自動応答"
   parameters:
     type: :AUTO_RESPONSE
     arguments:
       # サンプル
-      - request_format: "format_command"
-        response_entity: "entity_response"
+      - request_format: "command_format"
+        response_entity: "response_entity"

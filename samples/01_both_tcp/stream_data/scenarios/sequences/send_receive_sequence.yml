@@ -13,12 +13,12 @@ contents:
     # 送信
     - command: :SEND
       arguments:
-        message_entity: "entity_command"
+        message_entity: "command_entity"
     
     # 受信
     - command: :RECEIVE
       arguments:
-        expected_format: "format_response"
+        expected_format: "response_format"
         timeout: 5 # 秒
     
     # 切断
