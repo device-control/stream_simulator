@@ -27,9 +27,9 @@ module AutopilotCreator
     parameters = parameters.symbolize_keys
     
     # arguments のシンボル変換
-    parameters[:arguments].each do |argument|
+    parameters[:arguments].each.with_index(0) do |argument, index|
       argument.extend ExtendHash
-      argument = argument.symbolize_keys
+      parameters[:arguments][index] = argument.symbolize_keys
     end
     
     return Autopilot.new name, yaml[:file], parameters[:type], parameters[:arguments]

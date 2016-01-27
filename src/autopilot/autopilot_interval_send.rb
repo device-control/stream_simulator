@@ -6,7 +6,7 @@ Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 # オートパイロット
-class AutopilotIntervalSendEntity
+class AutopilotIntervalSend
   def initialize(arguments, messages, stream, variables)
     @interval_entities = create_interval_entities(arguments,messages)
     @stream = stream
@@ -27,17 +27,12 @@ class AutopilotIntervalSendEntity
   end
 
   # インターバル送信するmessage_entityリストを生成する
-  def create_interval_entities(arguments,messages)
+  def create_interval_entities(arguments, messages)
     entities = Array.new
-    arguments.each.with_index(0) do |_argument,index|
-      argument = _argument.clone
-      def argument.symbolize_keys
-        self.each_with_object({}){|(k,v),memo| memo[k.to_s.to_sym]=v}
-      end
-      argument.symbolize_keys
+    arguments.each.with_index(0) do |argument, index|
       # エラーチェック
-      raise "arguments[#{index}] not found :send_entity" unless argument.has_key :send_entity
-      raise "arguments[#{index}] not found :interval" unless argument.has_key :interval
+      raise "arguments[#{index}] not found :send_entity" unless argument.has_key? :send_entity
+      raise "arguments[#{index}] not found :interval" unless argument.has_key? :interval
       raise "arguments[#{index}] unknown send_entity name [#{argument[:send_entity]}]" unless messages[:entities].has_key? argument[:send_entity]
       raise "arguments[#{index}] unknown interval time [#{argument[:interval]}]" unless integer? argument[:interval]
       entity = Hash.new
