@@ -49,7 +49,7 @@ class MessageFormat
   
   # 対象かどうか
   def target?(values)
-    return false unless primary_keys_match?(values)
+    return false unless primary_keys_match? values
     return true
   end
   
@@ -58,7 +58,7 @@ class MessageFormat
     return false if @primary_keys.nil?
     return false if @primary_keys.size == 0
     @primary_keys.each do |key, value|
-      return false unless values.include?(key)
+      return false unless values.include? key
       return false unless values[key] == value
     end
     return true
@@ -73,13 +73,13 @@ class MessageFormat
   # デコード処理
   # @member_listをキーとしたHashにデコードする
   def decode(hex_string)
-    return nil unless enough_length?(hex_string)
+    return nil unless enough_length? hex_string
     
     values = Hash.new
     @member_list.each do |member_name|
-      member_data = get_member(member_name)
+      member_data = get_member member_name
       value = hex_string[member_data.offset*2, member_data.size*2]
-      values[member_name] = member_data.decode(value)
+      values[member_name] = member_data.decode value
     end
     return values
   end
@@ -91,11 +91,11 @@ class MessageFormat
   def encode(option=nil)
     hex_string = ""
     @member_list.each do |member_name|
-      member_data = get_member(member_name)
-      value = get_value(member_name)
-      hex_string += member_data.encode(value)
+      member_data = get_member member_name
+      value = get_value member_name
+      hex_string += member_data.encode value
     end
-    return hex_string_to_binary(hex_string) if option == :binary
+    return hex_string_to_binary hex_string if option == :binary
     return hex_string
   end
   

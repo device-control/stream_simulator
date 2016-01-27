@@ -15,8 +15,8 @@ module MessageAnalyze
     @message_formats = message_formats
     
     clear
-    stream.add_observer(StreamObserver::STATUS, self)
-    stream.add_observer(StreamObserver::MESSAGE,self)
+    stream.add_observer StreamObserver::STATUS, self
+    stream.add_observer StreamObserver::MESSAGE, self
   end
   
   # 受信メッセージ削除
@@ -38,7 +38,7 @@ module MessageAnalyze
   
   # 受信通知
   def stream_message_received(stream, message)
-    @message += binary_to_hex_string(message)
+    @message += binary_to_hex_string message
     analyze
   end
   
@@ -49,17 +49,16 @@ module MessageAnalyze
     # 受信データの解析処理
     loop do
       # Entity生成
-      message_entity = create_message_entity(@message)
+      message_entity = create_message_entity @message
       break if message_entity.nil?
       
       # 受信メッセージから解析済みメッセージを削除
       offset = message_entity.format.member_total_size * 2
       length = @message.length - offset
       @message = @message[offset, length]
-      puts @message
       
       # 解析完了を通知(callback)
-      analyze_completed(message_entity)
+      analyze_completed message_entity
     end
   end
   
@@ -81,7 +80,7 @@ module MessageAnalyze
     
     # エンティティ生成
     name = 'MessageAnalyze_'+target_format.name
-    return MessageEntity.new(name, 'None', target_format, values)
+    return MessageEntity.new name, 'None', target_format, values
   end
   
 end

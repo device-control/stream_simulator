@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 require 'log'
 require 'stream/stream_setting'
 require 'stream/stream_manager'
-require 'stream_data/stream_data_creator'
+require 'stream_data/stream_data'
 require 'stream_runner/stream_data_runner'
 
 Encoding.default_external = 'utf-8'
@@ -26,8 +26,7 @@ class StreamSimulator
     @stream = StreamManager.create stream_parameters
     
     # StreamData生成
-    stream_data_creator = StreamDataCreator.new inparam[:stream_data_path]
-    @stream_data = stream_data_creator.create
+    @stream_data = StreamData.create inparam[:stream_data_path]
     
     # StreamDataRunner生成
     messages = Hash.new

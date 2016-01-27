@@ -1,11 +1,13 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_data/stream_data_creator'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 class StreamData
+  extend StreamDataCreator
   
   attr_accessor :message_formats
   attr_accessor :message_entities
@@ -19,7 +21,7 @@ class StreamData
   
   def accept(visitor)
     @scenarios.each do |name, scenario|
-      scenario.accept(visitor)
+      scenario.accept visitor
     end
   end
   

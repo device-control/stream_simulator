@@ -64,7 +64,7 @@ module MessageFormatCreator
       raise "not found type" unless member.has_key? 'type'
       
       # メンバーの構成をリメイク
-      member = remake_member(member)
+      member = remake_member member
       # 構造体の場合
       struct = message_structs[member['type']]
       unless struct.nil?
@@ -93,7 +93,7 @@ module MessageFormatCreator
       generate_members creating_info, nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']], message_structs
     else
       # 配列の場合
-      out_members[member['name']] = Array.new(member['count'])
+      out_members[member['name']] = Array.new member['count']
       member['count'].times do |index|
         nested_member_names_now =  nested_member_names.clone
         nested_member_names_now << member['name'] + "[#{index}]"
@@ -106,14 +106,14 @@ module MessageFormatCreator
   
   # メンバーを生成する
   def generate_member(creating_info, nested_member_names, member, out_members)
-    if member['count'].nil? || !MemberDataCreator.use_array?(member)
+    if member['count'].nil? || (!MemberDataCreator.use_array? member)
       # 配列でない場合
-      add_member(creating_info, nested_member_names, member, out_members)
+      add_member creating_info, nested_member_names, member, out_members
     else
       # 配列の場合
       out_members[member['name']] = Array.new(member['count'])
       member['count'].times do |index|
-        add_member(creating_info, nested_member_names, member, out_members, index)
+        add_member creating_info, nested_member_names, member, out_members, index
       end
     end
   end
@@ -123,16 +123,16 @@ module MessageFormatCreator
     # フルメンバー名を生成
     nested_member_names_now =  nested_member_names.clone
     nested_member_names_now << member['name']
-    full_member_name = nested_member_names_now.join('.')
+    full_member_name = nested_member_names_now.join '.'
     full_member_name += "[#{index}]" if index
     
     # フルメンバー名の重複確認
-    if member_name_include?(creating_info[:member_list], full_member_name)
+    if member_name_include? creating_info[:member_list], full_member_name
       raise "multiple member name [#{full_member_name}]"
     end
     
     # メンバーを追加
-    member_data = MemberDataCreator.create(member, creating_info[:member_total_size])
+    member_data = MemberDataCreator.create member, creating_info[:member_total_size]
     if index.nil?
       # 配列でない場合
       out_members[member['name']] = member_data

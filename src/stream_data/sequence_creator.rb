@@ -29,14 +29,14 @@ module SequenceCreator
         command[:arguments].extend ExtendHash
         command[:arguments] = command[:arguments].symbolize_keys
       end
-      puts command
       commands << command
     end
     
-    return Sequence.new(name, yaml[:file], commands)
+    return Sequence.new name, yaml[:file], commands
   end
   
   def target_command?(command)
+    raise "command is nil" if command.nil?
     raise "not found command" unless command.has_key? 'command'
     raise "not found arguments" unless command.has_key? 'arguments'
     
