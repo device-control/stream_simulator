@@ -2,10 +2,9 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
-require 'stream/stream_setting'
 require 'stream/stream_manager'
-require 'stream_data/stream_data'
 require 'stream_runner/stream_data_runner'
+require 'stream_data/stream_data'
 require 'stream_data/message_utils'
 
 Encoding.default_external = 'utf-8'
@@ -20,15 +19,21 @@ class StreamSimulator
   
   # コンストラクタ
   def initialize(inparam)
+    raise "inparam is nil" if inparam.nil?
+    raise "not found :stream_simulator_log_path" unless inparam.has_key? :stream_simulator_log_path
+    raise "not found :stream_data_path" unless inparam.has_key? :stream_data_path
+    raise "not found :stream_setting_name" unless inparam.has_key? :stream_setting_name
+    
     # Log出力開始
     Log.instance.start inparam[:stream_simulator_log_path]
    
-    # Stream生成
-    stream_parameters = StreamSetting.load inparam[:stream_setting_file_path]
-    @stream = StreamManager.create stream_parameters
-    
     # StreamData生成
     @stream_data = StreamData.create inparam[:stream_data_path]
+    
+    # Stream生成
+    stream_setting_name = inparam[:stream_setting_name]
+    raise "not found stream_setting_name: [#{stream_setting_name}]" unless @stream_data.stream_settings.has_key? stream_setting_name
+    @stream = StreamManager.create @stream_data.stream_settings[stream_setting_name].parameters
     
     # StreamDataRunner生成
     messages = Hash.new
@@ -37,23 +42,6 @@ class StreamSimulator
     messages[:autopilots] = @stream_data.autopilots
     @stream_data_runner = StreamDataRunner.new @stream, messages
     
-    # @stream.add_observer(StreamObserver::STATUS, self)
-    # @stream.add_observer(StreamObserver::MESSAGE,self)
-  end
-  
-  # 接続通知
-  def stream_connected(stream)
-    # Log.instance.debug "stream_coonected: " + stream.name
-  end
-  
-  # 切断通知
-  def stream_disconnected(stream)
-    # Log.instance.debug "stream_discoonected: " + stream.name
-  end
-  
-  # 受信通知
-  def stream_message_received(stream, message)
-    # Log.instance.debug message.bytes.collect{|ch|sprintf "%02X",ch.ord}.join
   end
   
   # シナリオ実行

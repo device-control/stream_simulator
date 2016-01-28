@@ -3,6 +3,7 @@
 require 'log'
 require 'stream_data/yaml_reader'
 require 'stream_data/stream_data'
+require 'stream_data/stream_setting'
 require 'stream_data/message_format'
 require 'stream_data/message_entity'
 require 'stream_data/sequence'
@@ -24,6 +25,8 @@ module StreamDataCreator
     yamls = remake_yamls(yamls)
     
     stream_data = StreamData.new
+    # ストリーム設定を生成
+    stream_data.stream_settings = get_stream_settings yamls
     # メッセージフォーマットを生成
     stream_data.message_formats = get_message_formats yamls, yamls[:message_structs]
     # メッセージエンティティを生成
@@ -41,13 +44,23 @@ module StreamDataCreator
   # Yamlオブジェクトを内部用にリメイクする
   def remake_yamls(_yamls)
     yamls = Hash.new
-    yamls[:message_structs] = yamls_by_name _yamls, "message_struct"
-    yamls[:message_formats] = yamls_by_name _yamls, "message_format"
-    yamls[:message_entities] = yamls_by_name _yamls, "message_entity"
-    yamls[:scenarios] = yamls_by_name _yamls, "scenario"
-    yamls[:sequences] = yamls_by_name _yamls, "sequence"
-    yamls[:autopilots] = yamls_by_name _yamls, "autopilot"
+    yamls[:message_structs] = yamls_by_name _yamls, 'message_struct'
+    yamls[:message_formats] = yamls_by_name _yamls, 'message_format'
+    yamls[:message_entities] = yamls_by_name _yamls, 'message_entity'
+    yamls[:scenarios] = yamls_by_name _yamls, 'scenario'
+    yamls[:sequences] = yamls_by_name _yamls, 'sequence'
+    yamls[:autopilots] = yamls_by_name _yamls, 'autopilot'
+    yamls[:stream_settings] = yamls_by_name _yamls, 'stream_setting'
     return yamls
+  end
+  
+  # stream_settings取得
+  def get_stream_settings(yamls)
+    stream_settings = Hash.new
+    yamls[:stream_settings].each do |name, yaml|
+      stream_settings[name] = StreamSetting.create name, yaml
+    end
+    return stream_settings
   end
   
   # message_formats取得
