@@ -11,28 +11,32 @@ module AutopilotCreator
   
   # Autopilot 生成処理
   def create(name, yaml)
-    raise "name is nil" if name.nil?
-    raise "yaml is nil" if yaml.nil?
-    raise "not found file" unless yaml.has_key? :file
-    raise "not found body" unless yaml.has_key? :body
-    raise "not found contents" unless yaml[:body].has_key? 'contents'
-    raise "not found parameters" unless yaml[:body]['contents'].has_key? 'parameters'
-    
-    # parameters が対象かどうか
-    target_parameters? yaml[:body]['contents']['parameters']
-    
-    # parameters のシンボル変換
-    parameters = yaml[:body]['contents']['parameters']
-    parameters.extend ExtendHash
-    parameters = parameters.symbolize_keys
-    
-    # arguments のシンボル変換
-    parameters[:arguments].each.with_index(0) do |argument, index|
-      argument.extend ExtendHash
-      parameters[:arguments][index] = argument.symbolize_keys
+    begin
+      raise "name is nil" if name.nil?
+      raise "yaml is nil" if yaml.nil?
+      raise "not found file" unless yaml.has_key? :file
+      raise "not found body" unless yaml.has_key? :body
+      raise "not found contents" unless yaml[:body].has_key? 'contents'
+      raise "not found parameters" unless yaml[:body]['contents'].has_key? 'parameters'
+      
+      # parameters が対象かどうか
+      target_parameters? yaml[:body]['contents']['parameters']
+      
+      # parameters のシンボル変換
+      parameters = yaml[:body]['contents']['parameters']
+      parameters.extend ExtendHash
+      parameters = parameters.symbolize_keys
+      
+      # arguments のシンボル変換
+      parameters[:arguments].each.with_index(0) do |argument, index|
+        argument.extend ExtendHash
+        parameters[:arguments][index] = argument.symbolize_keys
+      end
+      
+      return Autopilot.new name, yaml[:file], parameters[:type], parameters[:arguments]
+    rescue => e
+      raise "#{e.message}\n file=[#{yaml[:file]}]"
     end
-    
-    return Autopilot.new name, yaml[:file], parameters[:type], parameters[:arguments]
   end
   
   def target_parameters?(parameters)

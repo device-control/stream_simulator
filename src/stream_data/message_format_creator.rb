@@ -11,57 +11,61 @@ module MessageFormatCreator
   
   # MessageFormat を生成する
   def create(name, yaml, message_structs)
-    raise "name is nil" if name.nil?
-    raise "yaml is nil" if yaml.nil?
-    raise "message_structs is nil" if message_structs.nil?
-    raise "not found file" unless yaml.has_key? :file
-    raise "not found body" unless yaml.has_key? :body
-    raise "not found contents" unless yaml[:body].has_key? 'contents'
-    raise "not found members" unless yaml[:body]['contents'].has_key? 'members'
-    
-    # 作成中のフォーマット情報
-    creating_info = Hash.new
-    creating_info[:member_list] = Array.new
-    creating_info[:member_total_size] = 0
-    creating_info[:values] = Hash.new
-    
-    # menbersを生成
-    nested_member_names = Array.new
-    out_members = Hash.new
-    generate_members creating_info, nested_member_names, yaml[:body]['contents']['members'], out_members, message_structs
-    
-    # Hashieオブジェクトを生成
-    hashie_members = Hashie::Mash.new out_members
-    
-    # プライマリキーの値を設定
-    primary_keys = yaml[:body]['contents']['primary_keys'] || Hash.new
-    primary_keys.each do |key, value|
-      raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
-      # 値のチェック
-      member_data = eval "hashie_members.#{key}"
-      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
-      creating_info[:values][key] = value
+    begin
+      raise "name is nil" if name.nil?
+      raise "yaml is nil" if yaml.nil?
+      raise "message_structs is nil" if message_structs.nil?
+      raise "not found file" unless yaml.has_key? :file
+      raise "not found body" unless yaml.has_key? :body
+      raise "not found contents" unless yaml[:body].has_key? 'contents'
+      raise "not found members" unless yaml[:body]['contents'].has_key? 'members'
+      
+      # 作成中のフォーマット情報
+      creating_info = Hash.new
+      creating_info[:member_list] = Array.new
+      creating_info[:member_total_size] = 0
+      creating_info[:values] = Hash.new
+      
+      # menbersを生成
+      nested_member_names = Array.new
+      out_members = Hash.new
+      generate_members creating_info, nested_member_names, yaml[:body]['contents']['members'], out_members, message_structs
+      
+      # Hashieオブジェクトを生成
+      hashie_members = Hashie::Mash.new out_members
+      
+      # プライマリキーの値を設定
+      primary_keys = yaml[:body]['contents']['primary_keys'] || Hash.new
+      primary_keys.each do |key, value|
+        raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
+        # 値のチェック
+        member_data = eval "hashie_members.#{key}"
+        raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+        creating_info[:values][key] = value
+      end
+      # デフォルト値を設定
+      default_values = yaml[:body]['contents']['default_values'] || Hash.new
+      default_values.each do |key, value|
+        raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
+        raise "already defined [#{key}] in primary_keys" if primary_keys.has_key? key
+        # 値のチェック
+        member_data = eval "hashie_members.#{key}"
+        raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+        creating_info[:values][key] = value
+      end
+      
+      # MessageFormatを生成
+      return MessageFormat.new(name,
+                               yaml[:file],
+                               creating_info[:member_list],
+                               creating_info[:member_total_size],
+                               out_members,
+                               creating_info[:values],
+                               primary_keys
+                              )
+    rescue => e
+      raise "#{e.message}\n file=[#{yaml[:file]}]"
     end
-    # デフォルト値を設定
-    default_values = yaml[:body]['contents']['default_values'] || Hash.new
-    default_values.each do |key, value|
-      raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
-      raise "already defined [#{key}] in primary_keys" if primary_keys.has_key? key
-      # 値のチェック
-      member_data = eval "hashie_members.#{key}"
-      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
-      creating_info[:values][key] = value
-    end
-    
-    # MessageFormatを生成
-    return MessageFormat.new(name,
-                             yaml[:file],
-                             creating_info[:member_list],
-                             creating_info[:member_total_size],
-                             out_members,
-                             creating_info[:values],
-                             primary_keys
-                            )
   end
   
   # membersを生成する

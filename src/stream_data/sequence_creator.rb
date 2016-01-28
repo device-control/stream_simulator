@@ -11,17 +11,18 @@ module SequenceCreator
   
   # Sequence 生成処理
   def create(name, yaml)
-    raise "name is nil" if name.nil?
-    raise "yaml is nil" if yaml.nil?
-    raise "not found file" unless yaml.has_key? :file
-    raise "not found body" unless yaml.has_key? :body
-    raise "not found contents" unless yaml[:body].has_key? 'contents'
-    raise "not found commands" unless yaml[:body]['contents'].has_key? 'commands'
-    raise "commands not Array" unless yaml[:body]['contents']['commands'].instance_of? Array
-    
-    # commands のシンボル変換
-    commands = Array.new
-    yaml[:body]['contents']['commands'].each do |command|
+    begin
+      raise "name is nil" if name.nil?
+      raise "yaml is nil" if yaml.nil?
+      raise "not found file" unless yaml.has_key? :file
+      raise "not found body" unless yaml.has_key? :body
+      raise "not found contents" unless yaml[:body].has_key? 'contents'
+      raise "not found commands" unless yaml[:body]['contents'].has_key? 'commands'
+      raise "commands not Array" unless yaml[:body]['contents']['commands'].instance_of? Array
+      
+      # commands のシンボル変換
+      commands = Array.new
+      yaml[:body]['contents']['commands'].each do |command|
       target_command? command
       # command のシンボル変換
       command.extend ExtendHash
@@ -31,11 +32,14 @@ module SequenceCreator
         command[:arguments] = command[:arguments].symbolize_keys
       end
       commands << command
+      end
+      
+      return Sequence.new name, yaml[:file], commands
+    rescue => e
+      raise "#{e.message}\n file=[#{yaml[:file]}]"
     end
-    
-    return Sequence.new name, yaml[:file], commands
   end
-  
+    
   def target_command?(command)
     raise "command is nil" if command.nil?
     raise "not found command" unless command.has_key? 'command'

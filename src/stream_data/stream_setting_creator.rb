@@ -8,19 +8,23 @@ module StreamSettingCreator
   
   # StreamSetting 生成処理
   def create(name, yaml)
-    raise "name is nil" if name.nil?
-    raise "yaml is nil" if yaml.nil?
-    raise "not found file" unless yaml.has_key? :file
-    raise "not found body" unless yaml.has_key? :body
-    raise "not found contents" unless yaml[:body].has_key? 'contents'
-    raise "not found parameters" unless yaml[:body]['contents'].has_key? 'parameters'
-    
-    parameters = yaml[:body]['contents']['parameters']
-    target_parameters? parameters
-    parameters.extend ExtendHash
-    parameters = parameters.symbolize_keys
-    
-    return StreamSetting.new name, yaml[:file], parameters
+    begin
+      raise "name is nil" if name.nil?
+      raise "yaml is nil" if yaml.nil?
+      raise "not found file" unless yaml.has_key? :file
+      raise "not found body" unless yaml.has_key? :body
+      raise "not found contents" unless yaml[:body].has_key? 'contents'
+      raise "not found parameters" unless yaml[:body]['contents'].has_key? 'parameters'
+      
+      parameters = yaml[:body]['contents']['parameters']
+      target_parameters? parameters
+      parameters.extend ExtendHash
+      parameters = parameters.symbolize_keys
+      
+      return StreamSetting.new name, yaml[:file], parameters
+    rescue => e
+      raise "#{e.message}\n file=[#{yaml[:file]}]"
+    end
   end
   
   def target_parameters?(parameters)

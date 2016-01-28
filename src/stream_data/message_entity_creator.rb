@@ -10,27 +10,31 @@ module MessageEntityCreator
   
   # MessageEntity を生成する
   def create(name, yaml, message_formats)
-    raise "name is nil" if name.nil?
-    raise "yaml is nil" if yaml.nil?
-    raise "message_formats is nil" if message_formats.nil?
-    raise "not found file" unless yaml.has_key? :file
-    raise "not found body" unless yaml.has_key? :body
-    raise "not found contents" unless yaml[:body].has_key? 'contents'
-    
-    raise "not found using_format" unless yaml[:body]['contents'].has_key? 'using_format'
-    using_format = yaml[:body]['contents']['using_format']
-    
-    raise "not found format. [#{using_format}]" unless message_formats.has_key? using_format
-    format = message_formats[using_format]
-    
-    values = yaml[:body]['contents']['values'] || Hash.new
-    values.each do |key, value|
-      raise "not found [#{key}] in member_list" unless format.member_list.include? key
-      member_data = format.get_member key
-      raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+    begin
+      raise "name is nil" if name.nil?
+      raise "yaml is nil" if yaml.nil?
+      raise "message_formats is nil" if message_formats.nil?
+      raise "not found file" unless yaml.has_key? :file
+      raise "not found body" unless yaml.has_key? :body
+      raise "not found contents" unless yaml[:body].has_key? 'contents'
+      
+      raise "not found using_format" unless yaml[:body]['contents'].has_key? 'using_format'
+      using_format = yaml[:body]['contents']['using_format']
+      
+      raise "not found format. [#{using_format}]" unless message_formats.has_key? using_format
+      format = message_formats[using_format]
+      
+      values = yaml[:body]['contents']['values'] || Hash.new
+      values.each do |key, value|
+        raise "not found [#{key}] in member_list" unless format.member_list.include? key
+        member_data = format.get_member key
+        raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+      end
+      
+      return MessageEntity.new name, yaml[:file], format, values
+    rescue => e
+      raise "#{e.message}\n file=[#{yaml[:file]}]"
     end
-    
-    return MessageEntity.new name, yaml[:file], format, values
   end
   
   # メッセージから MessageEntity を生成する
