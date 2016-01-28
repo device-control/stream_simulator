@@ -3,7 +3,7 @@ content-type: stream_setting
 content-version: 0.1
 
 contents:
-  name: "tcp_client_setting"
+  name: tcp_client_setting
   description: "TCPクライアントストリーム"
   parameters:
     type: :TCP_CLIENT

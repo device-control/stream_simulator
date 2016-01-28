@@ -5,8 +5,8 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 #---------------------------------------------------
 # (1) 配置した StreamSimulator ディレクトリ位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
-#  例：stream_simulator_path = '../../stream_simulator/stream_simulator'
-require '../../stream_simulator/stream_simulator'
+#  例：stream_simulator_path = '../../stream_simulator/src/stream_simulator'
+require '../../../../stream_simulator/src/stream_simulator'
 
 
 Encoding.default_external = 'utf-8'
@@ -15,21 +15,22 @@ Encoding.default_internal = 'utf-8'
 #---------------------------------------------------
 # (2) StreamSimulator データ一式の位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
-#  例：simulator_data_path = 'simulator_data'
+#  例：simulator_data_path = '../stream_data'
 simulator_data_path = '../stream_data'
 
 
 #---------------------------------------------------
-# (3) StreamSimulator Stream設定ファイルの位置を指定
-#  本スクリプトの配置位置からの相対パスを指定する必要がある
-#  例：stream_setting_file = 'stream_setting.yml'
-stream_setting_file = 'stream_setting.yml'
+# (3) StreamSimulator 使用するStream名を設定
+#  StreamSimulator データに含まれているstream名を設定する必要がある
+#  例：stream_setting_name = 'stream_setting'
+stream_setting_name = 'tcp_server_setting'
 
 
 # パラメータ設定
 $inparam = Hash.new
-$inparam[:stream_setting_file_path] = File.expand_path(File.dirname(__FILE__))+"/#{stream_setting_file}"
 $inparam[:stream_data_path] = File.expand_path(File.dirname(__FILE__))+"/#{simulator_data_path}"
+$inparam[:stream_setting_name] = stream_setting_name
+# シミュレータログ出力PATHを設定
 $inparam[:stream_simulator_log_path] = File.expand_path(File.dirname(__FILE__))+"/stream_simulator.log"
 # シミュレータ生成
 $simulator = StreamSimulator.new $inparam
@@ -78,5 +79,5 @@ def show_scenario
 end
 
 # 本スクリプト実行時に開始コマンドを実行する
-start
+run "tcp_server_scenario"
 
