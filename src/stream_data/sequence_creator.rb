@@ -58,7 +58,8 @@ module SequenceCreator
       raise "undefined time [#{arguments['time']}]" if (arguments['time'].instance_of? Symbol) && (arguments['time'] != :WAIT_FOR_EVER)
     when :SET_VARIABLE
       raise "not found name" unless arguments.has_key? 'name'
-      raise "not found command" unless arguments.has_key? 'command'
+      raise "not found formula" unless arguments.has_key? 'formula'
+      raise "not found value" unless arguments.has_key? 'value'
     when :AUTOPILOT_START
       raise "not found name" unless arguments.has_key? 'name'
     when :AUTOPILOT_END

@@ -55,7 +55,7 @@ module MessageAnalyze
       break if message_entity.nil?
       
       # 受信メッセージから解析済みメッセージを削除
-      offset = message_entity.format.member_total_size * 2
+      offset = message_entity.member_total_size * 2
       length = @message.length - offset
       @message = @message[offset, length]
       

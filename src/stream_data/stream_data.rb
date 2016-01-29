@@ -15,6 +15,7 @@ class StreamData
   attr_accessor :sequences
   attr_accessor :autopilots
   attr_accessor :stream_settings
+  attr_accessor :variables
   
   # コンストラクタ
   def initialize()

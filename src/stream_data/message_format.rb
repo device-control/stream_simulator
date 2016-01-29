@@ -96,11 +96,15 @@ class MessageFormat
   # バイナリテキストにエンコードする
   # option:
   #   :binary バイナリにエンコードする
-  def encode(option=nil)
+  def encode(variables, option=nil)
     hex_string = ""
     @member_list.each do |member_name|
       member_data = get_member member_name
       value = get_value member_name
+      if value.class == Symbol
+        raise "not found value: [#{value}]" unless variables.has_key? value
+        value = variables[value]
+      end
       hex_string += member_data.encode value
     end
     return hex_string_to_binary hex_string if option == :binary

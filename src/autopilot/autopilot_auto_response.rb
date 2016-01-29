@@ -7,10 +7,10 @@ Encoding.default_internal = 'utf-8'
 
 # オートパイロット自動応答
 class AutopilotAutoResponse
-  def initialize(arguments, messages, stream, variables)
+  def initialize(arguments, messages, stream)
     @responses = create_responses(arguments,messages)
     @stream = stream
-    @variables = variables
+    @variables = messages[:variables]
     @running = false
   end
 
@@ -54,7 +54,7 @@ class AutopilotAutoResponse
       # TODO: 登録されてない場合は、ログに出力する？
       return
     end
-    @stream.write @responses[message_entity.format.name].encode :binary
+    @stream.write @responses[message_entity.format.name].encode @variables, :binary
   end
   
 end

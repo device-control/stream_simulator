@@ -7,26 +7,31 @@ Encoding.default_internal = 'utf-8'
 
 # 待ち
 class SequenceCommandSetVariable
-  def initialize(arguments,variables)
-    # :name = 変数名
-    # :command = 実行コマンド
-    #   :test = 1
-    #   :test += 1
-    #   TODO: :testが未初期化の場合、どうするか検討が必要
+  def initialize(arguments, messages)
+    # # 変数設定
+    # - command: :SET_VARIABLE
+    #   arguments:
+    #     name: :COUNTER # 変数名
+    #     formula: "+="  # 式
+    #     value: *size   # 値
+    # 
     raise "not found :name" unless arguments.has_key? :name
-    raise "not found :command" unless arguments.has_key? :command
-
+    raise "not found :formula" unless arguments.has_key? :formula
+    raise "not found :value" unless arguments.has_key? :value
+    
     @arguments = arguments
-    @variables = variables
+    @variables = messages[:variables]
   end
   
   def run
     begin
-      command = @arguments[:command]
-      command.gsub!(/\:[0-9a-zA-Z_]+/){|h|"@variables[#{h}]"}
+      # 変数名が定義されてなければ、初期化する
+      # 初期値:0
+      @variables[@arguments[:name]] = 0 unless @variables.has_key? @arguments[:name]
+      command = "@variables[:#{@arguments[:name]}] #{@arguments[:formula]} #{@arguments[:value]}"
       eval command
     rescue => e
-      raise "unknown command \"#{e.message}\""
+      raise "unknown command [#{command}]\"#{e.message}\""
     end
   end
 end

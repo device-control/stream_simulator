@@ -29,6 +29,21 @@ class MessageEntity
     @values = values
   end
   
+  # メンバーリスト
+  def member_list
+    return @format.member_list
+  end
+  
+  # メンバー合計サイズ
+  def member_total_size
+    return @format.member_total_size
+  end
+  
+  # メンバー
+  def members
+    return @format.members
+  end
+  
   # 値をゲットする
   # @valuesになければ、@formatから取得する
   def get_value(key)
@@ -38,15 +53,24 @@ class MessageEntity
     return @values[key] 
   end
   
+  # メンバーをゲットする
+  def get_member(key)
+    return @format.get_member key
+  end
+  
   # エンコード処理
   # @valuesを@formatでバイナリテキストにエンコードする
   # option:
   #   :binary バイナリにエンコードする
-  def encode(option=nil)
+  def encode(variables, option=nil)
     hex_string = ""
-    @format.member_list.each do |member_name|
-      member_data = @format.get_member member_name
+    member_list.each do |member_name|
+      member_data = get_member member_name
       value = get_value member_name
+      if value.class == Symbol
+        raise "not found value: [#{value}]" unless variables.has_key? value
+        value = variables[value]
+      end
       hex_string += member_data.encode value
     end
     return hex_string_to_binary hex_string if option == :binary

@@ -28,7 +28,10 @@ module MessageEntityCreator
       values.each do |key, value|
         raise "not found [#{key}] in member_list" unless format.member_list.include? key
         member_data = format.get_member key
-        raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+        # シンボルでなければ値をチェック
+        unless value.class == Symbol
+          raise "invalid value: key=[#{key}] value=[#{value}]" unless member_data.valid? value
+        end
       end
       
       return MessageEntity.new name, yaml[:file], format, values

@@ -39,17 +39,10 @@ class MemberDataTypeInt16
     return true
   end
   
-  # メッセージの長さが足りているかどうか
-  def enough_length?(hex_string)
-    return false if hex_string.length < @size*2
-    return true
-  end
-  
   # デコード処理
   # バイナリテキストからデコードする
   def decode(hex_string)
-    return nil unless enough_length?(hex_string)
-    
+    raise "size error: expect=[#{@size*2}] actual=[#{hex_string.length}]" unless hex_string.length == @size*2
     binary = hex_string_to_binary(hex_string)
     return binary_to_integer(binary)
   end
@@ -58,6 +51,7 @@ class MemberDataTypeInt16
   # バイナリテキストにエンコードする
   def encode(value=nil)
     value = @value if value.nil?
+    raise "invalid value: value=[#{value}]" unless valid? value
     return integer_to_hex_string(value, @size*2)
   end
   

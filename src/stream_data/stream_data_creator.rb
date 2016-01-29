@@ -37,6 +37,8 @@ module StreamDataCreator
     stream_data.scenarios = get_scenarios yamls, stream_data.sequences
     # オートパイロットを生成
     stream_data.autopilots = get_autopilots yamls
+    # 変数を生成
+    stream_data.variables = get_variables stream_data.message_formats, stream_data.message_entities
     
     return stream_data
   end
@@ -54,7 +56,7 @@ module StreamDataCreator
     return yamls
   end
   
-  # stream_settings取得
+  # stream_settings 取得
   def get_stream_settings(yamls)
     stream_settings = Hash.new
     yamls[:stream_settings].each do |name, yaml|
@@ -63,7 +65,7 @@ module StreamDataCreator
     return stream_settings
   end
   
-  # message_formats取得
+  # message_formats 取得
   def get_message_formats(yamls, message_structs)
     formats = Hash.new
     yamls[:message_formats].each do |name, yaml|
@@ -72,7 +74,7 @@ module StreamDataCreator
     return formats
   end
   
-  # message_entities取得
+  # message_entities 取得
   def get_message_entities(yamls, message_formats)
     entities = Hash.new
     yamls[:message_entities].each do |name, yaml|
@@ -81,7 +83,7 @@ module StreamDataCreator
     return entities
   end
   
-  # sequences取得
+  # sequences 取得
   def get_sequences(yamls)
     sequences = Hash.new
     yamls[:sequences].each do |name, yaml|
@@ -90,7 +92,7 @@ module StreamDataCreator
     return sequences
   end
   
-  # scenarios取得
+  # scenarios 取得
   def get_scenarios(yamls, sequences)
     scenarios = Hash.new
     yamls[:scenarios].each do |name, yaml|
@@ -99,13 +101,36 @@ module StreamDataCreator
     return scenarios
   end
   
-  # autopilots取得
+  # autopilots 取得
   def get_autopilots(yamls)
     autopilots = Hash.new
     yamls[:autopilots].each do |name, yaml|
       autopilots[name] = Autopilot.create name, yaml
     end
     return autopilots
+  end
+  
+  # variables 取得
+  # message_formats, message_entities で使用する変数を定義する
+  # values の値がSymbolなら variables にSymbolを設定し、初期化する
+  # 初期値:0
+  def get_variables(message_formats, message_entities)
+    variables = Hash.new
+    # message_formats の変数を取得
+    message_formats.each do |name, format|
+      format.values.each do |member_name, value|
+        member_data = format.get_member member_name
+        variables[value] = member_data.default_value if value.class == Symbol
+      end
+    end
+    # message_entities の変数を取得
+    message_entities.each do |name, entity|
+      entity.values.each do |member_name, value|
+        member_data = entity.get_member member_name
+        variables[value] = member_data.default_value if value.class == Symbol
+      end
+    end
+    return variables
   end
   
 end

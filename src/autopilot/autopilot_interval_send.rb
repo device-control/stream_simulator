@@ -7,10 +7,10 @@ Encoding.default_internal = 'utf-8'
 
 # オートパイロット
 class AutopilotIntervalSend
-  def initialize(arguments, messages, stream, variables)
+  def initialize(arguments, messages, stream)
     @interval_entities = create_interval_entities(arguments,messages)
     @stream = stream
-    @variables = variables
+    @variables = messages[:variables]
     @running = false
   end
 
@@ -73,7 +73,7 @@ class AutopilotIntervalSend
       @interval_entities.each do |ise|
         ise[:count] -= 1
         if ise[:count] <= 0
-          @stream.write ise[:send_entity].encode :binary
+          @stream.write ise[:send_entity].encode @variables, :binary
           ise[:count] = ise[:interval]
         end
       end

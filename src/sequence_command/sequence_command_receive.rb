@@ -13,7 +13,7 @@ class SequenceCommandReceive
   #   arguments:
   #     expected_format: "03.10.01_CommandData03"
   #     timeout: 5 # options
-  def initialize(arguments, messages, stream, queue, variables)
+  def initialize(arguments, messages, stream, queue)
     raise "not found :expected_xxx" unless (arguments.has_key? :expected_entity) || (arguments.has_key? :expected_format)
     message_name, type = nil, nil
     message_name, type = arguments[:expected_format], :formats if arguments.has_key? :expected_format
@@ -27,14 +27,14 @@ class SequenceCommandReceive
     @messages = messages
     @stream = stream
     @queue = queue
-    @variables = variables
+    @variables = messages[:variables]
   end
   
   def run
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
-    # TODO: 期待のmessage_formatが到着するまで繰り返すべきか？
-    #       autopilotとの組み合わせ時との動作を検討する必要がある
+    # 期待のmessageが到着するかタイムアウトするまで待つ
+    # 期待のmessage以外は無視する
     begin
       Timeout.timeout(timeout) do # timeout=nil の場合、無限
         loop do
@@ -71,7 +71,9 @@ class SequenceCommandReceive
       # フォーマット名が一致しなければＮＧ
       return false unless actual_message.format.name == @expected_message.format.name
       # データが一致しなければＮＧ
-      return false unless actual_message.encode == @expected_message.encode
+      expect = @expected_message.encode @variables
+      actual = actual_message.encode @variables
+      return false unless expect == actual
     else
       raise "unknown type: #{@expected_message_type}"
     end

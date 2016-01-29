@@ -7,11 +7,10 @@ Encoding.default_internal = 'utf-8'
 
 # 待ち
 class SequenceCommandWait
-  def initialize(arguments, variables)
+  def initialize(arguments)
     raise "not found :time" unless arguments.has_key? :time
 
     @arguments = arguments
-    @variables = variables
   end
   
   def run

@@ -21,8 +21,8 @@ class StreamDataRunner
     raise "not found formats" unless messages.has_key? :formats
     raise "not found entities" unless messages.has_key? :entities
     raise "not found autopilots" unless messages.has_key? :autopilots
+    raise "not found variables" unless messages.has_key? :variables
     
-    @variables = Hash.new
     @stream = stream
     @messages = messages
     @queues = Hash.new
@@ -46,7 +46,7 @@ class StreamDataRunner
   def visit_sequence(sequence)
     raise "not found command" unless sequence.has_key? :command
     raise "not found arguments" unless sequence.has_key? :arguments
-    command = SequenceCommandCreator.create sequence, @messages, @stream, @queues, @variables
+    command = SequenceCommandCreator.create sequence, @messages, @stream, @queues
     command.run
   end
   
