@@ -5,10 +5,19 @@ content-version: 0.1
 contents:
   name: send_receive_sequence
   description: "送受信のシーケンス"
+  constants:
+    - &size 0x01
   commands:
     # 接続
     - command: :OPEN
       arguments:
+    
+    # 変数設定
+    - command: :SET_VARIABLE
+      arguments:
+        name: :COUNTER
+        formula: "+="
+        value: *size
     
     # 送信
     - command: :SEND
