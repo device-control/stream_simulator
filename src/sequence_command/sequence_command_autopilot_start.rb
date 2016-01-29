@@ -16,6 +16,7 @@ class SequenceCommandAutopilotStart
   end
   
   def run
+    Log.instance.debug "run command [AutopilotStart]"
     AutopilotManager.instance.create @arguments, @messages, @stream
   end
   

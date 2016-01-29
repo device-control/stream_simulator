@@ -23,6 +23,7 @@ class SequenceCommandSend
   end
   
   def run
+    Log.instance.debug "run command [SEND]"
     @stream.write @send_entity.encode @variables, :binary
   end
 end

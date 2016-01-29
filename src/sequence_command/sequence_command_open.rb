@@ -16,6 +16,7 @@ class SequenceCommandOpen
   end
   
   def run
+    Log.instance.debug "run command [Open]"
     @stream.open
     # 接続待ち
     loop do

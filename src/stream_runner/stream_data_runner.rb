@@ -52,7 +52,7 @@ class StreamDataRunner
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
   def analyze_completed(message_entity)
-    puts "message_received!!"
+    Log.instance.debug "analyze message: [#{message_entity.name}=#{message_entity.encode @messages[:variables]}]"
     event = Hash.new
     event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]

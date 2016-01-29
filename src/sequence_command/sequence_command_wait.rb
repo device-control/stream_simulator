@@ -14,6 +14,7 @@ class SequenceCommandWait
   end
   
   def run
+    Log.instance.debug "run command [Wait]"
     # TODO: 脱出方法を検討する必要があるはず
     if @arguments[:time] == :WAIT_FOR_EVER
       loop do

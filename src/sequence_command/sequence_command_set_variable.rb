@@ -24,6 +24,7 @@ class SequenceCommandSetVariable
   end
   
   def run
+    Log.instance.debug "run command [SetVariable]"
     begin
       # 変数名が定義されてなければ、初期化する
       # 初期値:0

@@ -14,6 +14,7 @@ class SequenceCommandClose
   end
   
   def run
+    Log.instance.debug "run command [Close]"
     @stream.close
   end
 

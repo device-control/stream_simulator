@@ -12,6 +12,7 @@ class SequenceCommandAutopilotEnd
   end
   
   def run
+    Log.instance.debug "run command [AutopilotEnd]"
     AutopilotManager.instance.delete @arguments
   end
   

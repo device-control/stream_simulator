@@ -31,6 +31,7 @@ class SequenceCommandReceive
   end
   
   def run
+    Log.instance.debug "run command [Receive]"
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
     # 期待のmessageが到着するかタイムアウトするまで待つ
@@ -57,11 +58,9 @@ class SequenceCommandReceive
   end
   
   def expected_message?(actual_message)
-    # 期待値と違う
-    # TODO: ログだす？
-    puts "期待メッセージタイプ:[#{@expected_message_type}]"
-    puts "期待メッセージ名:[#{@expected_message.name}]"
-    puts "結果メッセージ名:[#{actual_message.name}]"
+    Log.instance.debug "expect type: [#{@expected_message_type}]"
+    Log.instance.debug "expect name: [#{@expected_message.name}]"
+    Log.instance.debug "actual name: [#{actual_message.name}]"
     
     case @expected_message_type
     when :formats

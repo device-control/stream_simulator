@@ -93,7 +93,7 @@ class StreamSimulator
   # シナリオ一覧表示
   def show_scenario
     @stream_data.scenarios.each do |name, scenario|
-      puts "#{name}: \"#{scenario.name @stream_data.variables}\""
+      puts "#{name}: \"#{scenario.name}\""
     end
     return true
   end
