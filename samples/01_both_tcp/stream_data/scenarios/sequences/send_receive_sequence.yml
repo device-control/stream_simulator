@@ -8,6 +8,12 @@ contents:
   constants:
     - &size 0x01
   commands:
+    # 変数設定
+    - command: :SET_VARIABLE
+      arguments:
+        name: :STRUCT_LENGTH
+        command: ":STRUCT_LENGTH = 0x01"
+    
     # 接続
     - command: :OPEN
       arguments:
@@ -16,8 +22,7 @@ contents:
     - command: :SET_VARIABLE
       arguments:
         name: :COUNTER
-        formula: "+="
-        value: *size
+        command: ":COUNTER += :STRUCT_LENGTH"
     
     # 送信
     - command: :SEND
