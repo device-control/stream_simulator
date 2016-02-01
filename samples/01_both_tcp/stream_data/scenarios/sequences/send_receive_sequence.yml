@@ -5,8 +5,6 @@ content-version: 0.1
 contents:
   name: send_receive_sequence
   description: "送受信のシーケンス"
-  constants:
-    - &size 0x01
   commands:
     # 変数設定
     - command: :SET_VARIABLE
