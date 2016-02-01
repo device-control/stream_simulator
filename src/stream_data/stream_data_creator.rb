@@ -27,6 +27,8 @@ module StreamDataCreator
     stream_data = StreamData.new
     # ストリーム設定を生成
     stream_data.stream_settings = get_stream_settings yamls
+    # メッセージ構造体を生成
+    stream_data.message_structs = get_message_structs yamls, yamls[:message_structs]
     # メッセージフォーマットを生成
     stream_data.message_formats = get_message_formats yamls, yamls[:message_structs]
     # メッセージエンティティを生成
@@ -63,6 +65,15 @@ module StreamDataCreator
       stream_settings[name] = StreamSetting.create name, yaml
     end
     return stream_settings
+  end
+  
+  # message_structs 取得
+  def get_message_structs(yamls, message_structs)
+    structs = Hash.new
+    yamls[:message_structs].each do |name, yaml|
+      structs[name] = MessageFormat.create name, yaml, message_structs
+    end
+    return structs
   end
   
   # message_formats 取得

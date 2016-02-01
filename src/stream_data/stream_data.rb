@@ -9,6 +9,7 @@ Encoding.default_internal = 'utf-8'
 class StreamData
   extend StreamDataCreator
   
+  attr_accessor :message_structs
   attr_accessor :message_formats
   attr_accessor :message_entities
   attr_accessor :scenarios

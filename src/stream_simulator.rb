@@ -98,4 +98,13 @@ class StreamSimulator
     return true
   end
   
+  # メンバーリスト一覧表示
+  def show_member_list(format_name)
+    puts "member_list: "
+    @stream_data.message_formats[format_name].member_list.each do |member_name|
+      puts "\"#{member_name}\""
+    end
+    return true
+  end
+  
 end
