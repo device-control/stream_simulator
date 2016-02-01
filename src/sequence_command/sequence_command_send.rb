@@ -8,9 +8,9 @@ Encoding.default_internal = 'utf-8'
 # メッセージ送信
 class SequenceCommandSend
   # 例: sequence yaml
-  # - command: send
+  # - command: :SEND
   #   arguments:
-  #     message_entity: "03.10.01_CommandData03"
+  #     message_entity: "command_entity"
   def initialize(arguments, messages, stream)
     raise "not found :message_entity" unless arguments.has_key? :message_entity
     raise "unknown message_entity [#{arguments[:message_entity]}]" unless messages[:entities].has_key? arguments[:message_entity]

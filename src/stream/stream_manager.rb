@@ -7,7 +7,12 @@ class StreamManager
   def self.create(parameters)
     stream = nil
     begin
-      # TODO: parameters フォーマットチェックが必要
+      raise "parameters is nil" if parameters.nil?
+      raise "not found :name" unless parameters.has_key? :name
+      raise "not found :type" unless parameters.has_key? :type
+      raise "not found :ip" unless parameters.has_key? :ip
+      raise "not found :port" unless parameters.has_key? :port
+      
       if parameters[:type] == :TCP_SERVER
         stream = StreamTCPServer.new( parameters[:name],
                                       parameters[:ip],

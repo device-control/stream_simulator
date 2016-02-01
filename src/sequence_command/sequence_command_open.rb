@@ -1,8 +1,7 @@
 # coding: utf-8
 
-require 'stream/stream_tcp_server'
-require 'stream/stream_tcp_client'
 require 'log'
+require 'stream/stream_observer'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -25,7 +24,7 @@ class SequenceCommandOpen
     end
     @stream.delete_observer(StreamObserver::STATUS, self)
   end
-
+  
   # 接続通知
   def stream_connected(stream)
     @connected = true
@@ -35,5 +34,5 @@ class SequenceCommandOpen
   def stream_disconnected(stream)
     # 何もしない
   end
-
+  
 end

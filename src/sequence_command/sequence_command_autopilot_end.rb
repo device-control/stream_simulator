@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'log'
+require 'autopilot/autopilot_manager'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'

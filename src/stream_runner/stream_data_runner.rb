@@ -14,6 +14,8 @@ class StreamDataRunner
 
   # messages = messages[:formats][name] = format
   #            messages[:entities][name] = entity
+  #            messages[:autopilots][name] = autopilot
+  #            messages[:variables][name] = variable
   def initialize(stream, messages)
     super stream, messages[:formats]
     # 入力チェック
@@ -36,13 +38,16 @@ class StreamDataRunner
   #  sequence = sequence[:command]
   #             sequence[:arguments]
   # 例：sequence yaml
-  # - command: send
+  # # 送信
+  # - command: :SEND
   #   arguments:
-  #     message_entity: "03.10.01_CommandData03"
-  # - command: receive
+  #     message_entity: "command_entity"
+  
+  # # 受信
+  # - command: :RECEIVE
   #   arguments:
-  #     expected_format: "03.10.01_CommandData03"
-  #     timeout: 5
+  #     expected_format: "response_format"
+  #     timeout: 5 # 秒
   def visit_sequence(sequence)
     raise "not found command" unless sequence.has_key? :command
     raise "not found arguments" unless sequence.has_key? :arguments

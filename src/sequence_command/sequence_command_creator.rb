@@ -42,22 +42,3 @@ class SequenceCommandCreator
   end
 end
 
-
-# 例外発行場所出力サンプル(backtrace)
-# class TestCreator
-#   def self.create
-#     raise "test"
-#   end
-# end
-
-# class Test
-#   def run
-#     begin
-#       t = TestCreator.create
-#     rescue => e
-#       puts e.backtrace.join("\n")
-#       puts "message:" + e.message
-#     end
-#   end
-# end
-

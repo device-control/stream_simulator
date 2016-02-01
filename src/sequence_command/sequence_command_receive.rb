@@ -9,10 +9,10 @@ Encoding.default_internal = 'utf-8'
 class SequenceCommandReceive
   
   # 例: sequence yaml
-  # - command: receive
+  # - command: :RECEIVE
   #   arguments:
-  #     expected_format: "03.10.01_CommandData03"
-  #     timeout: 5 # options
+  #     expected_format: "response_format"
+  #     timeout: 5 # 秒
   def initialize(arguments, messages, stream, queue)
     raise "not found :expected_xxx" unless (arguments.has_key? :expected_entity) || (arguments.has_key? :expected_format)
     message_name, type = nil, nil
