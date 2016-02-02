@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_data/message_func'
 require 'stream_data/message_format'
 require 'stream_data/member_data/member_data_creator'
 
@@ -8,6 +9,7 @@ Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 module MessageFormatCreator
+  include MessageFunc
   
   # MessageFormat を生成する
   def create(name, yaml, message_structs)
@@ -48,6 +50,13 @@ module MessageFormatCreator
       # デフォルト値を設定
       default_values = yaml[:body]['contents']['default_values'] || Hash.new
       default_values.each do |key, value|
+        # TODO: bit対応(bitとシンボルの同時利用は認められない！！)
+        if( value.class == String )
+          if( (value.match(/\:/) == nil) && (value.match(/bit/) != nil) )
+            value = eval value
+          end
+        end
+        
         raise "not found [#{key}] in member_list" unless creating_info[:member_list].include? key
         raise "already defined [#{key}] in primary_keys" if primary_keys.has_key? key
         member_data = eval "hashie_members.#{key}"

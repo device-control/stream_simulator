@@ -1,12 +1,14 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_data/message_func'
 require 'stream_data/message_entity'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
 module MessageEntityCreator
+  include MessageFunc
   
   # MessageEntity を生成する
   def create(name, yaml, message_formats)
@@ -26,6 +28,13 @@ module MessageEntityCreator
       
       values = yaml[:body]['contents']['values'] || Hash.new
       values.each do |key, value|
+        # TODO: bit対応(bitとシンボルの同時利用は認められない！！)
+        if( value.class == String )
+          if( (value.match(/\:/) == nil) && (value.match(/bit/) != nil) )
+            value = eval value
+          end
+        end
+        
         raise "not found [#{key}] in member_list" unless format.member_list.include? key
         member_data = format.get_member key
         # シンボルでなければ値をチェック
