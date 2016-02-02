@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_log'
 require 'stream_data/scenario_creator'
 
 Encoding.default_external = 'utf-8'
@@ -26,10 +27,13 @@ class Scenario
   
   def accept(visitor)
     raise "visitor is nil" if visitor.nil?
+    StreamLog.instance.push :scenario, @name
     
     @sequences.each do |sequence|
       sequence.accept visitor
     end
+
+    StreamLog.instance.pop
   end
   
 end

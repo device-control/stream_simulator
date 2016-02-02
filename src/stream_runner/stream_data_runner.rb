@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'log'
+require 'stream_log'
 require 'stream_data/message_analyze'
 require 'autopilot/autopilot_manager'
 require 'sequence_command/sequence_command_creator'
@@ -51,8 +52,10 @@ class StreamDataRunner
   def visit_sequence(sequence)
     raise "not found command" unless sequence.has_key? :command
     raise "not found arguments" unless sequence.has_key? :arguments
+    StreamLog.instance.push :command, sequence.command
     command = SequenceCommandCreator.create sequence, @messages, @stream, @queues
     command.run
+    StreamLog.instance.pop
   end
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
