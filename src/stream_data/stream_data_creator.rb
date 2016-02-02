@@ -39,8 +39,13 @@ module StreamDataCreator
     stream_data.scenarios = get_scenarios yamls, stream_data.sequences
     # オートパイロットを生成
     stream_data.autopilots = get_autopilots yamls
+    
     # 変数を生成
-    stream_data.variables = get_variables stream_data.message_formats, stream_data.message_entities
+    variables = Hash.new
+    add_variables_from_messages variables, stream_data.message_formats
+    add_variables_from_messages variables, stream_data.message_entities
+    add_variables_from_sequences variables, stream_data.sequences
+    stream_data.variables = variables
     
     return stream_data
   end
@@ -121,27 +126,43 @@ module StreamDataCreator
     return autopilots
   end
   
-  # variables 取得
-  # message_formats, message_entities で使用する変数を定義する
-  # values の値がSymbolなら variables にSymbolを設定し、初期化する
-  # 初期値:0
-  def get_variables(message_formats, message_entities)
-    variables = Hash.new
-    # message_formats の変数を取得
-    message_formats.each do |name, format|
-      format.values.each do |member_name, value|
-        member_data = format.get_member member_name
-        variables[value] = member_data.default_value if value.class == Symbol
+  # variables に変数を追加
+  # messages の values の値がSymbolなら variables にSymbolを設定し、初期化する
+  def add_variables_from_messages(variables, messages)
+    return if messages.nil?
+    # messages のvaluesから変数を取得
+    messages.each do |name, message|
+      message.values.each do |member_name, value|
+        member_data = message.get_member member_name
+        if value.class == Symbol
+          variables[value] = member_data.default_value unless variables.has_key? value
+        end
       end
     end
-    # message_entities の変数を取得
-    message_entities.each do |name, entity|
-      entity.values.each do |member_name, value|
-        member_data = entity.get_member member_name
-        variables[value] = member_data.default_value if value.class == Symbol
+  end
+  
+  # variables に変数を追加
+  # sequences の commands から variables にSymbolを設定し、初期化する
+  def add_variables_from_sequences(variables, sequences)
+    return if sequences.nil?
+    # sequences のcommandsから変数を取得
+    sequences.each do |name, sequence|
+      sequence.commands.each do |command|
+        next if command[:name].nil?
+        if command[:name] == :SET_VARIABLE
+          next if command[:arguments].nil?
+          next if command[:arguments][:exec].nil?
+          execute_list = command[:arguments][:exec]
+          execute_list = Array.new [execute_list] unless execute_list.instance_of? Array
+          execute_list.each do |exec|
+            exec.scan(/\:([0-9a-zA-Z_]+)/) do |w|
+              symbol = $1.to_sym
+              variables[symbol] = 0 unless variables.has_key? symbol
+            end
+          end
+        end
       end
     end
-    return variables
   end
   
 end

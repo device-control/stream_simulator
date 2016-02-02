@@ -30,7 +30,7 @@ class Sequence
     StreamLog.instance.push :sequence, @name
     
     @commands.each do |command|
-      visitor.visit_sequence command
+      visitor.visit_command command
     end
     
     StreamLog.instance.pop

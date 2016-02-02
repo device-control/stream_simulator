@@ -15,29 +15,30 @@ Encoding.default_internal = 'utf-8'
 
 # シーケンスコマンド生成
 class SequenceCommandCreator
-  def self.create(sequence, messages, stream, queues)
-    raise "not found :command" unless sequence.has_key? :command
-    raise "not found :arguments" unless sequence.has_key? :arguments
-    arguments = sequence[:arguments]
+  def self.create(command, messages, stream, queues)
+    raise "not found :name" unless command.has_key? :name
+    raise "not found :arguments" unless command.has_key? :arguments
+    arguments = command[:arguments]
     
-    if sequence[:command] == :OPEN # ストリーム開始
+    case command[:name]
+    when :OPEN # ストリーム開始
       return SequenceCommandOpen.new stream
-    elsif sequence[:command] == :SEND # メッセージ送信
+    when :SEND # メッセージ送信
       return SequenceCommandSend.new arguments, messages, stream
-    elsif sequence[:command] == :RECEIVE # メッセージ受信
+    when :RECEIVE # メッセージ受信
       return SequenceCommandReceive.new arguments, messages, stream, queues[:sequence]
-    elsif sequence[:command] == :WAIT # 待ち
+    when :WAIT # 待ち
       return SequenceCommandWait.new arguments
-    elsif sequence[:command] == :SET_VARIABLE # 変数設定
+    when :SET_VARIABLE # 変数設定
       return SequenceCommandSetVariable.new arguments, messages
-    elsif sequence[:command] == :AUTOPILOT_START # オートパイロット開始
+    when :AUTOPILOT_START # オートパイロット開始
       return SequenceCommandAutopilotStart.new arguments, messages, stream
-    elsif sequence[:command] == :AUTOPILOT_END # オートパイロット終了
+    when :AUTOPILOT_END # オートパイロット終了
       return SequenceCommandAutopilotEnd.new arguments
-    elsif sequence[:command] == :CLOSE # ストリーム終了
+    when :CLOSE # ストリーム終了
       return SequenceCommandClose.new stream
     else
-      raise "unknonw command [#{sequence[:command]}]"
+      raise "unknonw command [#{command[:name]}]"
     end
   end
 end

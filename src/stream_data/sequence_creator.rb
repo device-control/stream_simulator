@@ -42,11 +42,11 @@ module SequenceCreator
     
   def target_command?(command)
     raise "command is nil" if command.nil?
-    raise "not found command" unless command.has_key? 'command'
+    raise "not found name" unless command.has_key? 'name'
     raise "not found arguments" unless command.has_key? 'arguments'
     
     arguments = command['arguments']
-    case command['command']
+    case command['name']
     when :OPEN
       # arguments なし
     when :SEND
@@ -57,8 +57,7 @@ module SequenceCreator
       raise "not found time" unless arguments.has_key? 'time'
       raise "undefined time [#{arguments['time']}]" if (arguments['time'].instance_of? Symbol) && (arguments['time'] != :WAIT_FOR_EVER)
     when :SET_VARIABLE
-      raise "not found name" unless arguments.has_key? 'name'
-      raise "not found command" unless arguments.has_key? 'command'
+      raise "not found exec" unless arguments.has_key? 'exec'
     when :AUTOPILOT_START
       raise "not found name" unless arguments.has_key? 'name'
     when :AUTOPILOT_END
