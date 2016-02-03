@@ -2,6 +2,7 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'log'
+require 'fileutils'
 require 'stream/stream_manager'
 require 'stream_runner/stream_data_runner'
 require 'stream_data/stream_data'
@@ -53,20 +54,22 @@ class StreamSimulator
   end
   
   # シナリオ実行
-  def run(scenario_name)
+  def run(scenario_list)
     ret = false
-    begin
-      unless @stream_data.scenarios.has_key? scenario_name
-        Log.instance.debug "scenario not found: name=[#{scenario_name}]"
-        return false
+    scenario_list.each do |scenario_name|
+      begin
+        unless @stream_data.scenarios.has_key? scenario_name
+          Log.instance.debug "scenario not found: name=[#{scenario_name}]"
+          return false
+        end
+        @stream_data.accept @stream_data_runner, scenario_name
+        ret = true
+      rescue => e
+        StreamLog.instance.puts "ERROR: message=\"#{e.message}\""
+        StreamLog.instance.puts "ERROR: backtrace=\n#{e.backtrace.join("\n")}\n"
+      ensure
+        StreamLog.instance.write_dos make_stream_log_filename scenario_name
       end
-      @stream_data.accept @stream_data_runner, scenario_name
-      ret = true
-    rescue => e
-      StreamLog.instance.puts "ERROR: message=\"#{e.message}\""
-      StreamLog.instance.puts "ERROR: backtrace=\n#{e.backtrace.join("\n")}\n"
-    ensure
-      StreamLog.instance.write_dos make_stream_log_filename scenario_name
     end
     return ret
   end

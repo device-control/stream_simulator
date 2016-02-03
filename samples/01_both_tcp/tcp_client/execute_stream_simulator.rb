@@ -25,11 +25,23 @@ simulator_data_path = '../stream_data'
 #  例：stream_setting_name = 'stream_setting'
 stream_setting_name = 'tcp_client_setting'
 
+
 #---------------------------------------------------
 # (4) StreamSimulator ログの出力先を指定
 #  StreamSimulator のログ出力先を指定する必要がある
 #  例：stream_log_path = './log'
 stream_log_path = './log'
+
+
+#---------------------------------------------------
+# (5) 起動時に実行するシナリオを追加
+#  本スクリプト起動時に実行するシナリオを指定する
+#  例：scenario_list = [
+#        "tcp_server_scenario",
+#      ]
+scenario_list = [
+  "tcp_client_scenario",
+]
 
 
 # パラメータ設定
@@ -39,21 +51,20 @@ $inparam[:stream_setting_name] = stream_setting_name
 # ストリームログ出力PATHを設定
 $inparam[:stream_log_path] = File.expand_path(File.dirname(__FILE__))+"/#{stream_log_path}"
 # デバッグログ出力先
-# $inparam[:stream_simulator_log_path] = File.expand_path(File.dirname(__FILE__))+"/debug.log"
-$inparam[:debug_log_path] = STDOUT
+$inparam[:debug_log_path] = File.expand_path(File.dirname(__FILE__))+"/stream_simulator.log"
 # シミュレータ生成
 $simulator = StreamSimulator.new $inparam
 
 # 既定のコマンド定義
 
 # シナリオ実行
-def run(scenario_name)
-  $simulator.run scenario_name
+def run(scenario_list)
+  $simulator.run scenario_list
 end
 
 
 #---------------------------------------------------
-# (5) 使用したいコマンドを追加
+# (6) 使用したいコマンドを追加
 #  stream_simulator のメソッド呼び出しを追加することが可能
 #  以下サンプルコマンドを追加
 
@@ -87,9 +98,6 @@ def show_scenario
   $simulator.show_scenario
 end
 
-#---------------------------------------------------
-# (6) 実行するシナリオを追加
 #  本スクリプト実行時にシナリオを実行する
-#  例：run "tcp_server_scenario"
-run "tcp_client_scenario"
+run scenario_list
 
