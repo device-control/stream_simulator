@@ -47,10 +47,12 @@ class SequenceCommandReceive
           raise "receive message entity is nil" if event[:arguments][0].nil?
           actual_message = event[:arguments][0]
           
+          StreamLog.instance.puts "command receive: name=\"#{actual_message.name}\""
+          StreamLog.instance.puts_message actual_message.get_all_members_with_values @variables
+          
           # 期待するメッセージなら終了
           if expected_message? actual_message
-            StreamLog.instance.puts "command receive: name=\"#{actual_message.name}\""
-            StreamLog.instance.puts_message actual_message.get_all_members_with_values @variables
+            Log.instance.debug "command receive: expected message. name=\"#{actual_message.name}\""
             return
           end
           Log.instance.debug "command receive: not expected message. name=\"#{actual_message.name}\""

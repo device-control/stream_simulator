@@ -29,7 +29,7 @@ class SequenceCommandSetVariable
     
     execute_list.each do |exec|
       begin
-        StreamLog.instance.puts "exec: #{exec}"
+        StreamLog.instance.puts "command set variable: exec=\"#{exec}\""
         exec = exec.gsub(/\:[0-9a-zA-Z_]+/){|h|"@variables[#{h}]"}
         eval exec
       rescue => e
