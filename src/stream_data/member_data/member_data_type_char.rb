@@ -58,4 +58,9 @@ class MemberDataTypeChar
     return ascii_to_hex_string(value, @size*2)
   end
   
+  # 値を形成する
+  def to_form(value)
+    return "\"#{value}\""
+  end
+  
 end

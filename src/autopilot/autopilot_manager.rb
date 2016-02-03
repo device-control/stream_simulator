@@ -49,12 +49,15 @@ class AutopilotManager
     else
       raise "unknown type [#{autopilot.type}]"
     end
+    StreamLog.instance.puts "autopilot start: name=\"#{name}\""
     @autopilots[name].start
   end
   
   # autopilot 削除
   def delete(arguments)
     raise "not found :name" unless arguments.has_key? :name
+    StreamLog.instance.puts "autopilot stop: name=\"#{arguments[:name]}\""
+    @autopilots[arguments[:name]].stop
     @autopilots.delete(arguments[:name])
   end
 

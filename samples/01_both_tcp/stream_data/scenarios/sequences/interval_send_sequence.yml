@@ -18,7 +18,7 @@ contents:
     # 待ち
     - name: :WAIT
       arguments:
-        time: :WAIT_FOR_EVER # 無限待ち
+        time: 20
     
     # 切断
     - name: :CLOSE

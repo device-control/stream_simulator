@@ -35,12 +35,11 @@ class StreamLog
   end
   
   def puts_message(msg)
-    # # msg.array
-    # msg.each.with_index(0) do |member|
-    #   puts mamber[:name], member[:value]
-    # end
-    # space = '  ' * @nested_names.size
-    # @logs << "  #{space}#{message}"
+    puts "message_member_list:"
+    msg.each.with_index(0) do |member|
+      value = member[:data].to_form member[:value]
+      puts "  - #{member[:name]}: #{value}"
+    end
   end
   
   # ファイル書き出し for Windows

@@ -47,11 +47,18 @@ class StreamSimulator
   
   # シナリオ実行
   def run(scenario_name)
-    unless @stream_data.scenarios.has_key? scenario_name
-      Log.instance.debug "scenario not found: name=[#{scenario_name}]"
-      return false
+    begin
+      unless @stream_data.scenarios.has_key? scenario_name
+        Log.instance.debug "scenario not found: name=[#{scenario_name}]"
+        return false
+      end
+      @stream_data.accept @stream_data_runner, scenario_name
+    rescue => e
+      StreamLog.instance.write_dos "test.log"
+      raise e
+    ensure
+      StreamLog.instance.write_dos "test.log"
     end
-    @stream_data.accept @stream_data_runner, scenario_name
     return true
   end
   

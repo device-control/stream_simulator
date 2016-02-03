@@ -55,4 +55,9 @@ class MemberDataTypeInt16
     return integer_to_hex_string(value, @size*2)
   end
   
+  # 値を形成する
+  def to_form(value)
+    return sprintf("0x%0#{@size*2}X", value)
+  end
+  
 end

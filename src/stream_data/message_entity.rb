@@ -77,4 +77,23 @@ class MessageEntity
     return hex_string
   end
   
+  # すべてのメンバーと値を取得する
+  def get_all_members_with_values(variables)
+    all_members = Array.new
+    member_list.each do |member_name|
+      member_data = get_member member_name
+      value = get_value member_name
+      if value.class == Symbol
+        raise "not found value: [#{value}]" unless variables.has_key? value
+        value = variables[value]
+      end
+      member = Hash.new
+      member[:name] = member_name
+      member[:value] = value
+      member[:data] = member_data
+      all_members << member
+    end
+    return all_members
+  end
+  
 end

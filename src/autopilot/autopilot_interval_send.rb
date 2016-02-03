@@ -73,7 +73,11 @@ class AutopilotIntervalSend
       @interval_entities.each do |ise|
         ise[:count] -= 1
         if ise[:count] <= 0
-          @stream.write ise[:send_entity].encode @variables, :binary
+          send_entity = ise[:send_entity]
+          Log.instance.debug "interval send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
+          StreamLog.instance.puts "interval send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
+          StreamLog.instance.puts_message send_entity.get_all_members_with_values @variables
+          @stream.write send_entity.encode @variables, :binary
           ise[:count] = ise[:interval]
         end
       end

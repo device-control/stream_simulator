@@ -15,8 +15,6 @@ class SequenceCommandSetVariable
   end
   
   def run
-    Log.instance.debug "run command [SetVariable]"
-    
     # 変数設定
     # - name: :SET_VARIABLE
     #   arguments:
@@ -31,6 +29,7 @@ class SequenceCommandSetVariable
     
     execute_list.each do |exec|
       begin
+        StreamLog.instance.puts "exec: #{exec}"
         exec = exec.gsub(/\:[0-9a-zA-Z_]+/){|h|"@variables[#{h}]"}
         eval exec
       rescue => e
