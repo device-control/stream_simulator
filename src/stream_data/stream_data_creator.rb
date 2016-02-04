@@ -133,9 +133,8 @@ module StreamDataCreator
     # messages のvaluesから変数を取得
     messages.each do |name, message|
       message.values.each do |member_name, value|
-        member_data = message.get_member member_name
         if value.class == Symbol
-          variables[value] = member_data.default_value unless variables.has_key? value
+          variables[value] = 0 unless variables.has_key? value
         end
       end
     end
