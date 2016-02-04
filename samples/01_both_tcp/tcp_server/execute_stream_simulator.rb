@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 # (1) 配置した StreamSimulator ディレクトリ位置を指定
 #  本スクリプトの配置位置からの相対パスを指定する必要がある
 #  例：stream_simulator_path = '../../stream_simulator/src/stream_simulator'
-require '../../../../stream_simulator/src/stream_simulator'
+require '../../../src/stream_simulator'
 
 
 Encoding.default_external = 'utf-8'
