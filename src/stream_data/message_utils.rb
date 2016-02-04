@@ -8,21 +8,27 @@ Encoding.default_internal = 'utf-8'
 module MessageUtils
   
   # バイナリをバイナリテキストに変換
+  # "\x00\x01\02\03" => "00010203" 
   def binary_to_hex_string(data)
     return data.bytes.collect{|ch|sprintf "%02X",ch.ord}.join
   end
   
   # バイナリテキストをバイナリに変換
+  # "\x00\x01\02\03" <= "00010203" 
   def hex_string_to_binary(data)
     return data.scan(/.{2}/).collect{|c| c.hex}.pack("C*")
   end
   
   # バイナリをASCII文字に変換
+  # "\x41\x42\x43\x44" => "ABCD"
+  # it '文字列から最初に見つかったnull文字以降が削除されること' do
   def binary_to_ascii(data)
-    return data.unpack("A*").pop
+    return data.sub(/\0.*/m,'')
+    # return data.unpack("A*").pop
   end
   
   # バイナリを整数に変換
+  # "\x00\x00\x00\x00" => 1234
   def binary_to_integer(data)
     buf = data.unpack('C*')
     ret = 0

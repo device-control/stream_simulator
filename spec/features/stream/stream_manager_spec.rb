@@ -1,16 +1,9 @@
 # coding: utf-8
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_data'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_runner'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../../src'))
 
-require 'stream_manager'
+require 'stream/stream_manager'
 require 'log'
-
-require 'pry'
 
 describe 'StreamManager' do
   before do
