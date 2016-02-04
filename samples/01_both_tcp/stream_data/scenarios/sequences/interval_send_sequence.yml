@@ -7,24 +7,24 @@ contents:
   description: "定時送信シーケンス"
   commands:
     # 自動応答開始
-    - command: :AUTOPILOT_START
+    - name: :AUTOPILOT_START
       arguments:
         name: "interval_send_autopilot"
     
     # 接続
-    - command: :OPEN
+    - name: :OPEN
       arguments:
     
     # 待ち
-    - command: :WAIT
+    - name: :WAIT
       arguments:
-        time: :WAIT_FOR_EVER # 無限待ち
+        time: 20
     
     # 切断
-    - command: :CLOSE
+    - name: :CLOSE
       arguments:
     
     # 自動応答終了
-    - command: :AUTOPILOT_END
+    - name: :AUTOPILOT_END
       arguments:
         name: "interval_send_autopilot"

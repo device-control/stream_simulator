@@ -7,32 +7,31 @@ contents:
   description: "送受信のシーケンス"
   commands:
     # 変数設定
-    - command: :SET_VARIABLE
+    - name: :SET_VARIABLE
       arguments:
-        name: :STRUCT_LENGTH
-        command: ":STRUCT_LENGTH = 0x01"
+        exec: ":STRUCT_LENGTH += 0x01"
     
     # 接続
-    - command: :OPEN
+    - name: :OPEN
       arguments:
     
     # 変数設定
-    - command: :SET_VARIABLE
+    - name: :SET_VARIABLE
       arguments:
         name: :COUNTER
-        command: ":COUNTER += :STRUCT_LENGTH"
+        exec: ":COUNTER += :STRUCT_LENGTH"
     
     # 送信
-    - command: :SEND
+    - name: :SEND
       arguments:
         message_entity: "command_entity"
     
     # 受信
-    - command: :RECEIVE
+    - name: :RECEIVE
       arguments:
         expected_format: "response_format"
         timeout: 5 # 秒
     
     # 切断
-    - command: :CLOSE
+    - name: :CLOSE
       arguments:

@@ -23,7 +23,9 @@ class SequenceCommandSend
   end
   
   def run
-    Log.instance.debug "run command [SEND]"
+    Log.instance.debug "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode @variables}\""
+    StreamLog.instance.puts "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode @variables}\""
+    StreamLog.instance.puts_message @send_entity.get_all_members_with_values @variables
     @stream.write @send_entity.encode @variables, :binary
   end
 end

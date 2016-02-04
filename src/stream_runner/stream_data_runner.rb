@@ -36,31 +36,33 @@ class StreamDataRunner
   end
 
   # sequence内容に従いコマンドを発行する
-  #  sequence = sequence[:command]
+  #  sequence = sequence[:name]
   #             sequence[:arguments]
   # 例：sequence yaml
   # # 送信
-  # - command: :SEND
+  # - name: :SEND
   #   arguments:
   #     message_entity: "command_entity"
   
   # # 受信
-  # - command: :RECEIVE
+  # - name: :RECEIVE
   #   arguments:
   #     expected_format: "response_format"
   #     timeout: 5 # 秒
-  def visit_sequence(sequence)
-    raise "not found command" unless sequence.has_key? :command
-    raise "not found arguments" unless sequence.has_key? :arguments
-    StreamLog.instance.push :command, sequence.command
-    command = SequenceCommandCreator.create sequence, @messages, @stream, @queues
+  def visit_command(command)
+    raise "not found name" unless command.has_key? :name
+    raise "not found arguments" unless command.has_key? :arguments
+    Log.instance.debug "run command [#{command[:name]}]"
+    StreamLog.instance.push :command, command[:name]
+    command = SequenceCommandCreator.create command, @messages, @stream, @queues
     command.run
     StreamLog.instance.pop
   end
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
   def analyze_completed(message_entity)
-    Log.instance.debug "analyze message: [#{message_entity.name}=#{message_entity.encode @messages[:variables]}]"
+    Log.instance.debug "receive: name=\"#{message_entity.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
+    StreamLog.instance.puts "receive: name=\"#{message_entity.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
     event = Hash.new
     event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]

@@ -15,7 +15,7 @@ class SequenceCommandOpen
   end
   
   def run
-    Log.instance.debug "run command [Open]"
+    StreamLog.instance.puts "command open: name=\"#{@stream.name}\", ip=\"#{@stream.ip}\", port=\"#{@stream.port}\""
     @stream.open
     # 接続待ち
     loop do

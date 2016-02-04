@@ -6,6 +6,9 @@ class StreamLog
   include Singleton
   
   def initialize
+    @mutex = Hash.new
+    @mutex[:logs] = Mutex.new
+    @mutex[:message] = Mutex.new
     @nested_names = Array.new
     @logs = Array.new
   end
@@ -14,33 +17,40 @@ class StreamLog
   # type = :scenario, :sequence, :command
   # name = 各name
   def push(type,name)
-    space = '  ' * @nested_names.size
-    @logs << "->#{space}#{type}[#{name}]"
-    hash = Hash.new
-    hash[:type] = type
-    hash[:name] = name
-    @nested_names << hash
+    @mutex[:logs].synchronize {
+      space = '  ' * @nested_names.size
+      @logs << "->#{space}#{type}[#{name}]"
+      hash = Hash.new
+      hash[:type] = type
+      hash[:name] = name
+      @nested_names << hash
+    }
   end
   
   # 動作名削除
   def pop
-    hash = @nested_names.pop
-    space = '  ' * @nested_names.size
-    @logs << "<-#{space}#{hash[:type]}[#{hash[:name]}]"
+    @mutex[:logs].synchronize {
+      hash = @nested_names.pop
+      space = '  ' * @nested_names.size
+      @logs << "<-#{space}#{hash[:type]}[#{hash[:name]}]"
+    }
   end
 
   def puts(format)
-    space = '  ' * @nested_names.size
-    @logs << "  #{space}#{format}"
+    @mutex[:logs].synchronize {
+      space = '  ' * @nested_names.size
+      @logs << "  #{space}#{format}"
+    }
   end
   
   def puts_message(msg)
-    # # msg.array
-    # msg.each.with_index(0) do |member|
-    #   puts mamber[:name], member[:value]
-    # end
-    # space = '  ' * @nested_names.size
-    # @logs << "  #{space}#{message}"
+    @mutex[:message].synchronize {
+      puts "message_member_list:"
+      msg.each.with_index(0) do |member|
+        value = member[:data].to_form member[:value]
+        puts "  #{member[:name]}: #{value}"
+      end
+    }
   end
   
   # ファイル書き出し for Windows
@@ -50,9 +60,13 @@ class StreamLog
 
   # ファイル書き出し
   def write(file_path,to='cp932',from='utf-8')
-    File.open(file_path,"w:#{to}:#{from}") do |file|
-      file.write @logs.join("\n");
-    end
+    @mutex[:logs].synchronize {
+      File.open(file_path,"w:#{to}:#{from}") do |file|
+        file.write @logs.join("\n");
+      end
+      @nested_names.clear
+      @logs.clear
+    }
   end
 end
 

@@ -12,7 +12,7 @@ class SequenceCommandClose
   end
   
   def run
-    Log.instance.debug "run command [Close]"
+    StreamLog.instance.puts "command close: name=\"#{@stream.name}\", ip=\"#{@stream.ip}\", port=\"#{@stream.port}\""
     @stream.close
   end
 

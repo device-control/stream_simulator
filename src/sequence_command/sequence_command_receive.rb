@@ -31,7 +31,7 @@ class SequenceCommandReceive
   end
   
   def run
-    Log.instance.debug "run command [Receive]"
+    StreamLog.instance.puts "expect: type=\"#{@expected_message_type}\", name=\"#{@expected_message.name}\""
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
     # 期待のmessageが到着するかタイムアウトするまで待つ
@@ -47,8 +47,15 @@ class SequenceCommandReceive
           raise "receive message entity is nil" if event[:arguments][0].nil?
           actual_message = event[:arguments][0]
           
-          # 期待するメッセージかどうか
-          return if expected_message? actual_message
+          StreamLog.instance.puts "command receive: name=\"#{actual_message.name}\""
+          StreamLog.instance.puts_message actual_message.get_all_members_with_values @variables
+          
+          # 期待するメッセージなら終了
+          if expected_message? actual_message
+            Log.instance.debug "command receive: expected message. name=\"#{actual_message.name}\""
+            return
+          end
+          Log.instance.debug "command receive: not expected message. name=\"#{actual_message.name}\""
         end
       end
     rescue Timeout::Error
@@ -58,10 +65,8 @@ class SequenceCommandReceive
   end
   
   def expected_message?(actual_message)
-    Log.instance.debug "expect type: [#{@expected_message_type}]"
-    Log.instance.debug "expect name: [#{@expected_message.name}]"
-    Log.instance.debug "actual name: [#{actual_message.name}]"
-    
+    expect = @expected_message.encode @variables
+    actual = actual_message.encode @variables
     case @expected_message_type
     when :formats
       # フォーマット名が一致しなければＮＧ
@@ -70,8 +75,6 @@ class SequenceCommandReceive
       # フォーマット名が一致しなければＮＧ
       return false unless actual_message.format.name == @expected_message.format.name
       # データが一致しなければＮＧ
-      expect = @expected_message.encode @variables
-      actual = actual_message.encode @variables
       return false unless expect == actual
     else
       raise "unknown type: #{@expected_message_type}"

@@ -8,28 +8,33 @@ Encoding.default_internal = 'utf-8'
 # 待ち
 class SequenceCommandSetVariable
   def initialize(arguments, messages)
-    raise "not found :name" unless arguments.has_key? :name
-    raise "not found :command" unless arguments.has_key? :command
+    raise "not found :exec" unless arguments.has_key? :exec
     
     @arguments = arguments
     @variables = messages[:variables]
   end
   
   def run
-    Log.instance.debug "run command [SetVariable]"
+    # 変数設定
+    # - name: :SET_VARIABLE
+    #   arguments:
+    #     exec:
+    #       - ":TEST1 = 0" 
+    #       - ":TEST2 = 0" 
+    # - name: :SET_VARIABLE
+    #   arguments:
+    #     exec: ":TEST += 1"
+    execute_list = @arguments[:exec]
+    execute_list = Array.new [execute_list] unless execute_list.instance_of? Array
     
-    # :name = 変数名
-    # :command = 実行コマンド
-    #   :test = 1
-    #   :test += 1
-    # 変数名が定義されてなければ、初期化する。初期値:0
-    begin
-      @variables[@arguments[:name]] = 0 unless @variables.has_key? @arguments[:name]
-      command = @arguments[:command]
-      command = command.gsub(/\:[0-9a-zA-Z_]+/){|h|"@variables[#{h}]"}
-      eval command
-    rescue => e
-      raise "unknown command [#{command}]\"#{e.message}\""
+    execute_list.each do |exec|
+      begin
+        StreamLog.instance.puts "command set variable: exec=\"#{exec}\""
+        exec = exec.gsub(/\:[0-9a-zA-Z_]+/){|h|"@variables[#{h}]"}
+        eval exec
+      rescue => e
+        raise "unknown exec [#{exec}]\"#{e.message}\""
+      end
     end
   end
 end

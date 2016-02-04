@@ -20,11 +20,12 @@ module MessageUtils
   end
   
   # バイナリをASCII文字に変換
-  # "\x41\x42\x43\x44" => "ABCD"
-  # it '文字列から最初に見つかったnull文字以降が削除されること' do
+  # "\x41\x42\x43\x44\x00\x00" => "ABCD"
+  # "ABCD\0\0" => "ABCD"
+  # 文字列から最初に見つかったNULL文字以降が削除
   def binary_to_ascii(data)
     return data.sub(/\0.*/m,'')
-    # return data.unpack("A*").pop
+    # return data.gsub(/\x00.+/,'') # これだと上手くNULLを削除できない
   end
   
   # バイナリを整数に変換

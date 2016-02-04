@@ -37,7 +37,7 @@ class MemberDataTypeChar
   end
   
   def valid?(value)
-    return false unless value.kind_of?(String)
+    return false unless value.kind_of? String
     return false if value.bytesize > @size
     return true
   end
@@ -46,8 +46,8 @@ class MemberDataTypeChar
   # バイナリテキストからデコードする
   def decode(hex_string)
     raise "size error: expect=[#{@size*2}] actual=[#{hex_string.length}]" unless hex_string.length == @size*2
-    binary = hex_string_to_binary(hex_string)
-    return binary_to_ascii(binary)
+    binary = hex_string_to_binary hex_string
+    return rstrip_null_or_later binary
   end
   
   # エンコード処理
@@ -55,7 +55,12 @@ class MemberDataTypeChar
   def encode(value=nil)
     value = @default_value if value.nil?
     raise "invalid value: value=[#{value}]" unless valid? value
-    return ascii_to_hex_string(value, @size*2)
+    return ascii_to_hex_string value, @size*2
+  end
+  
+  # 値を形成する
+  def to_form(value)
+    return "\"#{value}\""
   end
   
 end
