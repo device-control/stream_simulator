@@ -1,0 +1,30 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: interval_send_sequence
+  description: "定時送信シーケンス"
+  commands:
+    # 自動応答開始
+    - name: :AUTOPILOT_START
+      arguments:
+        name: "interval_send_autopilot"
+    
+    # 接続
+    - name: :OPEN
+      arguments:
+    
+    # 待ち
+    - name: :WAIT
+      arguments:
+        time: 20
+    
+    # 切断
+    - name: :CLOSE
+      arguments:
+    
+    # 自動応答終了
+    - name: :AUTOPILOT_END
+      arguments:
+        name: "interval_send_autopilot"

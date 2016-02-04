@@ -1,0 +1,37 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: send_receive_sequence
+  description: "送受信のシーケンス"
+  commands:
+    # 変数設定
+    - name: :SET_VARIABLE
+      arguments:
+        exec: ":STRUCT_LENGTH += 0x01"
+    
+    # 接続
+    - name: :OPEN
+      arguments:
+    
+    # 変数設定
+    - name: :SET_VARIABLE
+      arguments:
+        name: :COUNTER
+        exec: ":COUNTER += :STRUCT_LENGTH"
+    
+    # 送信
+    - name: :SEND
+      arguments:
+        message_entity: "command_entity"
+    
+    # 受信
+    - name: :RECEIVE
+      arguments:
+        expected_format: "response_format"
+        timeout: 5 # 秒
+    
+    # 切断
+    - name: :CLOSE
+      arguments:

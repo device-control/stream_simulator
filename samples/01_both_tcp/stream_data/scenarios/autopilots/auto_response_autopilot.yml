@@ -1,0 +1,13 @@
+# coding: utf-8
+content-type: autopilot
+content-version: 0.1
+
+contents:
+  name: auto_response_autopilot
+  description: "自動応答"
+  parameters:
+    type: :AUTO_RESPONSE
+    arguments:
+      # サンプル
+      - request_format: "command_format"
+        response_entity: "response_entity"
