@@ -56,12 +56,12 @@ describe 'MessageUtils' do
     end
   end
 
-  context 'binary_to_ascii' do
+  context 'rstrip_null_or_later' do
     it '文字列から最初に見つかったnull文字以降が削除されること' do
-      expect(target.binary_to_ascii "1ABCDEF").to eq "1ABCDEF"
-      expect(target.binary_to_ascii "2ABCDEF\0").to eq "2ABCDEF"
-      expect(target.binary_to_ascii "3ABCDEF\x00").to eq "3ABCDEF"
-      expect(target.binary_to_ascii "4ABC\nDEF\0\r\n").to eq "4ABC\nDEF"
+      expect(target.rstrip_null_or_later "1ABCDEF").to eq "1ABCDEF"
+      expect(target.rstrip_null_or_later "2ABCDEF\0").to eq "2ABCDEF"
+      expect(target.rstrip_null_or_later "3ABCDEF\x00").to eq "3ABCDEF"
+      expect(target.rstrip_null_or_later "4ABC\nDEF\0\r\n").to eq "4ABC\nDEF"
     end
   end
 

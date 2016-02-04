@@ -19,11 +19,10 @@ module MessageUtils
     return data.scan(/.{2}/).collect{|c| c.hex}.pack("C*")
   end
   
-  # バイナリをASCII文字に変換
+  # 文字列から最初に見つかったNULL文字以降を削除
   # "\x41\x42\x43\x44\x00\x00" => "ABCD"
   # "ABCD\0\0" => "ABCD"
-  # 文字列から最初に見つかったNULL文字以降が削除
-  def binary_to_ascii(data)
+  def rstrip_null_or_later(data)
     return data.sub(/\0.*/m,'')
     # return data.gsub(/\x00.+/,'') # これだと上手くNULLを削除できない
   end
