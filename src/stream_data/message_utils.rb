@@ -17,9 +17,9 @@ module MessageUtils
     return data.scan(/.{2}/).collect{|c| c.hex}.pack("C*")
   end
   
-  # バイナリをASCII文字に変換
-  def binary_to_ascii(data)
-    return data.unpack("A*").pop
+  # null(0x00)以降を削除
+  def rstrip_null_or_later(data)
+    return data.gsub(/\x00.+/,'')
   end
   
   # バイナリを整数に変換
