@@ -1,18 +1,12 @@
 # coding: utf-8
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_data'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_runner'))
+$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../../src'))
 
-require 'stream_tcp_server'
-require 'stream_tcp_client'
-require 'stream_observer'
+require 'stream/stream_tcp_server'
+require 'stream/stream_tcp_client'
+require 'stream/stream_observer'
 require 'log'
-
-require 'pry'
 
 class MockListener
   attr_reader :name, :connects, :recv_messages, :recv_message
