@@ -19,9 +19,14 @@ class SequenceCommandReceive
     message_name, type = arguments[:expected_format], :formats if arguments.has_key? :expected_format
     message_name, type = arguments[:expected_entity], :entities if arguments.has_key? :expected_entity
     raise "expected message is nil" if message_name.nil?
-    raise "unknown message [#{type}][#{message_name}]" unless messages[type].has_key? message_name
-    @expected_message = messages[type][message_name]
-    @expected_message_type = type
+    if message_name == :ANY
+      @expected_message_type = :any_message
+    else
+      raise "unknown message [#{type}][#{message_name}]" unless messages[type].has_key? message_name
+      @expected_message = messages[type][message_name]
+      @expected_message_type = type
+    end
+    @mismatched_action = arguments.has_key?(:mismatched_action) ? arguments[:mismatched_action] : :CONTINUE
     
     @arguments = arguments
     @messages = messages
@@ -31,11 +36,13 @@ class SequenceCommandReceive
   end
   
   def run
-    StreamLog.instance.puts "expect: type=\"#{@expected_message_type}\", name=\"#{@expected_message.name}\""
+    StreamLog.instance.puts "expect: type=\"#{@expected_message_type}\""
+    StreamLog.instance.puts "expect: name=\"#{@expected_message.name}\"" unless @expected_message.nil?
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
     # 期待のmessageが到着するかタイムアウトするまで待つ
-    # 期待のmessage以外は無視する
+    # タイムアウトが発生したら、シナリオ終了
+    # 期待のmessage以外はミスマッチ時の動作を行う
     begin
       Timeout.timeout(timeout) do # timeout=nil の場合、無限
         loop do
@@ -50,12 +57,28 @@ class SequenceCommandReceive
           StreamLog.instance.puts "command receive: name=\"#{actual_message.name}\""
           StreamLog.instance.puts_message actual_message.get_all_members_with_values @variables
           
-          # 期待するメッセージなら終了
+          # 期待するメッセージならコマンド終了
           if expected_message? actual_message
             Log.instance.debug "command receive: expected message. name=\"#{actual_message.name}\""
             return
           end
+          
           Log.instance.debug "command receive: not expected message. name=\"#{actual_message.name}\""
+          # ミスマッチ時のアクション
+          case @mismatched_action
+          when :CONTINUE
+            # マッチするまで待ち続ける
+            next
+          when :END_OF_SCENARIO
+            # シナリオ終了
+            raise "end of scenario"
+          when :NEXT_COMMAND
+            # 次のコマンドへ進む
+            return
+          else
+            raise "unknown mismatched action. [#{@mismatched_action}]"
+          end
+          
         end
       end
     rescue Timeout::Error
@@ -64,9 +87,8 @@ class SequenceCommandReceive
     end
   end
   
+  # 期待するメッセージかどうか
   def expected_message?(actual_message)
-    expect = @expected_message.encode @variables
-    actual = actual_message.encode @variables
     case @expected_message_type
     when :formats
       # フォーマット名が一致しなければＮＧ
@@ -75,7 +97,11 @@ class SequenceCommandReceive
       # フォーマット名が一致しなければＮＧ
       return false unless actual_message.format.name == @expected_message.format.name
       # データが一致しなければＮＧ
+      expect = @expected_message.encode @variables
+      actual = actual_message.encode @variables
       return false unless expect == actual
+    when :any_message
+      # すべてOK
     else
       raise "unknown type: #{@expected_message_type}"
     end
