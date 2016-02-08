@@ -5,6 +5,8 @@ require 'stream_log'
 require 'stream_data/message_analyze'
 require 'autopilot/autopilot_manager'
 require 'sequence_command/sequence_command_creator'
+require 'sequence_command/sequence_command_error'
+require 'stream_log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -54,8 +56,15 @@ class StreamDataRunner
     raise "not found arguments" unless command.has_key? :arguments
     Log.instance.debug "run command [#{command[:name]}]"
     StreamLog.instance.push :command, command[:name]
-    command = SequenceCommandCreator.create command, @messages, @stream, @queues
-    command.run
+    begin
+      command = SequenceCommandCreator.create command, @messages, @stream, @queues
+      command.run
+    rescue SequenceCommandError => e
+      # TODO: SequenceCommandError以外はどうする？？？
+      StreamLog.instance.puts_error e.message, e.position, e.detail
+      raise "Scenario END!!!"
+    end
+    
     StreamLog.instance.pop
   end
   
