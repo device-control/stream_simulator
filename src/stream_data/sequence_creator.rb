@@ -1,8 +1,11 @@
 # coding: utf-8
 
 require 'log'
+require 'sequence_command/sequence_command_creator'
 require 'stream_data/sequence'
 require 'stream_data/extend_hash'
+
+require 'pry'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -23,49 +26,20 @@ module SequenceCreator
       # commands のシンボル変換
       commands = Array.new
       yaml[:body]['contents']['commands'].each do |command|
-      target_command? command
-      # command のシンボル変換
-      command.extend ExtendHash
-      command = command.symbolize_keys
-      unless command[:arguments].nil?
-        command[:arguments].extend ExtendHash
-        command[:arguments] = command[:arguments].symbolize_keys
-      end
-      commands << command
+        # command のシンボル変換
+        command.extend ExtendHash
+        command = command.symbolize_keys
+        unless command[:arguments].nil?
+          command[:arguments].extend ExtendHash
+          command[:arguments] = command[:arguments].symbolize_keys
+        end
+        SequenceCommandCreator.command_permit? command # シンボルに変更後でないと呼び出せない
+        commands << command
       end
       
       return Sequence.new name, yaml[:file], commands
     rescue => e
       raise "#{e.message}\n file=[#{yaml[:file]}]"
-    end
-  end
-    
-  def target_command?(command)
-    raise "command is nil" if command.nil?
-    raise "not found name" unless command.has_key? 'name'
-    raise "not found arguments" unless command.has_key? 'arguments'
-    
-    arguments = command['arguments']
-    case command['name']
-    when :OPEN
-      # arguments なし
-    when :SEND
-      raise "not found message_entity" unless arguments.has_key? 'message_entity'
-    when :RECEIVE
-      raise "not found expected_xxx" unless (arguments.has_key? 'expected_entity') || (arguments.has_key? 'expected_format')
-    when :WAIT
-      raise "not found time" unless arguments.has_key? 'time'
-      raise "undefined time [#{arguments['time']}]" if (arguments['time'].instance_of? Symbol) && (arguments['time'] != :WAIT_FOR_EVER)
-    when :SET_VARIABLE
-      raise "not found exec" unless arguments.has_key? 'exec'
-    when :AUTOPILOT_START
-      raise "not found name" unless arguments.has_key? 'name'
-    when :AUTOPILOT_END
-      raise "not found name" unless arguments.has_key? 'name'
-    when :CLOSE
-      # arguments なし
-    else
-      raise "undefined command [#{command['command']}]"
     end
   end
   

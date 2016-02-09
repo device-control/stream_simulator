@@ -8,10 +8,17 @@ Encoding.default_internal = 'utf-8'
 
 # ストリーム開始
 class SequenceCommandOpen
-  def initialize(stream)
-    @stream = stream
+  def initialize(parameters)
+    raise "#{self.class}\##{__method__} parameters is nil" if parameters.nil?
+    raise "#{self.class}\##{__method__} parameters[:stream] is nil" if parameters[:stream].nil?
+    SequenceCommandOpen.arguments_permit? parameters[:arguments]
+    @stream = parameters[:stream]
     @connected = false
     @stream.add_observer(StreamObserver::STATUS, self)
+  end
+  
+  def self.arguments_permit?(arguments)
+    # 入力パラメータなし
   end
   
   def run

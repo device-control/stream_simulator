@@ -60,7 +60,7 @@ class MessageFormat
       hashie_members = Hashie::Mash.new @members
       return eval "hashie_members.#{key}"
     rescue => e
-      raise "ERROR: #{self.class}##{__method__}: key=[#{key}] file=[#{@file}] " + e.message
+      raise "ERROR: #{self.class}\##{__method__}: key=[#{key}] file=[#{@file}] " + e.message
     end
   end
   

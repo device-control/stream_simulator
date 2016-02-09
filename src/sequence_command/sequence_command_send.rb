@@ -11,15 +11,26 @@ class SequenceCommandSend
   # - command: :SEND
   #   arguments:
   #     message_entity: "command_entity"
-  def initialize(arguments, messages, stream)
-    raise "not found :message_entity" unless arguments.has_key? :message_entity
-    raise "unknown message_entity [#{arguments[:message_entity]}]" unless messages[:entities].has_key? arguments[:message_entity]
+  def initialize(parameters)
+    raise "#{self.class}\##{__method__} parameters is nil" if parameters.nil?
+    raise "#{self.class}\##{__method__} parameters[:messages] is nil" if parameters[:messages].nil?
+    raise "#{self.class}\##{__method__} parameters[:messages][:entities] is nil" if parameters[:messages][:entities].nil?
+    raise "#{self.class}\##{__method__} parameters[:messages][:variables] is nil" if parameters[:messages][:variables].nil?
+    raise "#{self.class}\##{__method__} parameters[:stream] is nil" if parameters[:stream].nil?
+    SequenceCommandSend.arguments_permit? parameters[:arguments]
+    arguments = parameters[:arguments]
+    messages = parameters[:messages]
+    @stream = parameters[:stream]
+    @variables = messages[:variables]
+
+    raise "#{self.class}\##{__method__} unknown message_entity [#{arguments[:message_entity]}]" unless messages[:entities].has_key? arguments[:message_entity]
     @send_entity = messages[:entities][arguments[:message_entity]]
     
-    @arguments = arguments
-    @messages = messages
-    @stream = stream
-    @variables = messages[:variables]
+  end
+  
+  def self.arguments_permit?(arguments)
+    raise "#{self}.#{__method__} arguments is nil" if arguments.nil?
+    raise "#{self}.#{__method__} not found :message_entity" unless arguments.has_key? :message_entity
   end
   
   def run

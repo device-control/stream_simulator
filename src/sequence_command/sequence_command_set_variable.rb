@@ -7,11 +7,19 @@ Encoding.default_internal = 'utf-8'
 
 # 待ち
 class SequenceCommandSetVariable
-  def initialize(arguments, messages)
-    raise "not found :exec" unless arguments.has_key? :exec
+  def initialize(parameters)
+    raise "#{self.class}\##{__method__} parameters is nil" if parameters.nil?
+    raise "#{self.class}\##{__method__} parameters[:messages] is nil" if parameters[:messages].nil?
+    raise "#{self.class}\##{__method__} parameters[:messages][:variables] is nil" if parameters[:messages][:variables].nil?
+    SequenceCommandSetVariable.arguments_permit? parameters[:arguments]
     
-    @arguments = arguments
-    @variables = messages[:variables]
+    @arguments = parameters[:arguments]
+    @variables = parameters[:messages][:variables]
+  end
+  
+  def self.arguments_permit?(arguments)
+    raise "#{self}.#{__method__} arguments is nil" if arguments.nil?
+    raise "#{self}.#{__method__} not found :exec" unless arguments.has_key? :exec
   end
   
   def run
