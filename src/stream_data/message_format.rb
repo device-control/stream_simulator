@@ -40,9 +40,18 @@ class MessageFormat
     @primary_keys = primary_keys
   end
   
+  def format
+    return self
+  end
+  
   # 値をゲットする
-  def get_value(key)
-    return @values[key]
+  def get_value(key, variables)
+    value = @values[key]
+    if value.class == Symbol
+      raise "not found value: [#{value}]" unless variables.has_key? value
+      value = variables[value]
+    end
+    return value
   end
   
   # メンバーをゲットする
@@ -100,11 +109,7 @@ class MessageFormat
     hex_string = ""
     @member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name
-      if value.class == Symbol
-        raise "not found value: [#{value}]" unless variables.has_key? value
-        value = variables[value]
-      end
+      value = get_value member_name, variables
       hex_string += member_data.encode value
     end
     return hex_string_to_binary hex_string if option == :binary
@@ -112,22 +117,42 @@ class MessageFormat
   end
   
   # すべてのメンバーと値を取得する
+  # @param
+  #   variables ... 変数群
+  # @return
+  #   all_members ... [Array] すべてのメンバーのリスト
+  # @all_members[n] ... [Hash] メンバー
+  #   :name  ... [String] メンバー名
+  #   :data  ... [Object] メンバーデータ
+  #   :value ... [Object] 値
   def get_all_members_with_values(variables)
     all_members = Array.new
     @member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name
-      if value.class == Symbol
-        raise "not found value: [#{value}]" unless variables.has_key? value
-        value = variables[value]
-      end
+      value = get_value member_name, variables
       member = Hash.new
       member[:name] = member_name
-      member[:value] = value
       member[:data] = member_data
+      member[:value] = value
       all_members << member
     end
     return all_members
+  end
+  
+  # 比較する
+  # @return
+  #   result: 比較結果 true / false
+  #   details: 詳細
+  #     :reason 理由 :different_format
+  def compare(message, variables)
+    result = true
+    details = Hash.new
+    # フォーマット名が一致するかどうか
+    unless @name == message.format.name
+      result = false
+      details[:reason] = :different_format
+    end
+    return result, details
   end
   
 end
