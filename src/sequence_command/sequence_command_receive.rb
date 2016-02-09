@@ -13,22 +13,35 @@ class SequenceCommandReceive
   #   arguments:
   #     expected_format: "response_format"
   #     timeout: 5 # 秒
-  def initialize(arguments, messages, stream, queue)
-    raise "not found :expected_xxx" unless (arguments.has_key? :expected_entity) || (arguments.has_key? :expected_format)
+  def initialize(parameters)
+    raise "#{self.class}\##{__method__} parameters is nil" if parameters.nil?
+    raise "#{self.class}\##{__method__} parameters[:messages] is nil" if parameters[:messages].nil?
+    raise "#{self.class}\##{__method__} parameters[:stream] is nil" if parameters[:stream].nil?
+    raise "#{self.class}\##{__method__} parameters[:queues] is nil" if parameters[:queues].nil?
+    raise "#{self.class}\##{__method__} parameters[:queues][:sequence] is nil" if parameters[:queues][:sequence].nil?
+    SequenceCommandReceive.arguments_permit? parameters[:arguments]
+
+    @arguments = parameters[:arguments]
+    messages = parameters[:messages]
+    @stream = parameters[:stream]
+    @queue = parameters[:queues][:sequence] # シーケンス用キュー使用
+    @variables = messages[:variables]
+    
     message_name, type = nil, nil
-    message_name, type = arguments[:expected_format], :formats if arguments.has_key? :expected_format
-    message_name, type = arguments[:expected_entity], :entities if arguments.has_key? :expected_entity
-    raise "expected message is nil" if message_name.nil?
-    raise "unknown message [#{type}][#{message_name}]" unless messages[type].has_key? message_name
+    message_name, type = @arguments[:expected_format], :formats if @arguments.has_key? :expected_format
+    message_name, type = @arguments[:expected_entity], :entities if @arguments.has_key? :expected_entity
+    raise "#{self.class}\##{__method__} expected message is nil" if message_name.nil?
+    raise "#{self.class}\##{__method__} unknown message [#{type}][#{message_name}]" unless messages[type].has_key? message_name
     @expected_message = messages[type][message_name]
     @expected_message_type = type
     
-    @arguments = arguments
-    @messages = messages
-    @stream = stream
-    @queue = queue
-    @variables = messages[:variables]
   end
+
+  def self.arguments_permit?(arguments)
+    raise "#{self}.#{__method__} arguments is nil" if arguments.nil?
+    raise "#{self}.#{__method__} not found :expected_xxx" unless (arguments.has_key? :expected_entity) || (arguments.has_key? :expected_format)
+  end
+
   
   def run
     StreamLog.instance.puts "expect: type=\"#{@expected_message_type}\", name=\"#{@expected_message.name}\""

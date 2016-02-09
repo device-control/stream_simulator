@@ -7,10 +7,15 @@ Encoding.default_internal = 'utf-8'
 
 # 待ち
 class SequenceCommandWait
-  def initialize(arguments)
-    raise "not found :time" unless arguments.has_key? :time
+  def initialize(parameters)
+    raise "#{self.class}\##{__method__} parameters is nil" if parameters.nil?
+    SequenceCommandWait.arguments_permit? parameters[:arguments]
+    @arguments = parameters[:arguments]
+  end
 
-    @arguments = arguments
+  def self.arguments_permit?(arguments)
+    raise "#{self}.#{__method__} arguments is nil" if arguments.nil?
+    raise "#{self}.#{__method__} not found :time" unless arguments.has_key? :time
   end
   
   def run

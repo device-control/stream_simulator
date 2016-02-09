@@ -57,8 +57,8 @@ class StreamDataRunner
     Log.instance.debug "run command [#{command[:name]}]"
     StreamLog.instance.push :command, command[:name]
     begin
-      command = SequenceCommandCreator.create command, @messages, @stream, @queues
-      command.run
+      sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues
+      sequence_command.run
     rescue SequenceCommandError => e
       # TODO: SequenceCommandError以外はどうする？？？
       StreamLog.instance.puts_error e.message, e.position, e.detail

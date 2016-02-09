@@ -81,7 +81,7 @@ module YamlReader
       name = contents["name"]
       raise "\"name\" is not defined in \"#{CONTENTS}\": file=[#{yaml[:file]}]" if name.nil?
       if hash.has_key? name 
-        Log.instance.warn "#{self.class}##{__method__}: Multiple define name: type=[#{type}] name=[#{name}] file=[#{yaml[:file]}]"
+        Log.instance.warn "#{self.class}\##{__method__}: Multiple define name: type=[#{type}] name=[#{name}] file=[#{yaml[:file]}]"
         next
       end
       hash[name] = yaml
