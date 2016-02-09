@@ -63,10 +63,12 @@ class StreamSimulator
           return false
         end
         @stream_data.accept @stream_data_runner, scenario_name
+        Log.instance.puts "Scenario SUCCESS."
         ret = true
       rescue => e
-        StreamLog.instance.puts "ERROR: message=\"#{e.message}\""
-        StreamLog.instance.puts "ERROR: backtrace=\n#{e.backtrace.join("\n")}\n"
+        Log.instance.debug "ERROR: message=#{e.message}"
+        Log.instance.debug "ERROR: backtrace="
+        Log.instance.debug e.backtrace
       ensure
         StreamLog.instance.write_dos make_stream_log_filename scenario_name
       end

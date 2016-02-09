@@ -54,19 +54,14 @@ class StreamLog
     }
   end
 
-  def puts(format)
+  # ログ出力
+  def puts(message,details=Array.new)
     @mutex.synchronize {
       space = '  ' * @nested_names.size
-      @logs << "  #{space}#{format}"
-    }
-  end
-  
-  def puts_message(msg)
-    @mutex.synchronize {
-      puts "message_member_list:"
-      msg.each.with_index(0) do |member|
-        value = member[:data].to_form member[:value]
-        puts "  #{member[:name]}: #{value}"
+      @logs << "  #{space}#{message}"
+      details.each do |detail|
+        space = '  ' * (@nested_names.size + 1)
+        @logs << "  #{space}#{detail}"
       end
     }
   end

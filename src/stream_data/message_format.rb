@@ -140,10 +140,14 @@ class MessageFormat
   end
   
   # 比較する
+  # @param
+  #   message   ... [Object] 比較するメッセージのオブジェクト
+  #                   MessageFormat or MessageEntity のオブジェクト
+  #   variables ... [Hash] 変数群
   # @return
-  #   result: 比較結果 true / false
-  #   details: 詳細
-  #     :reason 理由 :different_format
+  #   result  ... [true/false] 比較結果
+  #   details ... [Hash] 詳細
+  #     :reason                 ... [Symbol] 理由 :different_format
   def compare(message, variables)
     result = true
     details = Hash.new

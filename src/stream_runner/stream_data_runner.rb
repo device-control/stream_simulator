@@ -60,9 +60,12 @@ class StreamDataRunner
       command = SequenceCommandCreator.create command, @messages, @stream, @queues
       command.run
     rescue SequenceCommandError => e
-      # TODO: SequenceCommandError以外はどうする？？？
-      StreamLog.instance.puts_error e.message, e.position, e.detail
-      raise "Scenario END!!!"
+      StreamLog.instance.puts_error e.message, e.detail
+      raise e # シナリオ終了
+    rescue => e
+      details = Array.new
+      StreamLog.instance.puts_error "Scenario ERROR. error_message=\"#{e.message}\"", details
+      raise e # シナリオ終了
     end
     
     StreamLog.instance.pop

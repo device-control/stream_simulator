@@ -50,18 +50,33 @@ class AutopilotAutoResponse
   def message_entity_notify(message_entity)
     # 通知されてきたmessage_entityが応答リスト内に登録されているか
     unless @responses.has_key? message_entity.format.name
-      # TODO: 登録されてない場合は、ログに出力する？
-      Log.instance.debug "auto response receive: not auto response. name=\"#{message_entity.name}\""
+      StreamLog.instance.puts "auto response receive: unkown message. format name=\"#{message_entity.format.name}\""
+      Log.instance.debug "auto response receive: unkown message. format name=\"#{message_entity.format.name}\""
       return
     end
-    StreamLog.instance.puts "auto response receive: name=\"#{message_entity.name}\""
-    StreamLog.instance.puts_message message_entity.get_all_members_with_values @variables
     
+    output_receive_entity message_entity
     send_entity = @responses[message_entity.format.name]
-    Log.instance.debug "auto response send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
-    StreamLog.instance.puts "auto response send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
-    StreamLog.instance.puts_message send_entity.get_all_members_with_values @variables
+    output_send_entity send_entity
     @stream.write send_entity.encode @variables, :binary
+  end
+  
+  def output_receive_entity(entity)
+    Log.instance.debug "auto response receive: name=\"#{entity.name}\""
+    
+    StreamLog.instance.puts "auto response receive: format name=\"#{entity.format.name}\""
+    member_list = entity.get_all_members_with_values @variables
+    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:data].to_form member[:value]}"}
+    StreamLog.instance.puts "auto response receive: member_list=", log_details
+  end
+  
+  def output_send_entity(entity)
+    Log.instance.debug "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    
+    StreamLog.instance.puts "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    member_list = entity.get_all_members_with_values @variables
+    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:data].to_form member[:value]}"}
+    StreamLog.instance.puts "auto response send: member_list=", log_details
   end
   
 end

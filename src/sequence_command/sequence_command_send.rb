@@ -23,9 +23,17 @@ class SequenceCommandSend
   end
   
   def run
-    Log.instance.debug "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode @variables}\""
-    StreamLog.instance.puts "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode @variables}\""
-    StreamLog.instance.puts_message @send_entity.get_all_members_with_values @variables
+    output_send_entity @send_entity
     @stream.write @send_entity.encode @variables, :binary
   end
+  
+  def output_send_entity(entity)
+    Log.instance.debug "command send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    
+    StreamLog.instance.puts "command send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    member_list = entity.get_all_members_with_values @variables
+    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:data].to_form member[:value]}"}
+    StreamLog.instance.puts "command send: member_list=", log_details
+  end
+  
 end
