@@ -139,7 +139,7 @@ class SequenceCommandReceive
     
     StreamLog.instance.puts "command receive: format name=\"#{entity.format.name}\""
     member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:data].to_form member[:value]}"}
+    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
     StreamLog.instance.puts "command receive: member_list=", log_details
   end
   

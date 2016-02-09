@@ -32,7 +32,7 @@ class SequenceCommandSend
     
     StreamLog.instance.puts "command send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
     member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:data].to_form member[:value]}"}
+    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
     StreamLog.instance.puts "command send: member_list=", log_details
   end
   

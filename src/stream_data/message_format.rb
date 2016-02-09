@@ -118,13 +118,13 @@ class MessageFormat
   
   # すべてのメンバーと値を取得する
   # @param
-  #   variables ... 変数群
+  #   variables   ... [Hash] 変数群
   # @return
   #   all_members ... [Array] すべてのメンバーのリスト
-  # @all_members[n] ... [Hash] メンバー
-  #   :name  ... [String] メンバー名
-  #   :data  ... [Object] メンバーデータ
-  #   :value ... [Object] 値
+  #     all_members[n] ... [Hash] メンバー
+  #       :name         ... [String] メンバー名
+  #       :value        ... [Object] 値
+  #       :member_data  ... [Object] メンバーデータ
   def get_all_members_with_values(variables)
     all_members = Array.new
     @member_list.each do |member_name|
@@ -132,7 +132,7 @@ class MessageFormat
       value = get_value member_name, variables
       member = Hash.new
       member[:name] = member_name
-      member[:data] = member_data
+      member[:member_data] = member_data
       member[:value] = value
       all_members << member
     end
@@ -142,12 +142,11 @@ class MessageFormat
   # 比較する
   # @param
   #   message   ... [Object] 比較するメッセージのオブジェクト
-  #                   MessageFormat or MessageEntity のオブジェクト
   #   variables ... [Hash] 変数群
   # @return
   #   result  ... [true/false] 比較結果
   #   details ... [Hash] 詳細
-  #     :reason                 ... [Symbol] 理由 :different_format
+  #     :reason ... [Symbol] 理由 :different_format
   def compare(message, variables)
     result = true
     details = Hash.new
