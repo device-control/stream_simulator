@@ -63,9 +63,10 @@ class StreamSimulator
           return false
         end
         @stream_data.accept @stream_data_runner, scenario_name
-        Log.instance.puts "Scenario SUCCESS."
+        Log.instance.debug "Scenario SUCCESS."
         ret = true
       rescue => e
+        Log.instance.debug "Scenario ERROR."
         Log.instance.debug "ERROR: message=#{e.message}"
         Log.instance.debug "ERROR: backtrace="
         Log.instance.debug e.backtrace
