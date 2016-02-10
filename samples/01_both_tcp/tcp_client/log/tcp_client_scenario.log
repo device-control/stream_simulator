@@ -19,7 +19,7 @@
 ->    command[SEND]
       position: tcp_client_scenario.send_receive_sequence.SEND
         command send: name="command_entity", message="010100020000000334"
-        message_member_list:
+        command send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
@@ -28,10 +28,11 @@
 <-    command[SEND]
 ->    command[RECEIVE]
       position: tcp_client_scenario.send_receive_sequence.RECEIVE
-        expect: type="formats", name="response_format"
+        expected type="formats"
+        expected name="response_format"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        command receive: name="response_format"
-        message_member_list:
+        command receive: format name="response_format"
+        command receive: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
@@ -57,7 +58,7 @@
       position: tcp_client_scenario.interval_send_sequence.WAIT
         command wait: time="20"
         interval send: name="command_entity", message="010100020000000334"
-        message_member_list:
+        interval send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
@@ -65,7 +66,7 @@
           member4_char: "4"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
         interval send: name="command_entity", message="010100020000000334"
-        message_member_list:
+        interval send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
@@ -73,7 +74,7 @@
           member4_char: "4"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
         interval send: name="command_entity", message="010100020000000334"
-        message_member_list:
+        interval send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
@@ -81,7 +82,7 @@
           member4_char: "4"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
         interval send: name="command_entity", message="010100020000000334"
-        message_member_list:
+        interval send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002

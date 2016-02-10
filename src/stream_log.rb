@@ -87,6 +87,14 @@ class StreamLog
     end
   end
   
+  # メンバー一覧をログ出力
+  def puts_member_list(message, member_list)
+    @mutex.synchronize {
+      log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
+      StreamLog.instance.puts message, log_details
+    }
+  end
+
   
   # ファイル書き出し for Windows
   def write_dos(file_path)

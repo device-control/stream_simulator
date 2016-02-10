@@ -65,18 +65,14 @@ class AutopilotAutoResponse
     Log.instance.debug "auto response receive: name=\"#{entity.name}\""
     
     StreamLog.instance.puts "auto response receive: format name=\"#{entity.format.name}\""
-    member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
-    StreamLog.instance.puts "auto response receive: member_list=", log_details
+    StreamLog.instance.puts_member_list "auto response receive: member_list=", entity.get_all_members_with_values(@variables)
   end
   
   def output_send_entity(entity)
     Log.instance.debug "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
     
     StreamLog.instance.puts "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
-    StreamLog.instance.puts "auto response send: member_list=", log_details
+    StreamLog.instance.puts_member_list "auto response send: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end

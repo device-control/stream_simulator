@@ -86,9 +86,7 @@ class AutopilotIntervalSend
     Log.instance.debug "interval send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
     
     StreamLog.instance.puts "interval send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
-    StreamLog.instance.puts "interval send: member_list=", log_details
+    StreamLog.instance.puts_member_list "interval send: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end

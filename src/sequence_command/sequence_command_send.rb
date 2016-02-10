@@ -42,9 +42,7 @@ class SequenceCommandSend
     Log.instance.debug "command send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
     
     StreamLog.instance.puts "command send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
-    StreamLog.instance.puts "command send: member_list=", log_details
+    StreamLog.instance.puts_member_list "command send: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end

@@ -137,7 +137,7 @@ class SequenceCommandReceive
     when :different_values
       # 値が異なる
       raise "not found :difference_member_list" unless compared_details.has_key? :difference_member_list
-      log_message = "different values."
+      log_message = "different values. difference_member_list="
       difference_member_list = compared_details[:difference_member_list] || Array.new
       log_details = difference_member_list.collect {|member |"#{member[:name]}: expected=#{member[:value]} <=> actual=#{member[:compared_value]}" }
     else
@@ -150,9 +150,7 @@ class SequenceCommandReceive
     Log.instance.debug "command receive: name=\"#{entity.name}\""
     
     StreamLog.instance.puts "command receive: format name=\"#{entity.format.name}\""
-    member_list = entity.get_all_members_with_values @variables
-    log_details = member_list.collect {|member |"#{member[:name]}: #{member[:member_data].to_form member[:value]}"}
-    StreamLog.instance.puts "command receive: member_list=", log_details
+    StreamLog.instance.puts_member_list "command receive: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end
