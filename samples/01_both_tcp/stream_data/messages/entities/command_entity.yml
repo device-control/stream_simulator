@@ -7,4 +7,3 @@ contents:
   description: "コマンドのエンティティ"
   using_format: command_format
   values:
-    member1_int8: :COUNTER

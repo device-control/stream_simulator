@@ -48,7 +48,6 @@ class StreamSimulator
     messages[:formats] = @stream_data.message_formats
     messages[:entities] = @stream_data.message_entities
     messages[:autopilots] = @stream_data.autopilots
-    messages[:variables] = @stream_data.variables
     @stream_data_runner = StreamDataRunner.new @stream, messages
     
   end
@@ -106,7 +105,7 @@ class StreamSimulator
   # メッセージ一覧表示
   def show_message
     @stream_data.message_entities.each do |name, entity|
-      puts "#{name}: \"#{entity.encode @stream_data.variables}\""
+      puts "#{name}: \"#{entity.encode}\""
     end
     return true
   end
@@ -114,7 +113,7 @@ class StreamSimulator
   # メッセージフォーマット一覧表示
   def show_message_format
     @stream_data.message_formats.each do |name, format|
-      puts "#{name}: \"#{format.encode @stream_data.variables}\""
+      puts "#{name}: \"#{format.encode}\""
     end
     return true
   end

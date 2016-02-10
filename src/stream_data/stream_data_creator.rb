@@ -40,13 +40,6 @@ module StreamDataCreator
     # オートパイロットを生成
     stream_data.autopilots = get_autopilots yamls
     
-    # 変数を生成
-    variables = Hash.new
-    add_variables_from_messages variables, stream_data.message_formats
-    add_variables_from_messages variables, stream_data.message_entities
-    add_variables_from_sequences variables, stream_data.sequences
-    stream_data.variables = variables
-    
     return stream_data
   end
   
@@ -124,44 +117,6 @@ module StreamDataCreator
       autopilots[name] = Autopilot.create name, yaml
     end
     return autopilots
-  end
-  
-  # variables に変数を追加
-  # messages の values の値がSymbolなら variables にSymbolを設定し、初期化する
-  def add_variables_from_messages(variables, messages)
-    return if messages.nil?
-    # messages のvaluesから変数を取得
-    messages.each do |name, message|
-      message.values.each do |member_name, value|
-        if value.class == Symbol
-          variables[value] = 0 unless variables.has_key? value
-        end
-      end
-    end
-  end
-  
-  # variables に変数を追加
-  # sequences の commands から variables にSymbolを設定し、初期化する
-  def add_variables_from_sequences(variables, sequences)
-    return if sequences.nil?
-    # sequences のcommandsから変数を取得
-    sequences.each do |name, sequence|
-      sequence.commands.each do |command|
-        next if command[:name].nil?
-        if command[:name] == :SET_VARIABLE
-          next if command[:arguments].nil?
-          next if command[:arguments][:exec].nil?
-          execute_list = command[:arguments][:exec]
-          execute_list = Array.new [execute_list] unless execute_list.instance_of? Array
-          execute_list.each do |exec|
-            exec.scan(/\:([0-9a-zA-Z_]+)/) do |w|
-              symbol = $1.to_sym
-              variables[symbol] = 0 unless variables.has_key? symbol
-            end
-          end
-        end
-      end
-    end
   end
   
 end

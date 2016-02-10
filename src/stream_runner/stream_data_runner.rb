@@ -26,10 +26,10 @@ class StreamDataRunner
     raise "not found formats" unless messages.has_key? :formats
     raise "not found entities" unless messages.has_key? :entities
     raise "not found autopilots" unless messages.has_key? :autopilots
-    raise "not found variables" unless messages.has_key? :variables
     
     @stream = stream
     @messages = messages
+    @variables = Hash.new
     @queues = Hash.new
     @queues[:sequence] = Queue.new # sequence用queue
     @queues[:autopilot] = Queue.new # autopilot用queue
@@ -57,7 +57,7 @@ class StreamDataRunner
     Log.instance.debug "run command [#{command[:name]}]"
     StreamLog.instance.push :command, command[:name]
     begin
-      sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues
+      sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues, @variables
       sequence_command.run
     rescue SequenceCommandError => e
       StreamLog.instance.puts_error e.message, e.detail

@@ -32,6 +32,13 @@ module SequenceCreator
         unless command[:arguments].nil?
           command[:arguments].extend ExtendHash
           command[:arguments] = command[:arguments].symbolize_keys
+          
+          unless command[:arguments][:override_values].nil?
+            command[:arguments][:override_values].collect! do |override_value|
+              override_value.extend ExtendHash
+              override_value.symbolize_keys
+            end
+          end
         end
         SequenceCommandCreator.command_permit? command # シンボルに変更後でないと呼び出せない
         commands << command
