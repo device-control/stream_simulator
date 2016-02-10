@@ -66,10 +66,13 @@ class StreamSimulator
         Log.instance.debug "Scenario SUCCESS."
         ret = true
       rescue => e
-        Log.instance.debug "Scenario ERROR."
-        Log.instance.debug "ERROR: message=#{e.message}"
-        Log.instance.debug "ERROR: backtrace="
-        Log.instance.debug e.backtrace
+        Log.instance.error "@ERROR@ Scenario."
+        Log.instance.error " message: #{e.message}"
+        Log.instance.error " backtrace: "
+        e.backtrace.each do |bt|
+          Log.instance.error "   " + bt
+        end
+        # Log.instance.debug e.backtrace
       ensure
         StreamLog.instance.write_dos make_stream_log_filename scenario_name
       end

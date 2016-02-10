@@ -14,6 +14,7 @@ contents:
     # 接続
     - name: :OPEN
       arguments:
+        timeout: 30
     
     # 待ち
     - name: :WAIT

@@ -5,8 +5,6 @@ require 'sequence_command/sequence_command_creator'
 require 'stream_data/sequence'
 require 'stream_data/extend_hash'
 
-require 'pry'
-
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
