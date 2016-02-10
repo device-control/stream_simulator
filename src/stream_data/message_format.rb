@@ -46,11 +46,10 @@ class MessageFormat
   
   # 値をゲットする
   def get_value(key, override_values=nil)
-    value = @values[key]
     unless override_values.nil?
-      value = override_values[key] if override_values.has_key? key
+      return override_values[key] if override_values.has_key? key
     end
-    return value
+    return @values[key]
   end
   
   # メンバーをゲットする

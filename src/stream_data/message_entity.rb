@@ -47,14 +47,13 @@ class MessageEntity
   # 値をゲットする
   # @foramtから取得し、@valuesにあれば上書きする
   def get_value(key, override_values=nil)
-    value = @format.get_value key
-    unless @values.nil?
-      value = @values[key] if @values.has_key? key
-    end
     unless override_values.nil?
-      value = override_values[key] if override_values.has_key? key
+      return override_values[key] if override_values.has_key? key
     end
-    return value
+    unless @values.nil?
+      return @values[key] if @values.has_key? key
+    end
+    return @format.get_value key
   end
   
   # メンバーをゲットする
