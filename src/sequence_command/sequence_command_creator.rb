@@ -27,23 +27,24 @@ class SequenceCommandCreator
     CLOSE: SequenceCommandClose,
   }
   
-  def self.create(command, messages, stream, queues)
+  def self.create(command, messages, stream, queues, variables)
     raise "#{self}.#{__method__} command is nil" if command.nil?
     raise "#{self}.#{__method__} not found :name" unless command.has_key? :name
     raise "#{self}.#{__method__} not found :arguments" unless command.has_key? :arguments
     arguments = command[:arguments]
-
+    
     parameters = {
       arguments: arguments,
       messages: messages,
       stream: stream,
       queues: queues,
+      variables: variables,
     }
     
     raise "unknown command [#{command[:name]}]" unless SEQUENCE_COMMAND_CLASS_LIST.has_key? command[:name]
     return SEQUENCE_COMMAND_CLASS_LIST[command[:name]].new parameters
   end
-
+  
   def self.command_permit?(command)
     raise "#{self}.#{__method__} command is nil" if command.nil?
     raise "#{self}.#{__method__} not found name" unless command.has_key? :name

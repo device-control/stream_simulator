@@ -45,13 +45,11 @@ class MessageFormat
   end
   
   # 値をゲットする
-  def get_value(key, variables)
-    value = @values[key]
-    if value.class == Symbol
-      raise "not found value: [#{value}]" unless variables.has_key? value
-      value = variables[value]
+  def get_value(key, override_values=nil)
+    unless override_values.nil?
+      return override_values[key] if override_values.has_key? key
     end
-    return value
+    return @values[key]
   end
   
   # メンバーをゲットする
@@ -102,14 +100,16 @@ class MessageFormat
   end
   
   # エンコード処理
-  # バイナリテキストにエンコードする
-  # option:
-  #   :binary バイナリにエンコードする
-  def encode(variables, option=nil)
+  #   バイナリテキストにエンコードする
+  # @param
+  #   override_values ... [Hash] 上書きする値
+  #   option          ... [Symbol] オプション
+  #     :binary ... バイナリにエンコードする
+  def encode(override_values=nil, option=nil)
     hex_string = ""
     @member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name, variables
+      value = get_value member_name, override_values
       hex_string += member_data.encode value
     end
     return hex_string_to_binary hex_string if option == :binary
@@ -118,18 +118,18 @@ class MessageFormat
   
   # すべてのメンバーと値を取得する
   # @param
-  #   variables   ... [Hash] 変数群
+  #   override_values ... [Hash] 上書きする値
   # @return
   #   all_members ... [Array] すべてのメンバーのリスト
   #     all_members[n] ... [Hash] メンバー
   #       :name         ... [String] メンバー名
   #       :value        ... [Object] 値
   #       :member_data  ... [Object] メンバーデータ
-  def get_all_members_with_values(variables)
+  def get_all_members_with_values(override_values=nil)
     all_members = Array.new
     @member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name, variables
+      value = get_value member_name, override_values
       member = Hash.new
       member[:name] = member_name
       member[:member_data] = member_data
@@ -142,12 +142,12 @@ class MessageFormat
   # 比較する
   # @param
   #   message   ... [Object] 比較するメッセージのオブジェクト
-  #   variables ... [Hash] 変数群
+  #   override_values ... [Hash] 上書きする値
   # @return
   #   result  ... [true/false] 比較結果
   #   details ... [Hash] 詳細
   #     :reason ... [Symbol] 理由 :different_format
-  def compare(message, variables)
+  def compare(message, override_values=nil)
     result = true
     details = Hash.new
     # フォーマット名が一致するかどうか

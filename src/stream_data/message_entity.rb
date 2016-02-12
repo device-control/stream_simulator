@@ -46,16 +46,14 @@ class MessageEntity
   
   # 値をゲットする
   # @foramtから取得し、@valuesにあれば上書きする
-  def get_value(key, variables)
-    value = @format.get_value key, variables
+  def get_value(key, override_values=nil)
+    unless override_values.nil?
+      return override_values[key] if override_values.has_key? key
+    end
     unless @values.nil?
-      value = @values[key] if @values.has_key? key
+      return @values[key] if @values.has_key? key
     end
-    if value.class == Symbol
-      raise "not found value: [#{value}]" unless variables.has_key? value
-      value = variables[value]
-    end
-    return value
+    return @format.get_value key
   end
   
   # メンバーをゲットする
@@ -64,14 +62,16 @@ class MessageEntity
   end
   
   # エンコード処理
-  # @valuesを@formatでバイナリテキストにエンコードする
-  # option:
-  #   :binary バイナリにエンコードする
-  def encode(variables, option=nil)
+  #   @valuesを@formatでバイナリテキストにエンコードする
+  # @param
+  #   override_values ... [Hash] 上書きする値
+  #   option          ... [Symbol] オプション
+  #     :binary ... バイナリにエンコードする
+  def encode(override_values=nil, option=nil)
     hex_string = ""
     member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name, variables
+      value = get_value member_name, override_values
       hex_string += member_data.encode value
     end
     return hex_string_to_binary hex_string if option == :binary
@@ -80,18 +80,18 @@ class MessageEntity
   
   # すべてのメンバーと値を取得する
   # @param
-  #   variables   ... [Hash] 変数群
+  #   override_values ... [Hash] 上書きする値
   # @return
   #   all_members ... [Array] すべてのメンバーのリスト
   #     all_members[n] ... [Hash] メンバー
   #       :name        ... [String] メンバー名
   #       :member_data ... [Object] メンバーデータ
   #       :value       ... [Object] 値
-  def get_all_members_with_values(variables)
+  def get_all_members_with_values(override_values=nil)
     all_members = Array.new
     member_list.each do |member_name|
       member_data = get_member member_name
-      value = get_value member_name, variables
+      value = get_value member_name, override_values
       member = Hash.new
       member[:name] = member_name
       member[:member_data] = member_data
@@ -103,8 +103,8 @@ class MessageEntity
   
   # 比較する
   # @param
-  #   message   ... [Object] 比較するメッセージのオブジェクト
-  #   variables ... [Hash] 変数群
+  #   message         ... [Object] 比較するメッセージのオブジェクト
+  #   override_values ... [Hash] 上書きする値
   # @return
   #   result  ... [true/false] 比較結果
   #   details ... [Hash] 詳細
@@ -114,9 +114,9 @@ class MessageEntity
   #         :name           ... [String] メンバー名
   #         :value          ... [Object] 値
   #         :compared_value ... [Object] 比較した値
-  def compare(message, variables)
+  def compare(message, override_values=nil)
     # フォーマット比較
-    result, details = @format.compare message, variables
+    result, details = @format.compare message
     if result == false
       return result, details
     end
@@ -125,8 +125,8 @@ class MessageEntity
     difference_member_list = Array.new
     member_list.each.with_index(0) do |member_name, index|
       member_data = get_member member_name
-      value = get_value member_name, variables
-      compared_value = message.get_value member_name, variables
+      value = get_value member_name, override_values
+      compared_value = message.get_value member_name
       
       unless value == compared_value
         member = Hash.new

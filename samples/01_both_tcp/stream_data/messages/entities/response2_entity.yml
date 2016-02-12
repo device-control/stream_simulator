@@ -1,0 +1,13 @@
+# coding: utf-8
+content-type: message_entity
+content-version: 0.1
+
+contents:
+  name: response2_entity
+  description: "レスポンスのエンティティ２"
+  using_format: response_format
+  values:
+    member1_int8: 0x11
+    member2_int16: 0x2222
+    member3_int32: 0x33333333
+    member4_char: 'a'

@@ -1,4 +1,12 @@
 [OK]
+[WARNING] 1
+ 1:
+ position: tcp_client_scenario.send_receive_sequence.RECEIVE
+ message: different values. difference_member_list=
+  member1_int8: expected=0x02 <=> actual=0xFF
+  member2_int16: expected=0x2222 <=> actual=0xFFFF
+  member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
+  member4_char: expected="1" <=> actual="Z"
 [LOGS]
 ->scenario[tcp_client_scenario]
   position: tcp_client_scenario
@@ -6,7 +14,8 @@
     position: tcp_client_scenario.send_receive_sequence
 ->    command[SET_VARIABLE]
       position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
-        command set variable: exec=":STRUCT_LENGTH += 0x01"
+        command set variable: exec=":COUNTER = 0"
+        command set variable: exec=":INCREMENT = 1"
 <-    command[SET_VARIABLE]
 ->    command[OPEN]
       position: tcp_client_scenario.send_receive_sequence.OPEN
@@ -14,7 +23,7 @@
 <-    command[OPEN]
 ->    command[SET_VARIABLE]
       position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
-        command set variable: exec=":COUNTER += :STRUCT_LENGTH"
+        command set variable: exec=":COUNTER += :INCREMENT"
 <-    command[SET_VARIABLE]
 ->    command[SEND]
       position: tcp_client_scenario.send_receive_sequence.SEND
@@ -30,6 +39,33 @@
       position: tcp_client_scenario.send_receive_sequence.RECEIVE
         expected type="formats"
         expected name="response_format"
+        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
+        command receive: format name="response_format"
+        command receive: member_list=
+          id: 0x81
+          member1_int8: 0xFF
+          member2_int16: 0xFFFF
+          member3_int32: 0xFFFFFFFF
+          member4_char: "Z"
+<-    command[RECEIVE]
+->    command[SET_VARIABLE]
+      position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
+        command set variable: exec=":COUNTER += :INCREMENT"
+<-    command[SET_VARIABLE]
+->    command[SEND]
+      position: tcp_client_scenario.send_receive_sequence.SEND
+        command send: name="command_entity", message="010200020000000334"
+        command send: member_list=
+          id: 0x01
+          member1_int8: 0x02
+          member2_int16: 0x0002
+          member3_int32: 0x00000003
+          member4_char: "4"
+<-    command[SEND]
+->    command[RECEIVE]
+      position: tcp_client_scenario.send_receive_sequence.RECEIVE
+        expected type="entities"
+        expected name="response2_entity"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
         command receive: format name="response_format"
         command receive: member_list=
