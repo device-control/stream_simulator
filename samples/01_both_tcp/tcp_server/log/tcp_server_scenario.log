@@ -11,31 +11,31 @@
 ->    command[OPEN]
       position: [4] tcp_server_scenario.auto_response_sequence.OPEN
         command open: name="TCPƒT[ƒo", ip="127.0.0.1", port="50000"
-        receive: name="command_format", message="010100020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010100020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
-        receive: name="command_format", message="010200020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010200020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x02
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
@@ -45,61 +45,61 @@
 ->    command[WAIT]
       position: [5] tcp_server_scenario.auto_response_sequence.WAIT
         command wait: time="30"
-        receive: name="command_format", message="010100020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010100020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
-        receive: name="command_format", message="010100020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010100020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
-        receive: name="command_format", message="010100020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010100020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
-        receive: name="command_format", message="010100020000000334"
-        auto response receive: format name="command_format"
-        auto response receive: member_list=
+        receive: format="command_format", message="010100020000000334"
+        receive: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        auto response send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        auto response send: member_list=
+        [AutoResponse] receive: format="command_format"
+        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
+        [AutoResponse] send: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF

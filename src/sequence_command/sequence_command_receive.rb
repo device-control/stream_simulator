@@ -2,6 +2,8 @@
 
 require 'log'
 require 'sequence_command/sequence_command_utils'
+require 'sequence_command/sequence_command_error'
+require 'sequence_command/sequence_command_warning'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -62,8 +64,6 @@ class SequenceCommandReceive
   end
   
   def run
-    StreamLog.instance.puts "expected type=\"#{@expected_message_type}\""
-    StreamLog.instance.puts "expected name=\"#{@expected_message.name}\"" unless @expected_message.nil?
     event = nil
     timeout = @arguments[:timeout] # 指定がなければ nil が入る
     # 期待のmessageが到着するかタイムアウトするまで待つ
@@ -80,34 +80,36 @@ class SequenceCommandReceive
           raise "#{self.class}\##{__method__} receive message entity is nil" if event[:arguments][0].nil?
           actual_message = event[:arguments][0]
           
-          Log.instance.debug "command receive: name=\"#{actual_message.name}\""
-          StreamLog.instance.puts "command receive: format name=\"#{actual_message.format.name}\""
-          StreamLog.instance.puts_member_list "command receive: member_list=", actual_message.get_all_members_with_values
-          
           # :any なら次のコマンドへ進む
           return if @expected_message_type == :any
           
           # expected_message と比較する
           result, details = @expected_message.compare actual_message, SequenceCommandReceive.get_override_values(@override_values, @variables)
           if result == true
-            Log.instance.debug "command receive: expected message. name=\"#{actual_message.name}\""
+            log_message = "same as expected message."
+            log_details = Array.new
+            log_details << "expected_message type=\"#{@expected_message_type}\""
+            log_details << "expected_message name=\"#{@expected_message.name}\""
+            log_details << "actual_message format=\"#{actual_message.format.name}\""
+            Log.instance.debug log_message
+            StreamLog.instance.puts log_message, log_details
             return
           end
-          Log.instance.debug "command receive: not expected message. name=\"#{actual_message.name}\""
           
           # 期待するメッセージでない場合
           log_message, log_details = make_mismatched_log actual_message, details
+          Log.instance.debug log_message
+          StreamLog.instance.puts log_message, log_details
           case @mismatched_action
           when :CONTINUE
             # マッチするまで待ち続ける
-            StreamLog.instance.puts_warning log_message, log_details
             next
           when :END_OF_SCENARIO
             # シナリオ終了
-            raise SequenceCommandError.new log_message, StreamLog.instance.get_position, log_details
+            raise SequenceCommandError.new log_message, log_details
           when :NEXT_COMMAND
             # 次のコマンドへ進む
-            StreamLog.instance.puts_warning log_message, log_details
+            raise SequenceCommandWarning.new log_message, log_details
             return
           else
             raise "#{self.class}\##{__method__} unknown mismatched action. [#{@mismatched_action}]"
@@ -119,26 +121,24 @@ class SequenceCommandReceive
       # タイムアウト発生
       log_details = Array.new
       log_details << "timeout=#{@arguments[:timeout]}"
-      raise SequenceCommandError.new("receive timeout.", StreamLog.instance.get_position, log_details)
+      raise SequenceCommandError.new("receive timeout.", log_details)
     end
   end
   
   # ミスマッチログのメッセージと詳細を生成する
   def make_mismatched_log(actual_message, compared_details)
-    log_message = ""
+    log_message = "not same as expected message."
     log_details = Array.new
     case compared_details[:reason]
     when :different_format
       # フォーマットが異なる
-      log_message = "different format."
-      log_details << "expected format name=\"#{@expected_message.format.name}\""
-      log_details << "actual format name=\"#{actual_message.format.name}\""
+      log_message = log_message + " format is different."
+      log_details << "expected_message format=\"#{@expected_message.format.name}\""
+      log_details << "actual_message   format=\"#{actual_message.format.name}\""
     when :different_values
       # 値が異なる
-      log_message = "different values."
-      log_details << "expected name=\"#{@expected_message.name}\""
-      log_details << "expected format name=\"#{@expected_message.format.name}\""
-      log_details << "actual format name=\"#{actual_message.format.name}\""
+      log_message = log_message + " value is different."
+      log_details << "expected_message entity=\"#{@expected_message.name}\""
       log_details << "difference_member_list="
       difference_member_list = compared_details[:difference_member_list] || Array.new
       log_details.concat difference_member_list.collect {|member |"  #{member[:name]}: expected=#{member[:value]} <=> actual=#{member[:compared_value]}" }

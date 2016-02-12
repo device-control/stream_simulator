@@ -85,11 +85,11 @@ describe 'StreamLog' do
 [OK]
 [LOGS]
 ->scenario[scenario]
-  position: scenario
+  position: [1] scenario
 ->  sequence[sequence]
-    position: scenario.sequence
+    position: [2] scenario.sequence
 ->    command[command]
-      position: scenario.sequence.command
+      position: [3] scenario.sequence.command
 <-    command[command]
 <-  sequence[sequence]
 <-scenario[scenario]
@@ -123,17 +123,17 @@ describe 'StreamLog' do
 
       expected_logs = <<-'EXPECTED_LOGS'
 [ERROR]
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_error
   error_detail1
   error_detail2
 [LOGS]
 ->scenario[scenario]
-  position: scenario
+  position: [1] scenario
 ->  sequence[sequence]
-    position: scenario.sequence
+    position: [2] scenario.sequence
 ->    command[command]
-      position: scenario.sequence.command
+      position: [3] scenario.sequence.command
 <-    command[command]
 <-  sequence[sequence]
 <-scenario[scenario]
@@ -170,22 +170,22 @@ describe 'StreamLog' do
 [OK]
 [WARNING] 2
  1:
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_warning1
   warning1_detail1
   warning1_detail2
  2:
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_warning2
   warning2_detail1
   warning2_detail2
 [LOGS]
 ->scenario[scenario]
-  position: scenario
+  position: [1] scenario
 ->  sequence[sequence]
-    position: scenario.sequence
+    position: [2] scenario.sequence
 ->    command[command]
-      position: scenario.sequence.command
+      position: [3] scenario.sequence.command
 <-    command[command]
 <-  sequence[sequence]
 <-scenario[scenario]
@@ -222,28 +222,28 @@ describe 'StreamLog' do
 
       expected_logs = <<-'EXPECTED_LOGS'
 [ERROR]
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_error
   error_detail1
   error_detail2
 [WARNING] 2
  1:
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_warning1
   warning1_detail1
   warning1_detail2
  2:
- position: scenario.sequence.command
+ position: [3] scenario.sequence.command
  message: puts_warning2
   warning2_detail1
   warning2_detail2
 [LOGS]
 ->scenario[scenario]
-  position: scenario
+  position: [1] scenario
 ->  sequence[sequence]
-    position: scenario.sequence
+    position: [2] scenario.sequence
 ->    command[command]
-      position: scenario.sequence.command
+      position: [3] scenario.sequence.command
 <-    command[command]
 <-  sequence[sequence]
 <-scenario[scenario]

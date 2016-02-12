@@ -2,10 +2,8 @@
 [WARNING] 1
  1:
  position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
- message: different values.
-  expected name="response2_entity"
-  expected format name="response_format"
-  actual format name="response_format"
+ message: not same as expected message. value is different.
+  expected_message entity="response2_entity"
   difference_member_list=
     member1_int8: expected=0x02 <=> actual=0xFF
     member2_int16: expected=0x2222 <=> actual=0xFFFF
@@ -41,16 +39,17 @@
 <-    command[SEND]
 ->    command[RECEIVE]
       position: [7] tcp_client_scenario.send_receive_sequence.RECEIVE
-        expected type="formats"
-        expected name="response_format"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        command receive: format name="response_format"
-        command receive: member_list=
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
+        same as expected message.
+          expected_message type="formats"
+          expected_message name="response_format"
+          actual_message format="response_format"
 <-    command[RECEIVE]
 ->    command[SET_VARIABLE]
       position: [8] tcp_client_scenario.send_receive_sequence.SET_VARIABLE
@@ -68,16 +67,20 @@
 <-    command[SEND]
 ->    command[RECEIVE]
       position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
-        expected type="entities"
-        expected name="response2_entity"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        command receive: format name="response_format"
-        command receive: member_list=
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
+        not same as expected message. value is different.
+          expected_message entity="response2_entity"
+          difference_member_list=
+            member1_int8: expected=0x02 <=> actual=0xFF
+            member2_int16: expected=0x2222 <=> actual=0xFFFF
+            member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
+            member4_char: expected="1" <=> actual="Z"
 <-    command[RECEIVE]
 ->    command[CLOSE]
       position: [11] tcp_client_scenario.send_receive_sequence.CLOSE
@@ -97,38 +100,62 @@
 ->    command[WAIT]
       position: [15] tcp_client_scenario.interval_send_sequence.WAIT
         command wait: time="20"
-        interval send: name="command_entity", message="010100020000000334"
-        interval send: member_list=
+        [IntervalSend] send: name="command_entity", message="010100020000000334"
+        [IntervalSend] send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        interval send: name="command_entity", message="010100020000000334"
-        interval send: member_list=
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
+          id: 0x81
+          member1_int8: 0xFF
+          member2_int16: 0xFFFF
+          member3_int32: 0xFFFFFFFF
+          member4_char: "Z"
+        [IntervalSend] send: name="command_entity", message="010100020000000334"
+        [IntervalSend] send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        interval send: name="command_entity", message="010100020000000334"
-        interval send: member_list=
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
+          id: 0x81
+          member1_int8: 0xFF
+          member2_int16: 0xFFFF
+          member3_int32: 0xFFFFFFFF
+          member4_char: "Z"
+        [IntervalSend] send: name="command_entity", message="010100020000000334"
+        [IntervalSend] send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
-        interval send: name="command_entity", message="010100020000000334"
-        interval send: member_list=
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
+          id: 0x81
+          member1_int8: 0xFF
+          member2_int16: 0xFFFF
+          member3_int32: 0xFFFFFFFF
+          member4_char: "Z"
+        [IntervalSend] send: name="command_entity", message="010100020000000334"
+        [IntervalSend] send: member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
           member3_int32: 0x00000003
           member4_char: "4"
-        receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
+        receive: member_list=
+          id: 0x81
+          member1_int8: 0xFF
+          member2_int16: 0xFFFF
+          member3_int32: 0xFFFFFFFF
+          member4_char: "Z"
 <-    command[WAIT]
 ->    command[CLOSE]
       position: [16] tcp_client_scenario.interval_send_sequence.CLOSE

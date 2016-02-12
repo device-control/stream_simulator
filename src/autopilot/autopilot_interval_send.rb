@@ -83,10 +83,10 @@ class AutopilotIntervalSend
   end
   
   def output_send_entity(entity)
-    Log.instance.debug "interval send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    Log.instance.debug "[IntervalSend] send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
     
-    StreamLog.instance.puts "interval send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    StreamLog.instance.puts_member_list "interval send: member_list=", entity.get_all_members_with_values(@variables)
+    StreamLog.instance.puts "[IntervalSend] send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
+    StreamLog.instance.puts_member_list "[IntervalSend] send: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end

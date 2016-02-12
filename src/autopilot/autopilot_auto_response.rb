@@ -50,29 +50,21 @@ class AutopilotAutoResponse
   def message_entity_notify(message_entity)
     # 通知されてきたmessage_entityが応答リスト内に登録されているか
     unless @responses.has_key? message_entity.format.name
-      StreamLog.instance.puts "auto response receive: unkown message. format name=\"#{message_entity.format.name}\""
-      Log.instance.debug "auto response receive: unkown message. format name=\"#{message_entity.format.name}\""
+      StreamLog.instance.puts "[AutoResponse] receive: unkown message. format=\"#{message_entity.format.name}\""
+      Log.instance.debug "[AutoResponse] receive: unkown message. format=\"#{message_entity.format.name}\""
       return
     end
     
-    output_receive_entity message_entity
+    Log.instance.debug "[AutoResponse] receive: format=\"#{message_entity.format.name}\""
+    StreamLog.instance.puts "[AutoResponse] receive: format=\"#{message_entity.format.name}\""
+    
     send_entity = @responses[message_entity.format.name]
-    output_send_entity send_entity
+    
+    Log.instance.debug "[AutoResponse] send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
+    StreamLog.instance.puts "[AutoResponse] send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
+    StreamLog.instance.puts_member_list "[AutoResponse] send: member_list=", send_entity.get_all_members_with_values(@variables)
+    
     @stream.write send_entity.encode @variables, :binary
-  end
-  
-  def output_receive_entity(entity)
-    Log.instance.debug "auto response receive: name=\"#{entity.name}\""
-    
-    StreamLog.instance.puts "auto response receive: format name=\"#{entity.format.name}\""
-    StreamLog.instance.puts_member_list "auto response receive: member_list=", entity.get_all_members_with_values(@variables)
-  end
-  
-  def output_send_entity(entity)
-    Log.instance.debug "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    
-    StreamLog.instance.puts "auto response send: name=\"#{entity.name}\", message=\"#{entity.encode @variables}\""
-    StreamLog.instance.puts_member_list "auto response send: member_list=", entity.get_all_members_with_values(@variables)
   end
   
 end

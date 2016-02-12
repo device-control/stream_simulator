@@ -27,7 +27,7 @@ class StreamLog
     @nested_names.each do |nested_name|
       positions << nested_name[:name]
     end
-    return "[#{@position_count}] "+ positions.join('.')
+    return positions.join('.')
   end
 
   # 動作位置名を登録
@@ -42,7 +42,7 @@ class StreamLog
       hash[:name] = name
       @nested_names << hash
       @position_count += 1
-      @logs << "  #{space}position: " + get_position # 今の位置を出力
+      @logs << "  #{space}position: [#{@position_count}] " + get_position # 今の位置を出力
     }
   end
   
@@ -74,7 +74,7 @@ class StreamLog
       @error = Hash.new
       @error[:message] = message
       @error[:details] = details
-      @error[:position] = get_position
+      @error[:position] = "[#{@position_count}] " + get_position
     end
   end
   
@@ -84,7 +84,7 @@ class StreamLog
       warning = Hash.new
       warning[:message] = message
       warning[:details] = details
-      warning[:position] = get_position
+      warning[:position] = "[#{@position_count}] " + get_position
       @warnings << warning
     end
   end

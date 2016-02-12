@@ -6,6 +6,7 @@ require 'stream_data/message_analyze'
 require 'autopilot/autopilot_manager'
 require 'sequence_command/sequence_command_creator'
 require 'sequence_command/sequence_command_error'
+require 'sequence_command/sequence_command_warning'
 require 'stream_log'
 
 Encoding.default_external = 'utf-8'
@@ -59,6 +60,8 @@ class StreamDataRunner
     begin
       sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues, @variables
       sequence_command.run
+    rescue SequenceCommandWarning => e
+      StreamLog.instance.puts_warning e.message, e.detail
     rescue SequenceCommandError => e
       StreamLog.instance.puts_error e.message, e.detail
       raise e # シナリオ終了
@@ -73,8 +76,10 @@ class StreamDataRunner
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
   def analyze_completed(message_entity)
-    Log.instance.debug "receive: name=\"#{message_entity.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
-    StreamLog.instance.puts "receive: name=\"#{message_entity.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
+    Log.instance.debug "receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
+    StreamLog.instance.puts "receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
+    StreamLog.instance.puts_member_list "receive: member_list=", message_entity.get_all_members_with_values
+    
     event = Hash.new
     event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]
