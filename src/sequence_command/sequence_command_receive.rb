@@ -93,10 +93,10 @@ class SequenceCommandReceive
             Log.instance.debug "command receive: expected message. name=\"#{actual_message.name}\""
             return
           end
+          Log.instance.debug "command receive: not expected message. name=\"#{actual_message.name}\""
           
           # 期待するメッセージでない場合
-          log_message, log_details = make_mismatched_log details
-          Log.instance.debug log_message
+          log_message, log_details = make_mismatched_log actual_message, details
           case @mismatched_action
           when :CONTINUE
             # マッチするまで待ち続ける
@@ -124,20 +124,24 @@ class SequenceCommandReceive
   end
   
   # ミスマッチログのメッセージと詳細を生成する
-  def make_mismatched_log(compared_details)
+  def make_mismatched_log(actual_message, compared_details)
     log_message = ""
     log_details = Array.new
     case compared_details[:reason]
     when :different_format
       # フォーマットが異なる
       log_message = "different format."
-      log_details << "expected format name=#{@expected_message.format.name}"
-      log_details << "actual format name=#{actual_message.format.name}"
+      log_details << "expected format name=\"#{@expected_message.format.name}\""
+      log_details << "actual format name=\"#{actual_message.format.name}\""
     when :different_values
       # 値が異なる
-      log_message = "different values. difference_member_list="
+      log_message = "different values."
+      log_details << "expected name=\"#{@expected_message.name}\""
+      log_details << "expected format name=\"#{@expected_message.format.name}\""
+      log_details << "actual format name=\"#{actual_message.format.name}\""
+      log_details << "difference_member_list="
       difference_member_list = compared_details[:difference_member_list] || Array.new
-      log_details = difference_member_list.collect {|member |"#{member[:name]}: expected=#{member[:value]} <=> actual=#{member[:compared_value]}" }
+      log_details.concat difference_member_list.collect {|member |"  #{member[:name]}: expected=#{member[:value]} <=> actual=#{member[:compared_value]}" }
     else
       raise "#{self.class}\##{__method__} unknown compared reason: #{compared_details[:reason]}"
     end

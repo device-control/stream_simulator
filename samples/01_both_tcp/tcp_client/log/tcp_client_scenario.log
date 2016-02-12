@@ -1,32 +1,36 @@
 [OK]
 [WARNING] 1
  1:
- position: tcp_client_scenario.send_receive_sequence.RECEIVE
- message: different values. difference_member_list=
-  member1_int8: expected=0x02 <=> actual=0xFF
-  member2_int16: expected=0x2222 <=> actual=0xFFFF
-  member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
-  member4_char: expected="1" <=> actual="Z"
+ position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
+ message: different values.
+  expected name="response2_entity"
+  expected format name="response_format"
+  actual format name="response_format"
+  difference_member_list=
+    member1_int8: expected=0x02 <=> actual=0xFF
+    member2_int16: expected=0x2222 <=> actual=0xFFFF
+    member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
+    member4_char: expected="1" <=> actual="Z"
 [LOGS]
 ->scenario[tcp_client_scenario]
-  position: tcp_client_scenario
+  position: [1] tcp_client_scenario
 ->  sequence[send_receive_sequence]
-    position: tcp_client_scenario.send_receive_sequence
+    position: [2] tcp_client_scenario.send_receive_sequence
 ->    command[SET_VARIABLE]
-      position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
+      position: [3] tcp_client_scenario.send_receive_sequence.SET_VARIABLE
         command set variable: exec=":COUNTER = 0"
         command set variable: exec=":INCREMENT = 1"
 <-    command[SET_VARIABLE]
 ->    command[OPEN]
-      position: tcp_client_scenario.send_receive_sequence.OPEN
+      position: [4] tcp_client_scenario.send_receive_sequence.OPEN
         command open: name="TCPクライアント", ip="127.0.0.1", port="50000"
 <-    command[OPEN]
 ->    command[SET_VARIABLE]
-      position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
+      position: [5] tcp_client_scenario.send_receive_sequence.SET_VARIABLE
         command set variable: exec=":COUNTER += :INCREMENT"
 <-    command[SET_VARIABLE]
 ->    command[SEND]
-      position: tcp_client_scenario.send_receive_sequence.SEND
+      position: [6] tcp_client_scenario.send_receive_sequence.SEND
         command send: name="command_entity", message="010100020000000334"
         command send: member_list=
           id: 0x01
@@ -36,7 +40,7 @@
           member4_char: "4"
 <-    command[SEND]
 ->    command[RECEIVE]
-      position: tcp_client_scenario.send_receive_sequence.RECEIVE
+      position: [7] tcp_client_scenario.send_receive_sequence.RECEIVE
         expected type="formats"
         expected name="response_format"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
@@ -49,11 +53,11 @@
           member4_char: "Z"
 <-    command[RECEIVE]
 ->    command[SET_VARIABLE]
-      position: tcp_client_scenario.send_receive_sequence.SET_VARIABLE
+      position: [8] tcp_client_scenario.send_receive_sequence.SET_VARIABLE
         command set variable: exec=":COUNTER += :INCREMENT"
 <-    command[SET_VARIABLE]
 ->    command[SEND]
-      position: tcp_client_scenario.send_receive_sequence.SEND
+      position: [9] tcp_client_scenario.send_receive_sequence.SEND
         command send: name="command_entity", message="010200020000000334"
         command send: member_list=
           id: 0x01
@@ -63,7 +67,7 @@
           member4_char: "4"
 <-    command[SEND]
 ->    command[RECEIVE]
-      position: tcp_client_scenario.send_receive_sequence.RECEIVE
+      position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
         expected type="entities"
         expected name="response2_entity"
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
@@ -76,22 +80,22 @@
           member4_char: "Z"
 <-    command[RECEIVE]
 ->    command[CLOSE]
-      position: tcp_client_scenario.send_receive_sequence.CLOSE
+      position: [11] tcp_client_scenario.send_receive_sequence.CLOSE
         command close: name="TCPクライアント", ip="127.0.0.1", port="50000"
 <-    command[CLOSE]
 <-  sequence[send_receive_sequence]
 ->  sequence[interval_send_sequence]
-    position: tcp_client_scenario.interval_send_sequence
+    position: [12] tcp_client_scenario.interval_send_sequence
 ->    command[AUTOPILOT_START]
-      position: tcp_client_scenario.interval_send_sequence.AUTOPILOT_START
+      position: [13] tcp_client_scenario.interval_send_sequence.AUTOPILOT_START
         autopilot start: name="interval_send_autopilot"
 <-    command[AUTOPILOT_START]
 ->    command[OPEN]
-      position: tcp_client_scenario.interval_send_sequence.OPEN
+      position: [14] tcp_client_scenario.interval_send_sequence.OPEN
         command open: name="TCPクライアント", ip="127.0.0.1", port="50000"
 <-    command[OPEN]
 ->    command[WAIT]
-      position: tcp_client_scenario.interval_send_sequence.WAIT
+      position: [15] tcp_client_scenario.interval_send_sequence.WAIT
         command wait: time="20"
         interval send: name="command_entity", message="010100020000000334"
         interval send: member_list=
@@ -127,11 +131,11 @@
         receive: name="response_format", message="81FFFFFFFFFFFFFF5A"
 <-    command[WAIT]
 ->    command[CLOSE]
-      position: tcp_client_scenario.interval_send_sequence.CLOSE
+      position: [16] tcp_client_scenario.interval_send_sequence.CLOSE
         command close: name="TCPクライアント", ip="127.0.0.1", port="50000"
 <-    command[CLOSE]
 ->    command[AUTOPILOT_END]
-      position: tcp_client_scenario.interval_send_sequence.AUTOPILOT_END
+      position: [17] tcp_client_scenario.interval_send_sequence.AUTOPILOT_END
         autopilot stop: name="interval_send_autopilot"
 <-    command[AUTOPILOT_END]
 <-  sequence[interval_send_sequence]

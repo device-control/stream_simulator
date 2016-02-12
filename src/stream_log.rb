@@ -16,6 +16,7 @@ class StreamLog
 
   def reset
     @nested_names = Array.new
+    @position_count = 0
     @logs = Array.new
     @error = nil # Hash.new # シナリオ異常終了時のログ情報
     @warnings = Array.new # 警告発生時のログ情報
@@ -26,7 +27,7 @@ class StreamLog
     @nested_names.each do |nested_name|
       positions << nested_name[:name]
     end
-    return positions.join('.')
+    return "[#{@position_count}] "+ positions.join('.')
   end
 
   # 動作位置名を登録
@@ -40,6 +41,7 @@ class StreamLog
       hash[:type] = type
       hash[:name] = name
       @nested_names << hash
+      @position_count += 1
       @logs << "  #{space}position: " + get_position # 今の位置を出力
     }
   end
@@ -133,8 +135,9 @@ class StreamLog
         file.write "[LOGS]\n"
         file.write @logs.join("\n");
       end
-      # @nested_names.clear
-      # @logs.clear
+      
+      # ログをリセット
+      reset
     }
   end
 

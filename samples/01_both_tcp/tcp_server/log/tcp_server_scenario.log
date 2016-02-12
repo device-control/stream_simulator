@@ -1,15 +1,15 @@
 [OK]
 [LOGS]
 ->scenario[tcp_server_scenario]
-  position: tcp_server_scenario
+  position: [1] tcp_server_scenario
 ->  sequence[auto_response_sequence]
-    position: tcp_server_scenario.auto_response_sequence
+    position: [2] tcp_server_scenario.auto_response_sequence
 ->    command[AUTOPILOT_START]
-      position: tcp_server_scenario.auto_response_sequence.AUTOPILOT_START
+      position: [3] tcp_server_scenario.auto_response_sequence.AUTOPILOT_START
         autopilot start: name="auto_response_autopilot"
 <-    command[AUTOPILOT_START]
 ->    command[OPEN]
-      position: tcp_server_scenario.auto_response_sequence.OPEN
+      position: [4] tcp_server_scenario.auto_response_sequence.OPEN
         command open: name="TCPサーバ", ip="127.0.0.1", port="50000"
         receive: name="command_format", message="010100020000000334"
         auto response receive: format name="command_format"
@@ -43,7 +43,7 @@
           member4_char: "Z"
 <-    command[OPEN]
 ->    command[WAIT]
-      position: tcp_server_scenario.auto_response_sequence.WAIT
+      position: [5] tcp_server_scenario.auto_response_sequence.WAIT
         command wait: time="30"
         receive: name="command_format", message="010100020000000334"
         auto response receive: format name="command_format"
@@ -107,11 +107,11 @@
           member4_char: "Z"
 <-    command[WAIT]
 ->    command[CLOSE]
-      position: tcp_server_scenario.auto_response_sequence.CLOSE
+      position: [6] tcp_server_scenario.auto_response_sequence.CLOSE
         command close: name="TCPサーバ", ip="127.0.0.1", port="50000"
 <-    command[CLOSE]
 ->    command[AUTOPILOT_END]
-      position: tcp_server_scenario.auto_response_sequence.AUTOPILOT_END
+      position: [7] tcp_server_scenario.auto_response_sequence.AUTOPILOT_END
         autopilot stop: name="auto_response_autopilot"
 <-    command[AUTOPILOT_END]
 <-  sequence[auto_response_sequence]
