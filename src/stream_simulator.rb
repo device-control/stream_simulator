@@ -7,7 +7,7 @@ require 'stream/stream_manager'
 require 'stream_runner/stream_data_runner'
 require 'stream_data/stream_data'
 require 'stream_data/message_utils'
-require 'function_executor'
+require 'execute_function_receiver'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -44,14 +44,14 @@ class StreamSimulator
     raise "not found stream_setting_name: [#{stream_setting_name}]" unless @stream_data.stream_settings.has_key? stream_setting_name
     @stream = StreamManager.create @stream_data.stream_settings[stream_setting_name].parameters
 
-    # function_executor 使用する場合
-    @function_executor = nil
-    function_executor_name = inparam[:function_executor_name]
-    if function_executor_name
-      unless @stream_data.stream_settings.has_key? function_executor_name
-        raise "not found function_executor_name: [#{function_executor_name}]"
+    # execute_function_receiver 使用する場合
+    @execute_function_receiver = nil
+    execute_function_receiver_name = inparam[:execute_function_receiver_name]
+    if execute_function_receiver_name
+      unless @stream_data.stream_settings.has_key? execute_function_receiver_name
+        raise "not found execute_function_receiver_name: [#{execute_function_receiver_name}]"
       end
-      @function_executor = FunctionExecutor.new @stream_data.stream_settings[function_executor_name].parameters
+      @execute_function_receiver = ExecuteFunctionReceiver.new @stream_data.stream_settings[execute_function_receiver_name].parameters
     end
     
     # StreamDataRunner生成
@@ -65,10 +65,10 @@ class StreamSimulator
   
   # シナリオ実行
   def run(scenario_list)
-    # function_executor 開始
-    unless @function_executor.nil?
-      StreamLog.instance.puts "function_executor start"
-      @function_executor.start
+    # execute_function_receiver 開始
+    unless @execute_function_receiver.nil?
+      StreamLog.instance.puts "execute_function_receiver start."
+      @execute_function_receiver.start
     end
     ret = false
     scenario_list.each do |scenario_name|
@@ -89,10 +89,10 @@ class StreamSimulator
         end
         # Log.instance.debug e.backtrace
       ensure
-        # function_executor 終了
-        unless @function_executor.nil?
-          StreamLog.instance.puts "function_executor end"
-          @function_executor.stop
+        # execute_function_receiver 終了
+        unless @execute_function_receiver.nil?
+          StreamLog.instance.puts "execute_function_receiver end."
+          @execute_function_receiver.stop
         end
         StreamLog.instance.write_dos make_stream_log_filename scenario_name
       end

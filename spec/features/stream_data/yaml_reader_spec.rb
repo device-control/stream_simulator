@@ -20,10 +20,11 @@ describe 'YamlReader' do
       yamls = nil
       
       expect{ yamls = target.get_yamls '../samples/01_both_tcp/stream_data/settings' }.not_to raise_error
-      expect(yamls.size).to eq 2 # 件数
+      expect(yamls.size).to eq 3 # 件数
       files = [
         '../samples/01_both_tcp/stream_data/settings/tcp_client_setting.yml',
         '../samples/01_both_tcp/stream_data/settings/tcp_server_setting.yml',
+        '../samples/01_both_tcp/stream_data/settings/tcp_server_setting_for_execute_function_receiver.yml',
       ]
       # yaml存在確認
       yamls.each.with_index(0) do |info,index|

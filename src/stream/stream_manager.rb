@@ -28,7 +28,7 @@ class StreamManager
       end
     rescue => e
       # 異常フォーマット
-      raise "StreamManager::create error: " + e.message
+      raise "#{self}.#{__method__}: " + e.message
       stream = nil
     end
     return stream

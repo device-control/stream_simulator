@@ -6,11 +6,12 @@ require 'stream/stream_manager'
 require 'stream_data/message_utils'
 
 require 'log'
+require 'stream_log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
-class FunctionExecutor
+class ExecuteFunctionReceiver
   extend MessageUtils
   attr_reader :client_connected
   attr_reader :stream
@@ -56,77 +57,74 @@ class FunctionExecutor
   end
 
   def get_parameters message
-    name = nil
-    args = nil
+    parameters = nil
+    yml = ''
     begin
       yml = YAML.load(message)
-      raise "unknown format(contents)" if !yml.has_key?("contents")
-      contents = yml["contents"]
-      raise "unknown format(function_name)" if !contents.has_key?("function_name")
-      name = contents["function_name"]
-      if contents.has_key?("args")
-        args = Array.new
-        contents["args"].each do |arg|
-          args << arg["value"]
-        end
-      end
+      raise "not found content-type" unless yml.has_key? 'content-type'
+      raise "unknown format content-type [#{yml['content-type']}]" if yml['content-type'] != 'execute_function_request'
+      raise "not found content-version" unless yml.has_key? 'content-version'
+      # raise "unknown format content-version [#{yml['content-version']}]" if yml['content-version'] != 0.1
+      parameters = yml['contents']
+      raise "not found name" unless parameters.has_key?('name')
+      raise "not found id" unless parameters.has_key?('id')
+      raise "not found function_name" unless parameters.has_key?('function_name')
     rescue => e
-      raise "Error:FunctionExecutor.get_parameters: " + e.message
+      raise "#{self.class}\##{__method__} receive message unknown format.(#{yml.to_s})" + e.message
     end
-    return name, args
+    return parameters
   end
   
   # 受信通知
   # --- message 内容 ---
-  # content-type: message_fuction
+  # content-type: execute_function_request
   # content-version: 0.1
   # contents:
+  #   name: "Test()呼び出し。入力は適当"
+  #   id: 1
   #   function_name: "Test"
-  #   index: 1
-  #   description: "Test()呼び出し。入力は適当"
   #   args:
-  #     - type: intX (8,16,32のみ。配列禁止)
-  #       value: 0x01 (整数のみHex,Dec)
-  #     - type: char[64] (文字列。配列以外禁止)
-  #       value: "123456" (文字列)
+  #     - 0
+  #     - "arg1"
+  #     - 2
   # 
   # --- result 内容 ---
-  # content-type: message_fuction_result
+  # content-type: execute_function_result
   # content-version: 0.1
   # contents:
+  #   name: "Test()呼び出し。入力は適当"
+  #   id: 1
   #   function_name: "Test"
-  #   index: 1
-  #   result:
-  #     type: int8
-  #     value: 0x00
-  #     message: "例外等の内容"
+  #   result: :SUCCESS # :SUCCESS=成功, :SUCCESS以外=失敗
   def stream_message_received(stream,message)
     result = {
-      "content-type" => "message_function_result",
+      "content-type" => "execute_function_result",
       "content-version" => 0.1,
       "contents" => {
         "function_name" => "Unknown function name",
-        "index" => 1,
-        "result" => {
-          "type" => "int8",
-          "value" => 1, # 0:失敗, 1:成功
-          "message" => "success", # 理由
-        }
+        "id" => 1,
+        "result" => :SUCCESS,
       }
     }
     begin
-      (function_name,args) = get_parameters message
-      result["contents"]["function_name"] = function_name
+      # (name, id, function_name, args) = get_parameters message
+      parameters = get_parameters message
+      result['contents']['name'] = parameters['name']
+      result['contents']['id'] = parameters['id']
+      result['contents']['function_name'] = parameters['function_name']
       # send (name, [arg, ...])
-      if args
-        send function_name, *args
+      StreamLog.instance.puts "<execute function> #{parameters.to_s}"
+      Log.instance.debug "#{self.class}\##{__method__}: #{parameters.to_s}"
+      if parameters.has_key? 'args'
+        send parameters['function_name'], *parameters['args']
       else
-        send function_name
+        send parameters['function_name']
       end
     rescue => e
-      puts "Error:FunctionExecutor#stream_message_received: " + e.message
-      result["contents"]["result"]["value"] = 0
-      result["contents"]["result"]["message"] = e.message
+      StreamLog.instance.puts "<execute function> error: #{parameters.to_s}"
+      StreamLog.instance.puts_warning "<execute function> error: #{parameters.to_s}", e.message.split("\n")
+      Log.instance.error "#{self.class}\##{__method__}: " + e.message
+      result["contents"]["result"] = e.message
     ensure
       write result.to_yaml.to_s
     end

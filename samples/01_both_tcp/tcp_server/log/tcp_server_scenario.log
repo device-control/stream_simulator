@@ -1,5 +1,6 @@
 [OK]
 [LOGS]
+  execute_function_receiver start.
 ->scenario[tcp_server_scenario]
   position: [1] tcp_server_scenario
 ->  sequence[auto_response_sequence]
@@ -116,3 +117,4 @@
 <-    command[AUTOPILOT_END]
 <-  sequence[auto_response_sequence]
 <-scenario[tcp_server_scenario]
+  execute_function_receiver end.

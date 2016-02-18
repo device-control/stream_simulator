@@ -1,0 +1,12 @@
+# coding: utf-8
+content-type: stream_setting
+content-version: 0.1
+
+contents:
+  name: tcp_server_setting_for_execute_function_receiver
+  description: "TCPサーバストリーム for ExecuteFunctionReceiver"
+  parameters:
+    type: :TCP_SERVER
+    name: "TCPサーバ for ExecuteFunctionReceiver"
+    ip: "127.0.0.1"
+    port: 9001

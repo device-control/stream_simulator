@@ -24,6 +24,7 @@ simulator_data_path = '../stream_data'
 #  StreamSimulator データに含まれているstream名を設定する必要がある
 #  例：stream_setting_name = 'stream_setting'
 stream_setting_name = 'tcp_server_setting'
+execute_function_receiver_name = 'tcp_server_setting_for_execute_function_receiver'
 
 
 #---------------------------------------------------
@@ -48,6 +49,7 @@ scenario_list = [
 $inparam = Hash.new
 $inparam[:stream_data_path] = File.expand_path(File.dirname(__FILE__))+"/#{simulator_data_path}"
 $inparam[:stream_setting_name] = stream_setting_name
+$inparam[:execute_function_receiver_name] = execute_function_receiver_name
 # ストリームログ出力PATHを設定
 $inparam[:stream_log_path] = File.expand_path(File.dirname(__FILE__))+"/#{stream_log_path}"
 # デバッグログ出力先
@@ -96,6 +98,10 @@ end
 # 管理しているシナリオを表示する
 def show_scenario
   $simulator.show_scenario
+end
+
+def dummy_method(arg)
+  puts "arg:" + arg
 end
 
 #  本スクリプト実行時にシナリオを実行する

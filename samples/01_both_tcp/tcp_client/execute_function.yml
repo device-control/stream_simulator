@@ -1,0 +1,17 @@
+# coding: utf-8
+content-type: execute_function
+content-version: 0.1
+contents:
+  name: "外部から関数実行テスト"
+  stream_setting:
+    type: :TCP_CLIENT
+    name: "TCPクライアント for execute_function"
+    ip: "127.0.0.1"
+    port: 9001
+    timeout: 5
+  function_request:
+    name: "dummy_method()呼び出し"
+    id: 1,
+    function_name: "dummy_method"
+    args:
+      - "ABCDEF"
