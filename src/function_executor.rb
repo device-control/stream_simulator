@@ -2,9 +2,8 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 
 require 'yaml'
-require 'stream_manager'
-require 'stream_tcp_server'
-require 'message_utils'
+require 'stream/stream_manager'
+require 'stream_data/message_utils'
 
 require 'log'
 
@@ -20,13 +19,17 @@ class FunctionExecutor
   attr_reader :scenario_analyze
   
   # コンストラクタ
-  def initialize
-    @parameters = Hash.new
-    @parameters[:type] = :TCP_SERVER
-    @parameters[:name] = "関数呼び出し用内部TCPサーバ"
-    @parameters[:ip] = "127.0.0.1"
-    @parameters[:port] = 50001 # TODO 暫定(default)
-    @parameters[:timeout] = 5
+  def initialize(parameters=nil)
+    @parameters = parameters
+    if parameters.nil?
+      @parameters = {
+        type: :TCP_SERVER,
+        name: "関数呼び出し用内部TCPサーバ",
+        ip: "127.0.0.1", # default
+        port: 9001, # default
+        timeout: 5
+      }
+    end
     @stream = StreamManager.create @parameters
     @client_connected = false
     add_observer

@@ -1,17 +1,12 @@
 # coding: utf-8
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_data'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_runner'))
 
 require 'yaml'
 require 'function_executor'
 require 'function_runner'
 require 'log'
-require 'yaml_reader'
+require 'stream_data/yaml_reader'
 
 require 'pry'
 
@@ -22,19 +17,26 @@ def dummy_function_runner00(arg0)
 end
 
 describe 'FunctionRunner' do
-  before do
-    log = Log.instance
-    log.disabled
+  log = Log.instance
+  log.disabled
+
+  # before(:all) が実行されるのは最初の 1 回だけ
+  # before(:each) が実行されるのは各 it ごと(describe,it,context...正確にはどの単位かは不明)
+  before :all do
     @function_executor = FunctionExecutor.new
     @function_executor.start
   end
 
-  after do
+  after :all  do
     @function_executor.stop
   end
   
   context '生成／削除' do
     it '正しく生成／削除されることを確認' do
+      expect{ FunctionRunner.new }.not_to raise_error
+      expect{ FunctionRunner.new( '127.0.0.1' ) }.not_to raise_error
+      expect{ FunctionRunner.new( '127.0.0.1', 9001 ) }.not_to raise_error
+      expect{ FunctionRunner.new( '127.0.0.1', 9001, 5 ) }.not_to raise_error
       function_runner = nil
       expect{ function_runner = FunctionRunner.new }.not_to raise_error
       expect{ function_runner.start }.not_to raise_error

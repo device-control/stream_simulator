@@ -1,17 +1,15 @@
 # coding: utf-8
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
 
 require 'yaml'
-require 'stream_manager'
-require 'stream_tcp_client'
 require 'log'
+require 'stream/stream_manager'
+require 'stream/stream_tcp_client'
 
 class FunctionRunner
   attr_reader :connected, :recv_message
   
-  def initialize(ip='127.0.0.1',port=50001, timeout=5)
+  def initialize(ip='127.0.0.1',port=9001, timeout=5)
     @parameters = {
       :name => 'FunctionRunner',
       :type => :TCP_CLIENT,

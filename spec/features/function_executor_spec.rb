@@ -1,16 +1,11 @@
 # coding: utf-8
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/..'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../..'))
 $LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_data'))
-$LOAD_PATH.push(File.expand_path(File.dirname(__FILE__)+'/../../src/stream_runner'))
 
 require 'yaml'
-require 'function_executor'
 require 'log'
-require 'yaml_reader'
+require 'function_executor'
+require 'stream_data/yaml_reader'
 
 require 'pry'
 
@@ -72,15 +67,24 @@ end
 
 
 describe 'FunctionExecutor' do
+  log = Log.instance
+  log.disabled
+  parameters = {
+    type: :TCP_SERVER,
+    name: "関数呼び出し用内部TCPサーバ",
+    ip: "127.0.0.1",
+    port: 9001,
+    timeout: 5
+  }
+  
   before do
-    log = Log.instance
-    log.disabled
   end
   
   context '生成／削除' do
     it '正しく生成／削除されることを確認' do
-      function_executor = nil
-      expect{ function_executor = FunctionExecutor.new }.not_to raise_error
+      expect{ FunctionExecutor.new}.not_to raise_error
+      expect{ FunctionExecutor.new parameters}.not_to raise_error
+      function_executor = FunctionExecutor.new
       # ２重start
       expect{ function_executor.start }.not_to raise_error
       expect{ function_executor.start }.not_to raise_error
@@ -94,11 +98,11 @@ describe 'FunctionExecutor' do
   context '関数実行' do
     it '関数(引数なし)が実行できることを確認' do
       function_executor = nil
-      expect{ function_executor = FunctionExecutor.new }.not_to raise_error
+      expect{ function_executor = FunctionExecutor.new parameters}.not_to raise_error
       expect{ function_executor.start }.not_to raise_error
       tcp_client = nil
       client_listener = nil
-      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 50001, 5}.not_to raise_error
+      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 9001, 5}.not_to raise_error
       expect{ client_listener = MockListenerFunctionExecutor.new "MockListenerFunctionExecutor"}.not_to raise_error
       tcp_client.add_observer StreamObserver::STATUS, client_listener
       tcp_client.add_observer StreamObserver::MESSAGE, client_listener
@@ -138,7 +142,7 @@ describe 'FunctionExecutor' do
       expect{ function_executor.start }.not_to raise_error
       tcp_client = nil
       client_listener = nil
-      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 50001, 5}.not_to raise_error
+      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 9001, 5}.not_to raise_error
       expect{ client_listener = MockListenerFunctionExecutor.new "MockListenerFunctionExecutor"}.not_to raise_error
       tcp_client.add_observer StreamObserver::STATUS, client_listener
       tcp_client.add_observer StreamObserver::MESSAGE, client_listener
@@ -178,11 +182,11 @@ describe 'FunctionExecutor' do
     
     it '関数(引数あり:数値)が実行できることを確認' do
       function_executor = nil
-      expect{ function_executor = FunctionExecutor.new }.not_to raise_error
+      expect{ function_executor = FunctionExecutor.new parameters}.not_to raise_error
       expect{ function_executor.start }.not_to raise_error
       tcp_client = nil
       client_listener = nil
-      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 50001, 5}.not_to raise_error
+      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 9001, 5}.not_to raise_error
       expect{ client_listener = MockListenerFunctionExecutor.new "MockListenerFunctionExecutor"}.not_to raise_error
       tcp_client.add_observer StreamObserver::STATUS, client_listener
       tcp_client.add_observer StreamObserver::MESSAGE, client_listener
@@ -226,7 +230,7 @@ describe 'FunctionExecutor' do
       expect{ function_executor.start }.not_to raise_error
       tcp_client = nil
       client_listener = nil
-      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 50001, 5}.not_to raise_error
+      expect{ tcp_client = StreamTCPClient.new 'tcp_client', '127.0.0.1', 9001, 5}.not_to raise_error
       expect{ client_listener = MockListenerFunctionExecutor.new "MockListenerFunctionExecutor"}.not_to raise_error
       tcp_client.add_observer StreamObserver::STATUS, client_listener
       tcp_client.add_observer StreamObserver::MESSAGE, client_listener

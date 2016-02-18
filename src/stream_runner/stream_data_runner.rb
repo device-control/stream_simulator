@@ -15,6 +15,7 @@ Encoding.default_internal = 'utf-8'
 class StreamDataRunner
   include MessageAnalyze
   attr_reader :stream
+  attr_reader :sequence_command # 実行中コマンド
 
   # messages = messages[:formats][name] = format
   #            messages[:entities][name] = entity
@@ -34,6 +35,7 @@ class StreamDataRunner
     @queues = Hash.new
     @queues[:sequence] = Queue.new # sequence用queue
     @queues[:autopilot] = Queue.new # autopilot用queue
+    @sequence_command = nil
     # autopilot管理開始
     AutopilotManager.instance.start @queues[:autopilot]
   end
@@ -58,8 +60,8 @@ class StreamDataRunner
     Log.instance.debug "run command [#{command[:name]}]"
     StreamLog.instance.push :command, command[:name]
     begin
-      sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues, @variables
-      sequence_command.run
+      @sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues, @variables
+      @sequence_command.run
     rescue SequenceCommandWarning => e
       StreamLog.instance.puts_warning e.message, e.detail
     rescue SequenceCommandError => e
@@ -71,6 +73,19 @@ class StreamDataRunner
       raise e # シナリオ終了
     end
     
+    StreamLog.instance.pop
+  end
+
+  # 外部からsequence_commandを実行する
+  def external_command(command)
+    StreamLog.instance.push :external_command, command[:name]
+    begin
+      visit_command command
+    rescue SequenceCommandError => e
+      StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, e.detail
+    rescue => e
+      StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, [commnad.to_s]
+    end
     StreamLog.instance.pop
   end
   

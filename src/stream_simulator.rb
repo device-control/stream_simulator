@@ -7,6 +7,7 @@ require 'stream/stream_manager'
 require 'stream_runner/stream_data_runner'
 require 'stream_data/stream_data'
 require 'stream_data/message_utils'
+require 'function_executor'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -42,6 +43,16 @@ class StreamSimulator
     stream_setting_name = inparam[:stream_setting_name]
     raise "not found stream_setting_name: [#{stream_setting_name}]" unless @stream_data.stream_settings.has_key? stream_setting_name
     @stream = StreamManager.create @stream_data.stream_settings[stream_setting_name].parameters
+
+    # function_executor 使用する場合
+    @function_executor = nil
+    function_executor_name = inparam[:function_executor_name]
+    if function_executor_name
+      unless @stream_data.stream_settings.has_key? function_executor_name
+        raise "not found function_executor_name: [#{function_executor_name}]"
+      end
+      @function_executor = FunctionExecutor.new @stream_data.stream_settings[function_executor_name].parameters
+    end
     
     # StreamDataRunner生成
     messages = Hash.new
@@ -54,6 +65,11 @@ class StreamSimulator
   
   # シナリオ実行
   def run(scenario_list)
+    # function_executor 開始
+    unless @function_executor.nil?
+      StreamLog.instance.puts "function_executor start"
+      @function_executor.start
+    end
     ret = false
     scenario_list.each do |scenario_name|
       begin
@@ -73,6 +89,11 @@ class StreamSimulator
         end
         # Log.instance.debug e.backtrace
       ensure
+        # function_executor 終了
+        unless @function_executor.nil?
+          StreamLog.instance.puts "function_executor end"
+          @function_executor.stop
+        end
         StreamLog.instance.write_dos make_stream_log_filename scenario_name
       end
     end
