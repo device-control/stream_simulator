@@ -51,8 +51,7 @@ class SequenceCommandSend
   def run
     override_values = SequenceCommandReceive.get_override_values(@override_values, @variables)
     Log.instance.debug "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode override_values}\""
-    StreamLog.instance.puts "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode override_values}\""
-    StreamLog.instance.puts_member_list "command send: member_list=", @send_entity.get_all_members_with_values(override_values)
+    StreamLog.instance.puts_member_list "command send: name=\"#{@send_entity.name}\", message=\"#{@send_entity.encode override_values}\", member_list=", @send_entity.get_all_members_with_values(override_values)
     @stream.write @send_entity.encode override_values, :binary
   end
   

@@ -2,6 +2,9 @@
 
 require 'singleton'
 
+Encoding.default_external = 'utf-8'
+Encoding.default_internal = 'utf-8'
+
 class StreamLog
   include Singleton
   
@@ -14,6 +17,14 @@ class StreamLog
     # @warnings = Array.new # 警告発生時
   end
 
+  def lock
+    @mutex.mon_enter
+  end
+  
+  def unlock
+    @mutex.mon_exit
+  end
+  
   def reset
     @nested_names = Array.new
     @position_count = 0

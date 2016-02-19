@@ -3,8 +3,7 @@
  1:
  position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
  message: not same as expected message. value is different.
-  expected_message entity="response2_entity"
-  difference_member_list=
+  expected_message entity="response2_entity", difference_member_list=
     member1_int8: expected=0x02 <=> actual=0xFF
     member2_int16: expected=0x2222 <=> actual=0xFFFF
     member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
@@ -29,8 +28,7 @@
 <-    command[SET_VARIABLE]
 ->    command[SEND]
       position: [6] tcp_client_scenario.send_receive_sequence.SEND
-        command send: name="command_entity", message="010100020000000334"
-        command send: member_list=
+        command send: name="command_entity", message="010100020000000334", member_list=
           id: 0x01
           member1_int8: 0x01
           member2_int16: 0x0002
@@ -39,8 +37,7 @@
 <-    command[SEND]
 ->    command[RECEIVE]
       position: [7] tcp_client_scenario.send_receive_sequence.RECEIVE
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
+        receive: format="response_format", member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
@@ -57,8 +54,7 @@
 <-    command[SET_VARIABLE]
 ->    command[SEND]
       position: [9] tcp_client_scenario.send_receive_sequence.SEND
-        command send: name="command_entity", message="010200020000000334"
-        command send: member_list=
+        command send: name="command_entity", message="010200020000000334", member_list=
           id: 0x01
           member1_int8: 0x02
           member2_int16: 0x0002
@@ -67,16 +63,14 @@
 <-    command[SEND]
 ->    command[RECEIVE]
       position: [10] tcp_client_scenario.send_receive_sequence.RECEIVE
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
+        receive: format="response_format", member_list=
           id: 0x81
           member1_int8: 0xFF
           member2_int16: 0xFFFF
           member3_int32: 0xFFFFFFFF
           member4_char: "Z"
         not same as expected message. value is different.
-          expected_message entity="response2_entity"
-          difference_member_list=
+          expected_message entity="response2_entity", difference_member_list=
             member1_int8: expected=0x02 <=> actual=0xFF
             member2_int16: expected=0x2222 <=> actual=0xFFFF
             member3_int32: expected=0x33333333 <=> actual=0xFFFFFFFF
@@ -100,69 +94,49 @@
 ->    command[WAIT]
       position: [15] tcp_client_scenario.interval_send_sequence.WAIT
         command wait: time="20"
-        [IntervalSend] send: name="command_entity", message="010100020000000334"
-        [IntervalSend] send: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        [IntervalSend] send: name="command_entity", message="010100020000000334"
-        [IntervalSend] send: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        [IntervalSend] send: name="command_entity", message="010100020000000334"
-        [IntervalSend] send: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        [IntervalSend] send: name="command_entity", message="010100020000000334"
-        [IntervalSend] send: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        receive: format="response_format", message="81FFFFFFFFFFFFFF5A"
-        receive: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
+->      autopilot[IntervalSend]
+        position: [16] tcp_client_scenario.interval_send_sequence.WAIT.IntervalSend
+          send: name="command_entity", message="010100020000000334", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+<-      autopilot[IntervalSend]
+->      autopilot[IntervalSend]
+        position: [17] tcp_client_scenario.interval_send_sequence.WAIT.IntervalSend
+          send: name="command_entity", message="010100020000000334", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+<-      autopilot[IntervalSend]
+->      autopilot[IntervalSend]
+        position: [18] tcp_client_scenario.interval_send_sequence.WAIT.IntervalSend
+          send: name="command_entity", message="010100020000000334", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+<-      autopilot[IntervalSend]
+->      autopilot[IntervalSend]
+        position: [19] tcp_client_scenario.interval_send_sequence.WAIT.IntervalSend
+          send: name="command_entity", message="010100020000000334", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+<-      autopilot[IntervalSend]
 <-    command[WAIT]
 ->    command[CLOSE]
-      position: [16] tcp_client_scenario.interval_send_sequence.CLOSE
+      position: [20] tcp_client_scenario.interval_send_sequence.CLOSE
         command close: name="TCPクライアント", ip="127.0.0.1", port="50000"
 <-    command[CLOSE]
 ->    command[AUTOPILOT_END]
-      position: [17] tcp_client_scenario.interval_send_sequence.AUTOPILOT_END
+      position: [21] tcp_client_scenario.interval_send_sequence.AUTOPILOT_END
         autopilot stop: name="interval_send_autopilot"
 <-    command[AUTOPILOT_END]
 <-  sequence[interval_send_sequence]

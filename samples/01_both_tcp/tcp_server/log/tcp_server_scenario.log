@@ -12,107 +12,107 @@
 ->    command[OPEN]
       position: [4] tcp_server_scenario.auto_response_sequence.OPEN
         command open: name="TCPサーバ", ip="127.0.0.1", port="50000"
-        receive: format="command_format", message="010100020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        receive: format="command_format", message="010200020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x02
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
+->      autopilot[AutoResponse]
+        position: [5] tcp_server_scenario.auto_response_sequence.OPEN.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
+->      autopilot[AutoResponse]
+        position: [6] tcp_server_scenario.auto_response_sequence.OPEN.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x02
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
 <-    command[OPEN]
 ->    command[WAIT]
-      position: [5] tcp_server_scenario.auto_response_sequence.WAIT
+      position: [7] tcp_server_scenario.auto_response_sequence.WAIT
         command wait: time="30"
-        receive: format="command_format", message="010100020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        receive: format="command_format", message="010100020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        receive: format="command_format", message="010100020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
-        receive: format="command_format", message="010100020000000334"
-        receive: member_list=
-          id: 0x01
-          member1_int8: 0x01
-          member2_int16: 0x0002
-          member3_int32: 0x00000003
-          member4_char: "4"
-        [AutoResponse] receive: format="command_format"
-        [AutoResponse] send: name="response_entity", message="81FFFFFFFFFFFFFF5A"
-        [AutoResponse] send: member_list=
-          id: 0x81
-          member1_int8: 0xFF
-          member2_int16: 0xFFFF
-          member3_int32: 0xFFFFFFFF
-          member4_char: "Z"
+->      autopilot[AutoResponse]
+        position: [8] tcp_server_scenario.auto_response_sequence.WAIT.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
+->      autopilot[AutoResponse]
+        position: [9] tcp_server_scenario.auto_response_sequence.WAIT.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
+->      autopilot[AutoResponse]
+        position: [10] tcp_server_scenario.auto_response_sequence.WAIT.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
+->      autopilot[AutoResponse]
+        position: [11] tcp_server_scenario.auto_response_sequence.WAIT.AutoResponse
+          receive: format="command_format", member_list=
+            id: 0x01
+            member1_int8: 0x01
+            member2_int16: 0x0002
+            member3_int32: 0x00000003
+            member4_char: "4"
+          send: name="response_entity", message="81FFFFFFFFFFFFFF5A", member_list=
+            id: 0x81
+            member1_int8: 0xFF
+            member2_int16: 0xFFFF
+            member3_int32: 0xFFFFFFFF
+            member4_char: "Z"
+<-      autopilot[AutoResponse]
 <-    command[WAIT]
 ->    command[CLOSE]
-      position: [6] tcp_server_scenario.auto_response_sequence.CLOSE
+      position: [12] tcp_server_scenario.auto_response_sequence.CLOSE
         command close: name="TCPサーバ", ip="127.0.0.1", port="50000"
 <-    command[CLOSE]
 ->    command[AUTOPILOT_END]
-      position: [7] tcp_server_scenario.auto_response_sequence.AUTOPILOT_END
+      position: [13] tcp_server_scenario.auto_response_sequence.AUTOPILOT_END
         autopilot stop: name="auto_response_autopilot"
 <-    command[AUTOPILOT_END]
 <-  sequence[auto_response_sequence]

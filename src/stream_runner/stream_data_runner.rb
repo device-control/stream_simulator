@@ -91,13 +91,13 @@ class StreamDataRunner
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
   def analyze_completed(message_entity)
-    Log.instance.debug "receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
-    StreamLog.instance.puts "receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
-    StreamLog.instance.puts_member_list "receive: member_list=", message_entity.get_all_members_with_values
+    Log.instance.debug "#{self.class}\##{__method__} receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\""
+    # StreamLog.instance.puts_member_list "#{self.class}\##{__method__} receive: format=\"#{message_entity.format.name}\", message=\"#{message_entity.encode @messages[:variables]}\", member_list=", message_entity.get_all_members_with_values
     
     event = Hash.new
     event[:name] = :message_entity_received
     event[:arguments] = [ message_entity ]
+    # TODO: queues に上限設定が必要(autopilot時にシーケンス側にqueueがたまり続けるため)
     @queues.each do |name,queue|
       queue.push(event)
     end

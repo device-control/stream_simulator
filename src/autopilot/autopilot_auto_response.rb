@@ -50,21 +50,26 @@ class AutopilotAutoResponse
   def message_entity_notify(message_entity)
     # 通知されてきたmessage_entityが応答リスト内に登録されているか
     unless @responses.has_key? message_entity.format.name
-      StreamLog.instance.puts "[AutoResponse] receive: unkown message. format=\"#{message_entity.format.name}\""
       Log.instance.debug "[AutoResponse] receive: unkown message. format=\"#{message_entity.format.name}\""
+      # StreamLog.instance.lock
+      # StreamLog.instance.push :autopilot, "AutoResponse"
+      # StreamLog.instance.puts "receive: unkown message. format=\"#{message_entity.format.name}\""
+      # SteramLog.instance.pop
+      # StreamLog.instance.unlock
       return
     end
     
     Log.instance.debug "[AutoResponse] receive: format=\"#{message_entity.format.name}\""
-    StreamLog.instance.puts "[AutoResponse] receive: format=\"#{message_entity.format.name}\""
-    
     send_entity = @responses[message_entity.format.name]
-    
-    Log.instance.debug "[AutoResponse] send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
-    StreamLog.instance.puts "[AutoResponse] send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
-    StreamLog.instance.puts_member_list "[AutoResponse] send: member_list=", send_entity.get_all_members_with_values(@variables)
-    
     @stream.write send_entity.encode @variables, :binary
+    Log.instance.debug "[AutoResponse] send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\""
+    StreamLog.instance.lock
+    StreamLog.instance.push :autopilot, "AutoResponse"
+    StreamLog.instance.puts_member_list "receive: format=\"#{message_entity.format.name}\", member_list=", message_entity.get_all_members_with_values(@variables)
+    StreamLog.instance.puts_member_list "send: name=\"#{send_entity.name}\", message=\"#{send_entity.encode @variables}\", member_list=", send_entity.get_all_members_with_values(@variables)
+    StreamLog.instance.pop
+    StreamLog.instance.unlock
+    
   end
   
 end

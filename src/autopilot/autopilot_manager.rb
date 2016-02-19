@@ -5,6 +5,7 @@ require 'timeout'
 require 'autopilot/autopilot_auto_response'
 require 'autopilot/autopilot_interval_send'
 require 'log'
+require 'stream_log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -81,6 +82,9 @@ class AutopilotManager
         end
       rescue Timeout::Error
         next
+      rescue => e
+        Log.instance.error "rescue: #{self.class}\##{__method__} " + e.message
+        StreamLog.instance.puts_error "rescue: #{self.class}\##{__method__}", e.message.split("\n")
       end
     end
   end

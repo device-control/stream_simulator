@@ -79,6 +79,10 @@ class SequenceCommandReceive
           raise "#{self.class}\##{__method__} unknown receive event arguments" unless event[:arguments].class == Array
           raise "#{self.class}\##{__method__} receive message entity is nil" if event[:arguments][0].nil?
           actual_message = event[:arguments][0]
+
+          # 受信時ログ
+          Log.instance.debug "#{self.class}\##{__method__} receive: format=\"#{actual_message.format.name}\""
+          StreamLog.instance.puts_member_list "receive: format=\"#{actual_message.format.name}\", member_list=", actual_message.get_all_members_with_values(@variables)
           
           # :any なら次のコマンドへ進む
           return if @expected_message_type == :any
@@ -138,8 +142,7 @@ class SequenceCommandReceive
     when :different_values
       # 値が異なる
       log_message = log_message + " value is different."
-      log_details << "expected_message entity=\"#{@expected_message.name}\""
-      log_details << "difference_member_list="
+      log_details << "expected_message entity=\"#{@expected_message.name}\", difference_member_list="
       difference_member_list = compared_details[:difference_member_list] || Array.new
       log_details.concat difference_member_list.collect {|member |"  #{member[:name]}: expected=#{member[:value]} <=> actual=#{member[:compared_value]}" }
     else
