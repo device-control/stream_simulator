@@ -12,7 +12,7 @@ contents:
     timeout: 5
   function_request:
     name: "dummy_method()呼び出し"
-    id: 1,
+    id: 1
     function_name: "dummy_method"
     args:
       - "ABCDEF"
