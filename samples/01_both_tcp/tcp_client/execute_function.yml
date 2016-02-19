@@ -2,7 +2,8 @@
 content-type: execute_function
 content-version: 0.1
 contents:
-  name: "外部から関数実行テスト"
+  name: external_function_test
+  description: "外部から関数実行テスト"
   stream_setting:
     type: :TCP_CLIENT
     name: "TCPクライアント for execute_function"
