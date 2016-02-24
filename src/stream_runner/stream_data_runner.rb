@@ -84,7 +84,7 @@ class StreamDataRunner
     rescue SequenceCommandError => e
       StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, e.detail
     rescue => e
-      StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, [commnad.to_s]
+      StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, [command.to_s]
     end
     StreamLog.instance.pop
   end
