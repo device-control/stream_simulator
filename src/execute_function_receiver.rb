@@ -103,7 +103,7 @@ class ExecuteFunctionReceiver
       "contents" => {
         "function_name" => "Unknown function name",
         "id" => 1,
-        "result" => :SUCCESS,
+        "result" => '@SUCCESS@',
       }
     }
     begin

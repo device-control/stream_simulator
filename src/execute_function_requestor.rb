@@ -57,6 +57,7 @@ class ExecuteFunctionRequestor
   end
 
   # 要求送信
+  # return : 成功:0, 失敗:1
   def send(function_request)
     # 接続確認
     start
@@ -80,16 +81,16 @@ class ExecuteFunctionRequestor
         sleep 1
       end
       yml = YAML.load @recv_message
-      return false if yml["content-type"] != "execute_function_result"
-      return false if yml["content-version"] != 0.1
-      return false unless yml.has_key? "contents"
+      return 1 if yml["content-type"] != "execute_function_result"
+      return 1 if yml["content-version"] != 0.1
+      return 1 unless yml.has_key? "contents"
       contents = yml["contents"]
-      return true if contents["result"] == :SUCCESS
-      puts contents["result"]
+      puts "result: " + contents["result"]
+      return 1 if contents["result"] != '@SUCCESS@'
     rescue => e
-      puts "Error:#{self.class}\##{__method__}: " + e.message
+      puts "#{self.class}\##{__method__} Error: " + e.message
     end
-    return false
+    return 0
   end
 end
 

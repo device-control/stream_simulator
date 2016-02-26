@@ -56,7 +56,8 @@ class AutopilotManager
   
   # autopilot 削除
   def delete(arguments)
-    raise "not found :name" unless arguments.has_key? :name
+    raise "#{self.class}\##{__method__} not found :name" unless arguments.has_key? :name
+    raise "#{self.class}\##{__method__} not found autopilot name[#{arguments[:name]}]" unless @autopilots.has_key? arguments[:name]
     StreamLog.instance.puts "autopilot stop: name=\"#{arguments[:name]}\""
     @autopilots[arguments[:name]].stop
     @autopilots.delete(arguments[:name])

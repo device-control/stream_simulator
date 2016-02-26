@@ -33,6 +33,7 @@ end
 #       - "1"
 #       - 2
 #       - "arg3"
+result = 0
 begin
   body = YAML.load_file ARGV[0]
   raise "content-type error. [#{body['content-type']}]" if body['content-type'] != 'execute_function'
@@ -54,10 +55,12 @@ begin
   
   execute_function_requestor = ExecuteFunctionRequestor.new stream_setting
   execute_function_requestor.start
-  execute_function_requestor.send function_request
+  result = execute_function_requestor.send function_request
   execute_function_requestor.stop
+  puts "complate.[#{result}]"
 rescue => e
   puts "ERROR:" + e.message
+  exit 1
 end
 
-puts "complate."
+exit result

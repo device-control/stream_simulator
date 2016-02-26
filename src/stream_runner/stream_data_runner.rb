@@ -57,15 +57,17 @@ class StreamDataRunner
   def visit_command(command)
     raise "not found name" unless command.has_key? :name
     raise "not found arguments" unless command.has_key? :arguments
-    Log.instance.debug "run command [#{command[:name]}]"
+    Log.instance.debug "run command [#{command[:name]}] start"
     StreamLog.instance.push :command, command[:name]
     begin
       @sequence_command = SequenceCommandCreator.create command, @messages, @stream, @queues, @variables
       @sequence_command.run
     rescue SequenceCommandWarning => e
       StreamLog.instance.puts_warning e.message, e.detail
+      Log.instance.warn e.message
     rescue SequenceCommandError => e
       StreamLog.instance.puts_error e.message, e.detail
+      Log.instance.error e.message
       raise e # シナリオ終了
     rescue => e
       details = Array.new
@@ -74,19 +76,27 @@ class StreamDataRunner
     end
     
     StreamLog.instance.pop
+    Log.instance.debug "run command [#{command[:name]}] end"
   end
 
   # 外部からsequence_commandを実行する
   def external_command(command)
     StreamLog.instance.push :external_command, command[:name]
+    Log.instance.debug "#{self.class}\##{__method__} external_command: #{command.to_s} start"
     begin
       visit_command command
     rescue SequenceCommandError => e
       StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, e.detail
+      Log.instance.warn "#{self.class}\##{__method__} can't execute sequence command." + e.message
+      raise e
     rescue => e
       StreamLog.instance.puts_warning "#{self.class}\##{__method__} can't execute sequence command." + e.message, [command.to_s]
+      Log.instance.warn "#{self.class}\##{__method__} can't execute sequence command." + e.message
+      raise e
+    ensure
+      StreamLog.instance.pop
+      Log.instance.debug "#{self.class}\##{__method__} external_command: #{command.to_s} end"
     end
-    StreamLog.instance.pop
   end
   
   # 受信メッセージを解析してmessage entityが生成されたら呼び出されるメソッド
