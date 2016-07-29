@@ -1,0 +1,11 @@
+# coding: utf-8
+content-type: scenario
+content-version: 0.1
+
+contents:
+  name: "websocket_server_scenario"
+  description: "WebSocketサーバーのシナリオ"
+  sequences:
+    # 自動応答シーケンス
+    - name: "auto_response_sequence"
+      

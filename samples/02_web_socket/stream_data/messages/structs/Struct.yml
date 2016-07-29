@@ -1,0 +1,39 @@
+# coding: utf-8
+content-type: message_struct
+content-version: 0.1
+
+contents:
+  name: Struct
+  description: "構造体"
+  members:
+    - name_jp: "member1 INT8"
+      name: member1_int8
+      type: :INT8
+    - name_jp: "member2 INT16"
+      name: member2_int16
+      type: :INT16
+    - name_jp: "member3 INT32"
+      name: member3_int32
+      type: :INT32
+    - name_jp: "member4 CHAR"
+      name: member4_char
+      type: :CHAR
+    - name_jp: "member5 Struct"
+      name: member5_sub_struct
+      type: SubStruct
+      
+    - name_jp: "member6 INT8[3]"
+      name: member6_int8[3]
+      type: :INT8
+    - name_jp: "member7 INT16[3]"
+      name: member7_int16[3]
+      type: :INT16
+    - name_jp: "member8 INT32[3]"
+      name: member8_int32[3]
+      type: :INT32
+    - name_jp: "member9 CHAR[3]"
+      name: member9_char[3]
+      type: :CHAR
+    - name_jp: "member10 Struct[3]"
+      name: member10_sub_struct[3]
+      type: SubStruct

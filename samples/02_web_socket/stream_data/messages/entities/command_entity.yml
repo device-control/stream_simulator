@@ -1,0 +1,9 @@
+# coding: utf-8
+content-type: message_entity
+content-version: 0.1
+
+contents:
+  name: command_entity
+  description: "コマンドのエンティティ"
+  using_format: command_format
+  values:

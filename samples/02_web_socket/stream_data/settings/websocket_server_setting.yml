@@ -1,0 +1,12 @@
+# coding: utf-8
+content-type: stream_setting
+content-version: 0.1
+
+contents:
+  name: websocket_server_setting
+  description: "WebSocketサーバストリーム"
+  parameters:
+    type: :WEB_SOCKET_SERVER
+    name: "WebSocketサーバ"
+    ip: "0.0.0.0"
+    port: 7090

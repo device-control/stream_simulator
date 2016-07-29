@@ -1,0 +1,36 @@
+# coding: utf-8
+content-type: message_format
+content-version: 0.1
+
+contents:
+  name: response_format
+  description: "レスポンスのフォーマット"
+  # メンバー定義
+  members:
+    - name_jp: "ID"
+      name: id
+      type: :INT8
+    
+    - name_jp: "member1 INT8"
+      name: member1_int8
+      type: :INT8
+    - name_jp: "member2 INT16"
+      name: member2_int16
+      type: :INT16
+    - name_jp: "member3 INT32"
+      name: member3_int32
+      type: :INT32
+    - name_jp: "member4 CHAR"
+      name: member4_char
+      type: :CHAR
+    
+  # プライマリキーの項目と値を設定
+  primary_keys:
+    id: 0x81
+  
+  # デフォルト値を設定（設定しなければ、typeの初期値となる）
+  default_values:
+    member1_int8: 0xFF
+    member2_int16: 0xFFFF
+    member3_int32: 0xFFFFFFFF
+    member4_char: 'Z'
