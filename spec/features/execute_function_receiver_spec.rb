@@ -129,7 +129,7 @@ describe 'ExecuteFunctionReceiver' do
       expect(yml["content-version"]).to eq 0.1
       expect(yml["contents"]["function_name"]).to eq "dummy_execute_function_receiver00"
       expect(yml["contents"]["id"]).to eq 99
-      expect(yml["contents"]["result"]).to eq :SUCCESS
+      expect(yml["contents"]["result"]).to eq "@SUCCESS@"
       # 後始末
       expect{ execute_function_receiver.stop }.not_to raise_error
     end
@@ -169,7 +169,7 @@ describe 'ExecuteFunctionReceiver' do
       expect(yml["contents"]["name"]).to eq "dummy_execute_function_receiver01()呼び出し。引数あり"
       expect(yml["contents"]["id"]).to eq 48
       expect(yml["contents"]["function_name"]).to eq "dummy_execute_function_receiver01"
-      expect(yml["contents"]["result"]).to eq :SUCCESS
+      expect(yml["contents"]["result"]).to eq "@SUCCESS@"
       expect($dummy_execute_function_receiver_arg[0]).to eq "ABCDEF"
       # 後始末
       expect{ execute_function_receiver.stop }.not_to raise_error
@@ -210,7 +210,7 @@ describe 'ExecuteFunctionReceiver' do
       expect(yml["contents"]["name"]).to eq "dummy_execute_function_receiver01()呼び出し。引数あり"
       expect(yml["contents"]["id"]).to eq 123456
       expect(yml["contents"]["function_name"]).to eq "dummy_execute_function_receiver01"
-      expect(yml["contents"]["result"]).to eq :SUCCESS
+      expect(yml["contents"]["result"]).to eq "@SUCCESS@"
       expect($dummy_execute_function_receiver_arg[0]).to eq 0x10
       # 後始末
       expect{ execute_function_receiver.stop }.not_to raise_error
@@ -251,7 +251,7 @@ describe 'ExecuteFunctionReceiver' do
       expect(yml["contents"]["name"]).to eq "dummy_execute_function_receiver02()呼び出し。2引数あり"
       expect(yml["contents"]["id"]).to eq 0xffffffff
       expect(yml["contents"]["function_name"]).to eq "dummy_execute_function_receiver02"
-      expect(yml["contents"]["result"]).to eq :SUCCESS
+      expect(yml["contents"]["result"]).to eq "@SUCCESS@"
       expect($dummy_execute_function_receiver_arg[0]).to eq 0x10
       expect($dummy_execute_function_receiver_arg[1]).to eq "ABCDEF12"
       # 後始末

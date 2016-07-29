@@ -63,7 +63,7 @@ describe 'ExecuteFunctionRequestor' do
       res = false
       expect{ res = execute_function_requestor.send message }.not_to raise_error
       # 関数実行結果を確認
-      expect(res).to eq true
+      expect(res).to eq 0
       # 後始末
       expect{ execute_function_requestor.stop }.not_to raise_error
     end
