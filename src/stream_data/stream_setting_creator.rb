@@ -47,6 +47,13 @@ module StreamSettingCreator
       # IPアドレス表記かどうか
       pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
       raise "wrong ip address: [#{parameters['ip']}]" unless parameters['ip'] =~ pattern
+    when :WEB_SOCKET_SERVER
+      raise "not found name in parameters" unless parameters.has_key? 'name'
+      raise "not found ip in parameters" unless parameters.has_key? 'ip'
+      raise "not found port in parameters" unless parameters.has_key? 'port'
+      # IPアドレス表記かどうか
+      pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+      raise "wrong ip address: [#{parameters['ip']}]" unless parameters['ip'] =~ pattern
     else
       raise "undefined type: [#{type}]"
     end

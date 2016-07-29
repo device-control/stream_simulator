@@ -2,6 +2,7 @@
 
 require "stream/stream_tcp_server"
 require "stream/stream_tcp_client"
+require "stream/stream_websocket_server"
 
 class StreamManager
   def self.create(parameters)
@@ -23,6 +24,11 @@ class StreamManager
                                       parameters[:ip],
                                       parameters[:port],
                                       parameters[:timeout])
+      elsif parameters[:type] == :WEB_SOCKET_SERVER
+        stream = StreamWebSocketServer.new( parameters[:name],
+                                            parameters[:ip],
+                                            parameters[:port],
+                                            parameters[:timeout])
       else
         raise ":UDP format? not support."
       end
