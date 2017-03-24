@@ -31,6 +31,17 @@ describe 'StreamManager' do
       map[:timeout] = 5
       expect{ StreamManager.create map }.not_to raise_error
     end
+    it 'serialが正しく生成されること確認' do
+      map = Hash.new
+      map[:type] = :SERIAL
+      map[:name] = "serial"
+      map[:port] = "COM3"
+      map[:baud_rate] = 115200
+      map[:data_bits] = 8
+      map[:stop_bits] = 1
+      map[:parity] = SerialPort::NONE
+      expect{ StreamManager.create map }.not_to raise_error
+    end
   end
 
 end
