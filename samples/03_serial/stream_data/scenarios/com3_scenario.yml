@@ -1,0 +1,10 @@
+# coding: utf-8
+content-type: scenario
+content-version: 0.1
+
+contents:
+  name: "com3_scenario"
+  description: "COM3のシナリオ"
+  sequences:
+    # 自動応答シーケンス
+    - name: "auto_response_sequence"

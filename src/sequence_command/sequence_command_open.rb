@@ -34,7 +34,8 @@ class SequenceCommandOpen
   end
   
   def run
-    StreamLog.instance.puts "command open: name=\"#{@stream.name}\", ip=\"#{@stream.ip}\", port=\"#{@stream.port}\""
+    # StreamLog.instance.puts "command open: name=\"#{@stream.name}\", ip=\"#{@stream.ip}\", port=\"#{@stream.port}\""
+    StreamLog.instance.puts "command open: name=\"#{@stream.name}\""
     begin
       @stream.open # TODO: TCPClientの場合、タイムアウト値と関係なく接続できない場合、そく"open error."となってしまう。
       # 接続待ち

@@ -1,0 +1,13 @@
+# coding: utf-8
+content-type: autopilot
+content-version: 0.1
+
+contents:
+  name: interval_send_autopilot
+  description: "定時送信"
+  parameters:
+    type: :INTERVAL_SEND
+    arguments:
+      # サンプル
+      - send_entity: "command_entity"
+        interval: 5

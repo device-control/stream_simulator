@@ -1,0 +1,32 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: auto_response_sequence
+  description: "自動応答シーケンス"
+  commands:
+    # 自動応答開始
+    - name: :AUTOPILOT_START
+      arguments:
+        name: "auto_response_autopilot"
+    
+    # 接続
+    - name: :OPEN
+      arguments:
+        timeout: 30
+    
+    # 待ち
+    - name: :WAIT
+      arguments:
+        # time: :WAIT_FOR_EVER # 無限待ち
+        time: 30
+    
+    # 切断
+    - name: :CLOSE
+      arguments:
+    
+    # 自動応答終了
+    - name: :AUTOPILOT_END
+      arguments:
+        name: "auto_response_autopilot"

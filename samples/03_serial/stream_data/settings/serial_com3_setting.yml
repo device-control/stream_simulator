@@ -1,0 +1,16 @@
+# coding: utf-8
+content-type: stream_setting
+content-version: 0.1
+
+contents:
+  name: serial_com3_setting
+  description: "シリアルCOM3ストリーム"
+  parameters:
+    type: :SERIAL
+    name: "シリアルCOM3"
+    port: 'COM3'
+    baud_rate: 115200
+    data_bits: 8
+    stop_bits: 1
+    parity: "NONE" #  NONE, EVEN or ODD (Windows allows also MARK and SPACE)
+

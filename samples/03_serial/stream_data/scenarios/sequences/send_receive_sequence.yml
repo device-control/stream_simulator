@@ -1,0 +1,64 @@
+# coding: utf-8
+content-type: sequence
+content-version: 0.1
+
+contents:
+  name: send_receive_sequence
+  description: "送受信のシーケンス"
+  commands:
+    # 変数設定
+    - name: :SET_VARIABLE
+      arguments:
+        exec:
+          - ":COUNTER = 0"
+          - ":INCREMENT = 1"
+    
+    # 接続
+    - name: :OPEN
+      arguments:
+    
+    # 変数設定
+    - name: :SET_VARIABLE
+      arguments:
+        exec: ":COUNTER += :INCREMENT"
+    
+    # 送信
+    - name: :SEND
+      arguments:
+        message_entity: "command_entity"
+        override_values:
+          - name: member1_int8
+            value: :COUNTER
+    # 受信
+    - name: :RECEIVE
+      arguments:
+        expected_format: "response_format"
+        timeout: 5 # 秒
+    
+    # 変数設定
+    - name: :SET_VARIABLE
+      arguments:
+        exec: ":COUNTER += :INCREMENT"
+    
+    # 送信
+    - name: :SEND
+      arguments:
+        message_entity: "command_entity"
+        override_values:
+          - name: member1_int8
+            value: :COUNTER
+    # 受信
+    - name: :RECEIVE
+      arguments:
+        expected_entity: "response2_entity"
+        override_values:
+          - name: member1_int8
+            value: :COUNTER
+          - name: member4_char
+            value: '1'
+        mismatched_action: :NEXT_COMMAND
+        timeout: 5 # 秒
+    
+    # 切断
+    - name: :CLOSE
+      arguments:

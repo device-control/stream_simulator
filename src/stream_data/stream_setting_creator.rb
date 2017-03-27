@@ -54,6 +54,15 @@ module StreamSettingCreator
       # IPアドレス表記かどうか
       pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
       raise "wrong ip address: [#{parameters['ip']}]" unless parameters['ip'] =~ pattern
+    when :SERIAL
+      raise "not found name in parameters" unless parameters.has_key? 'name'
+      raise "not found port in parameters" unless parameters.has_key? 'port'
+      raise "not found baud_rate in parameters" unless parameters.has_key? 'baud_rate'
+      raise "not found data_bits in parameters" unless parameters.has_key? 'data_bits'
+      raise "not found stop_bits in parameters" unless parameters.has_key? 'stop_bits'
+      raise "not found parity in parameters" unless parameters.has_key? 'parity'
+      # parity 設定値確認
+      raise "wrong parity: [#{parameters['parity']}]" unless parameters['parity'] =~ /NONE|EVEN|ODD|MARK|SPACE/
     else
       raise "undefined type: [#{type}]"
     end
