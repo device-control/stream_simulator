@@ -51,13 +51,13 @@ describe 'StreamSerial' do
     #   @serial = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, SerialPort::NONE
     # end
     it '正しく生成されることを確認' do
-      serial = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, SerialPort::NONE
+      serial = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, 'NONE'
       expect(serial.name).to eq 'serial'
       expect(serial.port).to eq 'COM3'
       expect(serial.baud_rate).to eq 115200
       expect(serial.data_bits).to eq 8
       expect(serial.stop_bits).to eq 1
-      expect(serial.parity).to eq SerialPort::NONE
+      expect(serial.parity).to eq SerialPort::NONE # 内部的にはserialport値に変換されている
       serial.close
     end
   end
@@ -67,10 +67,10 @@ describe 'StreamSerial' do
       listener3 = MockListener.new 'COM3'
       listener4 = MockListener.new 'COM4'
       
-      serial3 = StreamSerial.new 'serial3', 'COM3', 115200, 8, 1, SerialPort::NONE
-      serial4 = StreamSerial.new 'serial4', 'COM4', 115200, 8, 1, SerialPort::NONE
+      serial3 = StreamSerial.new 'serial3', 'COM3', 115200, 8, 1, 'NONE'
+      serial4 = StreamSerial.new 'serial4', 'COM4', 115200, 8, 1, 'NONE'
 
-      serial3.add_observer( StreamObserver::STATUS, listener3)
+      serial3.add_observer StreamObserver::STATUS, listener3
       serial3.add_observer StreamObserver::MESSAGE, listener3
       serial4.add_observer StreamObserver::STATUS, listener4
       serial4.add_observer StreamObserver::MESSAGE, listener4
@@ -93,8 +93,8 @@ describe 'StreamSerial' do
       listener3 = MockListener.new 'COM3'
       listener4 = MockListener.new 'COM4'
       
-      serial3 = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, SerialPort::NONE
-      serial4 = StreamSerial.new 'serial', 'COM4', 115200, 8, 1, SerialPort::NONE
+      serial3 = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, 'NONE'
+      serial4 = StreamSerial.new 'serial', 'COM4', 115200, 8, 1, 'NONE'
       
       serial3.add_observer StreamObserver::STATUS,  listener3
       serial3.add_observer StreamObserver::MESSAGE, listener3
@@ -127,8 +127,8 @@ describe 'StreamSerial' do
       listener3 = MockListener.new 'COM3'
       listener4 = MockListener.new 'COM4'
       
-      serial3 = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, SerialPort::NONE
-      serial4 = StreamSerial.new 'serial', 'COM4', 115200, 8, 1, SerialPort::NONE
+      serial3 = StreamSerial.new 'serial', 'COM3', 115200, 8, 1, 'NONE'
+      serial4 = StreamSerial.new 'serial', 'COM4', 115200, 8, 1, 'NONE'
       
       serial3.add_observer StreamObserver::STATUS,  listener3
       serial3.add_observer StreamObserver::MESSAGE, listener3

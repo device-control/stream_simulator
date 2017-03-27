@@ -18,7 +18,20 @@ class StreamSerial
     @baud_rate = baud_rate
     @data_bits = data_bits
     @stop_bits = stop_bits
-    @parity = parity
+    # TODO: 仕方がないのでここで外部との依存を切る
+    if( parity == 'NONE')
+      @parity = SerialPort::NONE
+    elsif (parity == 'EVEN')
+      @parity = SerialPort::EVEN
+    elsif (parity == 'ODD')
+      @parity = SerialPort::ODD
+    elsif (parity == 'MARK')
+      @parity = SerialPort::MARK
+    elsif (parity == 'SPACE')
+      @parity = SerialPort::SPACE
+    else
+      raise "StreamSerial::initialize: error"
+    end
     @opened = false
     @locker = Mutex::new
     @serial = nil
