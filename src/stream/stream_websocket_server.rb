@@ -3,6 +3,7 @@
 require 'em-websocket'
 require "stream/stream_observer"
 require "log"
+require 'pry'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
@@ -10,7 +11,7 @@ Encoding.default_internal = 'utf-8'
 class StreamWebSocketServer
   include StreamObserver
   
-  attr_reader :name, :ip, :port, :timeout
+  attr_reader :name, :ip, :port, :timeout, :opened
   
   def initialize(name, ip, port, timeout)
     super()
@@ -27,38 +28,48 @@ class StreamWebSocketServer
   end
   
   def open
+    return if @opened == true
+    @opened = true
     # EventMachineを別スレッドで生成
-    Thread.new {
-      EM.run {
-        # 送信用のスレッドを生成
-        EM.defer {
-          while message = @send_queue.pop
-            EM.next_tick do
-              # バイナリで送信する
-              # _send_data(message)
-              _send_binary(message)
+    begin
+      @thread = Thread.new {
+        EM.run {
+          # 送信用のスレッドを生成
+          EM.defer {
+            while message = @send_queue.pop
+              EM.next_tick do
+                # バイナリで送信する
+                # _send_data(message)
+                _send_binary(message)
+              end
             end
-          end
-        }
-        
-        # WebSocket実行
-        EM::WebSocket.run(:host => @ip, :port => @port) { |ws|
-          ws.onopen { |handshake| _onopen(ws, handshake) }
-          ws.onclose { _onclose(ws) }
-          ws.onmessage { |msg| _onmessage(ws, msg) }
-          ws.onbinary { |msg| _onbinary(ws, msg) }
+          }
           
-          @current_socket.close if @current_socket
-          @current_socket = ws
-          @connected = false
+          # WebSocket実行
+          EM::WebSocket.start(:host => @ip, :port => @port) { |ws|
+            ws.onopen { |handshake| _onopen(ws, handshake) }
+            ws.onclose { _onclose(ws) }
+            ws.onmessage { |msg| _onmessage(ws, msg) }
+            ws.onbinary { |msg| _onbinary(ws, msg) }
+            
+            @current_socket.close if @current_socket
+            @current_socket = ws
+            @connected = false
+          }
         }
       }
-    }
-    
+    rescue => e
+      Log.instance.error "StreamWebSocketServer#open: error" + e.messaeg
+      raise "StreamWebSocketServer#open: error: " + e.message
+    end
   end
   
   def close
+    return if @opened == false
     EM.stop_event_loop
+    @thread.kill
+    @thread.join
+    @thread = nil
   end
   
   def write(message)
