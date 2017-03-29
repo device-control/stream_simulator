@@ -1,0 +1,95 @@
+<ons-page id="websocket_page">
+  <ons-toolbar>
+    <div class="left"><ons-back-button>Back</ons-back-button></div>
+    <div class="center">
+      <ons-icon icon="fa-info-circle" size="20px"></ons-icon>ステータス
+    </div>
+  </ons-toolbar>
+
+  <ons-list>
+
+    <!-- IP -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>websocket ip:port</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input id="websocket_ip" type="text" placeholder="127.0.0.1" class="text-input text-input--transparent" style="margin-top:8px; width: 100%;" value="127.0.0.1">
+          </div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input id="websocket_port" type="text" placeholder="8888" class="text-input text-input--transparent" style="margin-top:8px; width: 100%;" value="8888">
+          </div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <!-- <ons-button ng-click="websocket_open();">接続</ons-button> -->
+            <input type="button" value="接続" onclick="websocket_open();"/>
+          </div>
+        </ons-col>
+
+      </ons-row>
+    </ons-list-item>
+
+
+    <!-- message -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>message</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input id="websocket_message" type="text" placeholder="message" class="text-input text-input--transparent" style="margin-top:8px; width: 100%;">
+          </div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input type="button" value="送信" onclick="websocket_send();"/>
+          </div>
+        </ons-col>
+
+      </ons-row>
+    </ons-list-item>
+
+    <!-- status -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>status</div>
+        </ons-col>
+        <ons-col>
+          <div id="websocket_status">websocket_status</div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- receive message -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>receive message</div>
+        </ons-col>
+        <ons-col>
+          <div id="websocket_receive_message">websocket_receive_message</div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- error -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>error</div>
+        </ons-col>
+        <ons-col>
+          <div id="websocket_error">websocket_error</div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+    
+  </ons-list>
+</ons-page>

@@ -1,0 +1,37 @@
+<ons-page>
+  <ons-toolbar>
+    <div class="left"><ons-back-button>Back</ons-back-button></div>
+    <div class="center">Alert dialog</div>
+  </ons-toolbar>
+
+  <div style="text-align: center">
+    <br />
+    <ons-button ng-click="fromTemplate()">Create from template</ons-button>
+    <ons-button ng-click="alert()">Alert</ons-button>
+    <ons-button ng-click="confirm()">Confirm</ons-button>
+    <ons-button ng-click="prompt()">Prompt</ons-button>
+    <ons-button ng-click="cancelable()">Cancelable</ons-button>
+  </div>
+  <div ons-if-platform="Android" class="ons-if-platform-inner" style="display: none;">
+    <h3>running Android.</h3>
+  </div>
+  <div ons-if-platform="iOS" class="ons-if-platform-inner" style="display: none;">
+    <h3>running iOS.</h3>
+  </div>
+  <div ons-if-platform="BlackBerry" class="ons-if-platform-inner" style="display: none;">
+    <h3>running BlackBerry.</h3>
+  </div>
+  <div ons-if-platform="chrome" class="ons-if-platform-inner" style="display: block;">
+    <h3>running Chrome.</h3>
+  </div>
+  <div ons-if-platform="safari" class="ons-if-platform-inner" style="display: none;">
+    <h3>running Safari.</h3>
+  </div>
+  <div ons-if-platform="firefox" class="ons-if-platform-inner" style="display: none;">
+    <h3>running Firefox.</h3>
+  </div>
+  <div ons-if-platform="Opera" class="ons-if-platform-inner" style="display: none;">
+    <h3>running Opera.</h3>
+  </div>
+  
+</ons-page>

@@ -1,0 +1,108 @@
+<ons-page>
+  <ons-toolbar>
+    <div class="left"><ons-back-button>Back</ons-back-button></div>
+    <div class="center">
+      <ons-icon icon="fa-cogs" size="20px"></ons-icon>TCP/IP設定
+    </div>
+  </ons-toolbar>
+  
+  <ons-list>
+    <!-- 検証 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>verifiy</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <label class="radio-button">
+              <input type="radio" name="level" ng-model="selectedLevel">
+              <div class="radio-button__checkmark"></div>
+              yes
+            </label>
+            
+            <label class="radio-button">
+              <input type="radio" name="level" ng-model="selectedLevel">
+              <div class="radio-button__checkmark"></div>
+              no
+            </label>
+          </div>
+          
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- IP -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>IP</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input type="text" placeholder="192.168.1.1" class="text-input text-input--transparent" style="margin-top:8px; width: 100%;">
+          </div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- IP Mask -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>subnet mask</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <input type="text" placeholder="255.255.255.0" class="text-input text-input--transparent" style="margin-top:8px; width: 100%;">
+          </div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- USE IPv6 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>use IPv6</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <ons-switch modifier="list-item" checked></ons-switch>
+          </div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- offline -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>Offline</div>
+        </ons-col>
+        <ons-col>
+          <div Align="right">
+            <ons-switch modifier="list-item"></ons-switch>
+          </div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+  </ons-list>
+
+  <div style="text-align: right">
+    <br />
+    <ons-button ng-click="confirm()">Confirm</ons-button>
+  </div>
+
+  <div style="text-align: center">
+    <br />
+    <ons-button ng-click="fromTemplate()">Create from template</ons-button>
+    <ons-button ng-click="alert()">Alert</ons-button>
+    <ons-button ng-click="confirm()">Confirm</ons-button>
+    <ons-button ng-click="prompt()">Prompt</ons-button>
+    <ons-button ng-click="cancelable()">Cancelable</ons-button>
+  </div>
+
+
+
+</ons-page>

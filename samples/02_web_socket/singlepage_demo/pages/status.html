@@ -1,0 +1,227 @@
+<ons-page id="status_page">
+  <ons-toolbar>
+    <div class="left"><ons-back-button>Back</ons-back-button></div>
+    <div class="center">
+      <ons-icon icon="fa-info-circle" size="20px"></ons-icon>ステータス
+    </div>
+  </ons-toolbar>
+
+  <div>
+    <div ons-if-platform="Android" class="ons-if-platform-inner" style="display: none;">
+      <h3>running Android.</h3>
+    </div>
+    <div ons-if-platform="iOS" class="ons-if-platform-inner" style="display: none;">
+      <h3>running iOS.</h3>
+    </div>
+    <div ons-if-platform="BlackBerry" class="ons-if-platform-inner" style="display: none;">
+      <h3>running BlackBerry.</h3>
+    </div>
+    <div ons-if-platform="chrome" class="ons-if-platform-inner" style="display: block;">
+      <h3>running Chrome.</h3>
+    </div>
+    <div ons-if-platform="safari" class="ons-if-platform-inner" style="display: none;">
+      <h3>running Safari.</h3>
+    </div>
+    <div ons-if-platform="firefox" class="ons-if-platform-inner" style="display: none;">
+      <h3>running Firefox.</h3>
+    </div>
+    <div ons-if-platform="Opera" class="ons-if-platform-inner" style="display: none;">
+      <h3>running Opera.</h3>
+    </div>
+  </div>
+
+  <ons-list>
+    <!-- 日付 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>date</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_date"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ホスト -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>host</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_host"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ホスト名 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>hostname</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_hostname"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ポート -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>port</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_port"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- リクエスト -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>request</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_request"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- コード -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>code</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_code"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ブラウザ -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>browser</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_browser"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- バージョン -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>version</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_version"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- 言語 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>language</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_language"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- プラットフォーム -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>platform</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_platform"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ユーザエージェント -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>useragent</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_useragent"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- リファラー -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>referrer</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_referrer"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- ドメイン -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>domain</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_domain"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- 画面幅 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>width</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_screen_w"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- 画面高 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>height</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_screen_h"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+    <!-- 画面深度 -->
+    <ons-list-item>
+      <ons-row>
+        <ons-col>
+          <div>depth</div>
+        </ons-col>
+        <ons-col>
+          <div id="status_screen_depth"></div>
+        </ons-col>
+      </ons-row>
+    </ons-list-item>
+
+  </ons-list>
+</ons-page>

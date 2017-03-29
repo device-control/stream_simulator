@@ -1,0 +1,16 @@
+<ons-page ng-controller="DynamicCarouselController">
+  <ons-toolbar>
+    <div class="left"><ons-back-button>Back</ons-back-button></div>
+    <div class="center">Dynamic carousel</div>
+    <div class="right">
+      <ons-toolbar-button ng-click="add()">Add</ons-toolbar-button>
+      <ons-toolbar-button ng-click="remove()">Remove</ons-toolbar-button>
+    </div>
+  </ons-toolbar>
+  
+  <ons-carousel var="carousel" auto-refresh swipeable overscrollable style="height: 50%; width: 100%;" item-width="40%">
+    <ons-carousel-item ng-repeat="item in items" ng-attr-style="background-color: {{ item }}">
+      {{ item }}   
+    </ons-carousel-item>
+  </ons-carousel>
+</ons-page>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+  <head>
+    <meta charset="utf-8">
+    <title>SinglePageDemo</title>
+    <link rel="stylesheet" href="styles/app.css"/>
+    <link rel="stylesheet prefetch" href="stylesheets/onsenui.css">
+    <link rel="stylesheet prefetch" href="stylesheets/onsen-css-components.css">
+    <script src="javascripts/all.js"></script>
+    <script src="javascripts/myctrl.js"></script>
+    <script src="javascripts/graph.js"></script>
+    <script src="javascripts/status.js"></script>
+    <script src="javascripts/websocket.js"></script>
+
+  </head>
+  <body ng-controller="myCtrl">
+
+    <ons-navigator var="navi">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center">SinglePageDemo</div>
+        </ons-toolbar>
+
+        <ons-list>
+          <ons-list-item ng-click="navi.pushPage('pages/status.html')" modifier="chevron">
+            <ons-icon icon="fa-info-circle" size="20px"></ons-icon>ステータス
+          </ons-list-item>
+
+          <ons-list-header>設定１</ons-list-header>
+          <ons-list-item ng-click="navi.pushPage('pages/tcpip_setting.html')" modifier="chevron">
+            <ons-icon icon="fa-cogs" size="20px"></ons-icon>TCP/IP設定
+          </ons-list-item>
+          <ons-list-item ng-click="navi.pushPage('pages/page6.html')" modifier="chevron">
+            <ons-icon icon="fa-cogs" size="20px"></ons-icon>ポート設定
+          </ons-list-item>
+
+          <ons-list-header>設定２</ons-list-header>
+          <ons-list-item ng-click="navi.pushPage('pages/page3.html')" modifier="chevron">
+            <ons-icon icon="fa-cogs" size="20px"></ons-icon>基本設定
+          </ons-list-item>
+          <ons-list-item ng-click="navi.pushPage('pages/page4.html')" modifier="chevron">
+            <ons-icon icon="fa-cogs" size="20px"></ons-icon>拡張設定
+          </ons-list-item>
+
+          <ons-list-header>モニタ</ons-list-header>
+          <ons-list-item ng-click="navi.pushPage('pages/graph.html')" modifier="chevron">
+            <ons-icon icon="fa-history" size="20px"></ons-icon>グラフ
+          </ons-list-item>
+
+          <ons-list-header>websocket</ons-list-header>
+          <ons-list-item ng-click="navi.pushPage('pages/websocket.html')" modifier="chevron">
+            <ons-icon icon="fa-history" size="20px"></ons-icon>websocket
+          </ons-list-item>
+
+        </ons-list>
+      </ons-page>
+    </ons-navigator>
+
+
+
+  </body>
+</html>
