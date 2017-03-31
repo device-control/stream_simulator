@@ -39,7 +39,7 @@ describe 'StreamManager' do
       map[:baud_rate] = 115200
       map[:data_bits] = 8
       map[:stop_bits] = 1
-      map[:parity] = SerialPort::NONE
+      map[:parity] = "NONE"
       expect{ StreamManager.create map }.not_to raise_error
     end
   end
