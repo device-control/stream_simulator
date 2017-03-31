@@ -1,26 +1,18 @@
 # coding: utf-8
 
-require 'stream_data/message_utils'
+require 'stream_data/member_data/member_data_type'
 require 'log'
 
 Encoding.default_external = 'utf-8'
 Encoding.default_internal = 'utf-8'
 
-class MemberDataTypeInt8
-  include MessageUtils
-  
-  attr_reader :name_jp
-  attr_reader :name
-  attr_reader :type
-  attr_reader :size
-  attr_reader :offset
-  attr_reader :default_value
-  
+class MemberDataTypeInt8 < MemberDataType
   SIZE = 1
   DEFAULT_VALUE = 0
   
   # コンストラクタ
   def initialize(member, offset=nil)
+    super()
     @name_jp = member['name_jp']
     @name = member['name']
     @type = member['type']

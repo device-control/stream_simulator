@@ -231,26 +231,34 @@ module MessageFormatCreator
   end
 
   def struct_cat(creating_info, nested_member_names, out_members, base_member, struct_info)
+    offset = creating_info[:member_total_size]
     if base_member['count'].nil?
       # 配列でない
+      # members = Hashie::Mash.new(struct_info[:members].clone)
+      members = Hashie::Mash.new( Marshal.load(Marshal.dump(struct_info[:members])) )
       struct_info[:member_list].each do |member|
         full_member_name = (nested_member_names.join(".") + base_member["name"] + "." + member)
         creating_info[:member_list] << full_member_name
         creating_info[:values][full_member_name] = struct_info[:values][member]
+        eval "members.#{member}.add_offset(offset)" # base_memberの位置加算
       end
-      out_members[base_member["name"]] = struct_info[:members]
+      out_members[base_member["name"]] = members.to_hash
       creating_info[:member_total_size] += struct_info[:member_total_size]
     else
       # 配列
       out_members[base_member['name']] = Array.new base_member['count']
       base_member['count'].times do |index|
+        # members = Hashie::Mash.new(struct_info[:members].clone)
+        members = Hashie::Mash.new( Marshal.load(Marshal.dump(struct_info[:members])) )
         struct_info[:member_list].each do |member|
           full_member_name = (nested_member_names.join(".") + base_member["name"] + "[#{index}]" + "." + member)
           creating_info[:member_list] << full_member_name
           creating_info[:values][full_member_name] = struct_info[:values][member]
+          eval "members.#{member}.add_offset(offset)" # base_memberの位置加算
         end
-        out_members[base_member['name']][index] = struct_info[:members]
+        out_members[base_member['name']][index] = members.to_hash
         creating_info[:member_total_size] += struct_info[:member_total_size]
+        offset += struct_info[:member_total_size] # 配列分進める
       end
     end
   end
