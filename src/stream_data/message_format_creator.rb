@@ -234,7 +234,9 @@ module MessageFormatCreator
     if base_member['count'].nil?
       # 配列でない
       struct_info[:member_list].each do |member|
-        creating_info[:member_list] << (nested_member_names.join(".") + base_member["name"] + "." + member)
+        full_member_name = (nested_member_names.join(".") + base_member["name"] + "." + member)
+        creating_info[:member_list] << full_member_name
+        creating_info[:values][full_member_name] = struct_info[:values][member]
       end
       out_members[base_member["name"]] = struct_info[:members]
       creating_info[:member_total_size] += struct_info[:member_total_size]
@@ -243,7 +245,9 @@ module MessageFormatCreator
       out_members[base_member['name']] = Array.new base_member['count']
       base_member['count'].times do |index|
         struct_info[:member_list].each do |member|
-          creating_info[:member_list] << (nested_member_names.join(".") + base_member["name"] + "[#{index}]" + "." + member)
+          full_member_name = (nested_member_names.join(".") + base_member["name"] + "[#{index}]" + "." + member)
+          creating_info[:member_list] << full_member_name
+          creating_info[:values][full_member_name] = struct_info[:values][member]
         end
         out_members[base_member['name']][index] = struct_info[:members]
         creating_info[:member_total_size] += struct_info[:member_total_size]
@@ -267,7 +271,7 @@ module MessageFormatCreator
       if message_structs.has_key? member['type']
         struct_info = StructCache.instance.get_struct member['type']
         struct_cat(creating_info, nested_member_names, out_members, member, struct_info)
-        #analyze_struct creating_info, nested_member_names, member, message_structs[member['type']], out_members, message_structs
+        # analyze_struct creating_info, nested_member_names, member, message_structs[member['type']], out_members, message_structs
         next
       end
       # 最小構成の場合
@@ -275,32 +279,32 @@ module MessageFormatCreator
     end
   end
   
-  # # 構造体を解析する
-  # def analyze_struct(creating_info, nested_member_names, member, struct, out_members, message_structs)
-  #   raise "struct is nil" if struct.nil?
-  #   raise "not found file" unless struct.has_key? :file
-  #   raise "not found body" unless struct.has_key? :body
-  #   raise "not found contents" unless struct[:body].has_key? 'contents'
-  #   raise "not found members" unless struct[:body]['contents'].has_key? 'members'
-  #   if member['count'].nil?
-  #     # 配列でない場合
-  #     nested_member_names_now =  nested_member_names.clone
-  #     nested_member_names_now << member['name']
-  #     # 構造体のメンバーを取得
-  #     out_members[member['name']] =Hash.new
-  #     generate_members creating_info, nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']], message_structs
-  #   else
-  #     # 配列の場合
-  #     out_members[member['name']] = Array.new member['count']
-  #     member['count'].times do |index|
-  #       nested_member_names_now =  nested_member_names.clone
-  #       nested_member_names_now << member['name'] + "[#{index}]"
-  #       # 構造体のメンバーを取得
-  #       out_members[member['name']][index] =Hash.new
-  #       generate_members creating_info, nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']][index], message_structs
-  #     end
-  #   end
-  # end
+  # 構造体を解析する
+  def analyze_struct(creating_info, nested_member_names, member, struct, out_members, message_structs)
+    raise "struct is nil" if struct.nil?
+    raise "not found file" unless struct.has_key? :file
+    raise "not found body" unless struct.has_key? :body
+    raise "not found contents" unless struct[:body].has_key? 'contents'
+    raise "not found members" unless struct[:body]['contents'].has_key? 'members'
+    if member['count'].nil?
+      # 配列でない場合
+      nested_member_names_now =  nested_member_names.clone
+      nested_member_names_now << member['name']
+      # 構造体のメンバーを取得
+      out_members[member['name']] =Hash.new
+      generate_members creating_info, nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']], message_structs
+    else
+      # 配列の場合
+      out_members[member['name']] = Array.new member['count']
+      member['count'].times do |index|
+        nested_member_names_now =  nested_member_names.clone
+        nested_member_names_now << member['name'] + "[#{index}]"
+        # 構造体のメンバーを取得
+        out_members[member['name']][index] =Hash.new
+        generate_members creating_info, nested_member_names_now, struct[:body]['contents']['members'], out_members[member['name']][index], message_structs
+      end
+    end
+  end
   
   # メンバーを生成する
   def generate_member(creating_info, nested_member_names, member, out_members)
