@@ -1531,33 +1531,33 @@ describe 'MessageFormat' do
         format.member_list.each do |member|
           # メンバ要素が存在しているか確認
           res = eval "hashie_members.#{member}"
-          expect(res).not_to eq nil #, {"#{format.name} #{member} != nil"}
+          expect(res).not_to eq(nil), "#{format.name} not exists member #{member}" # カスタムメッセージは、eq等の引数を括弧で囲まないとnot_be等の関数の引数とが判断できない
           
           # member_dataを確認
           exp_base = expected_member_data[format.name][member]
           a = eval "hashie_members.#{member}.default_value"
           e = exp_base['default_value']
-          expect(a).to eq e #, "#{format.name} #{member}.default_value"
+          expect(a).to eq(e), "#{format.name} #{member}.default_value != #{e}"
           
           a = eval "hashie_members.#{member}.name"
           e = exp_base['name']
-          expect(a).to eq e #, "#{format.name} #{member}.name"
+          expect(a).to eq(e), "#{format.name} #{member}.name != #{e}"
           
           a = eval "hashie_members.#{member}.name_jp"
           e = exp_base['name_jp']
-          expect(a).to eq e #, "#{format.name} #{member}.name_jp"
+          expect(a).to eq(e), "#{format.name} #{member}.name_jp != #{e}"
           
           a = eval "hashie_members.#{member}.offset"
           e = exp_base['offset']
-          expect(a).to eq e #, "#{format.name} #{member}.offset"
+          expect(a).to eq(e), "#{format.name} #{member}.offset != #{e}"
           
           a = eval "hashie_members.#{member}.size"
           e = exp_base['size']
-          expect(a).to eq e #, "#{format.name} #{member}.size"
+          expect(a).to eq(e), "#{format.name} #{member}.size != #{e}"
           
           a = eval "hashie_members.#{member}.type"
           e = exp_base['type']
-          expect(a).to eq e #,lambda {"#{format.name} #{member}.type" }
+          expect(a).to eq(e), "#{format.name} #{member}.type != #{e}"
           
         end
       end
