@@ -7,6 +7,7 @@ require 'stream_data/yaml_reader'
 require 'stream_data/message_format'
 require 'stream_data/message_entity'
 require 'log'
+require 'benchmark'
 
 require 'pry'
 
@@ -1562,6 +1563,18 @@ describe 'MessageFormat' do
         end
       end
     end
+
+    it '速度が1秒以下であることを確認' do
+      message_formats.each.with_index(0) do |(name,yaml),index|
+        next if name != "struct_sample_format"
+        format = nil
+        bench_result = Benchmark.realtime do
+          format= MessageFormat.create name, yaml, message_structs
+        end
+        expect(bench_result < 1.0 ).to eq true
+      end
+    end
+
     it 'エンコードできることを確認' do
       # 予想
       expect_hex_string = '010100020000000334'
