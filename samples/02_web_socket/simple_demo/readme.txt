@@ -21,4 +21,4 @@ $ ruby websocket_server.rb
 $ cd ../singlepage_demo
 # gulp がインストールされていること
 $ gulp 
-ブラウザで localhost:8888 にアクセスし websocket 欄を選択する
+ブラウザで localhost:8000 にアクセスし websocket 欄を選択する

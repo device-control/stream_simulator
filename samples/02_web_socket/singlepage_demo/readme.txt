@@ -6,7 +6,7 @@ $ bower install
 $ npm install
 $ gulp
 ※node_modules/smoothie/smoothie.js の監視や圧縮が上手く動作していないかも
-
+※ブラウザより localhost:8000 でアクセスできる
 
 参考サイト：
 * npm + gulp + bower でビルド自動化
